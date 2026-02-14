@@ -5,7 +5,7 @@
 	True — Order map-packs by their diffuculty
 	False — Order map-packs by their creation date (newest to oldest)
 */
-$orderMapPacksByStars = true;
+$orderMapPacksByStars = false;
 
 /*
 	SAKUJES
@@ -111,37 +111,15 @@ $leaderboardMinStars = 10;
 /*
 	Update rated levels
 	
-	This setting allows to disable updating of rated levels
+	This setting allows to automatically disable updating of rated levels
 	
 	$ratedLevelsUpdates:
 		True — Allow updating rated levels
 		False — Disallow updating rated levels
-		
-	$ratedLevelsUpdatesExceptions - Allow these levels to update
+	
+	You can allow updating specific level by running !unlockUpdating (!unlu)
 */
 $ratedLevelsUpdates = true;
-$ratedLevelsUpdatesExceptions = [
-    1,
-    2
-];
-
-/*
-	Multiply comment likes by value
-	
-	Fun setting, it will allow you to visually multiply comment likes by value you set
-	
-	$commentAutoLike:
-		True — Enable multiplying
-		False — Disable multiplying
-		
-	$specialCommentLikes - Comment IDs and their multipliers:
-		Comment ID => Multiplier
-*/
-$commentAutoLike = false;
-$specialCommentLikes = [
-    1 => 10,
-    2 => 20
-];
 
 /*
 	Let GDPS administrators to see unlisted levels

@@ -6,70 +6,88 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 $accountID = $person['accountID'];
 
 $targetAccountID = Escape::latin_no_spaces($_POST['targetAccountID']);
 $targetUserID = Library::getUserID($targetAccountID);
-if(!$targetUserID) exit(CommonError::InvalidRequest);
+if(!$targetUserID) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $isBlocked = Library::isPersonBlocked($accountID, $targetAccountID);
-if($isBlocked) exit(CommonError::InvalidRequest);
+if($isBlocked) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $user = Library::getUserByID($targetUserID);
 $account = Library::getAccountByID($targetAccountID);
-
-$queryText = Library::getBannedPeopleQuery(Ban::Leaderboards, true);
 
 $targetPerson = [
 	'accountID' => $targetAccountID,
 	'userID' => $targetUserID,
 	'IP' => $user['IP']
 ];
-
-$checkBan = Library::getPersonBan($targetPerson, Ban::Leaderboards);
-$user['rank'] = !$checkBan ? Library::getUserRank($user['stars'], $user['moons'], $user['userName']) : 0;
-$user['creatorPoints'] = round($user["creatorPoints"], PHP_ROUND_HALF_DOWN);
-
-$user['messagesState'] = $account['mS'];
-$user['friendRequestsState'] = $account['frS'];
-$user['commentsState'] = $account['cS'];
-
-$user['youtubeurl'] = Escape::gd($account['youtubeurl']);
-$user['twitter'] = Escape::gd($account['twitter']);
-$user['twitch'] = Escape::gd($account['twitch']);
+$userData = [];
 
 $userAppearance = Library::getPersonCommentAppearance($targetPerson);
-$user['badge'] = $userAppearance['modBadgeLevel'];
+$checkBan = Library::getPersonBan($targetPerson, Ban::Leaderboards);
+$rank = !$checkBan ? Library::getUserRank("stars", $user['stars'], $user['stars'], $user['userName']) : 0;
+
+$userData['userName'] = Library::makeClanUsername($user['extID']);
+$userData['userID'] = $user['userID'];
+$userData['stars'] = $user['stars'];
+$userData['demons'] = $user['demons'];
+$userData['creatorPoints'] = round($user["creatorPoints"], PHP_ROUND_HALF_DOWN);
+$userData['color1'] = $user['color1'];
+$userData['color2'] = $user['color2'];
+$userData['coins'] = $user['coins'];
+$userData['accountID'] = $user['extID'];
+$userData['userCoins'] = $user['userCoins'];
+$userData['messagingState'] = $account['mS'];
+$userData['friendRequetsState'] = $account['frS'];
+$userData['youtube'] = $account['youtubeurl'];
+$userData['accIcon'] = $user['accIcon'];
+$userData['accShip'] = $user['accShip'];
+$userData['accBall'] = $user['accBall'];
+$userData['accBird'] = $user['accBird'];
+$userData['accDart'] = $user['accDart'];
+$userData['accRobot'] = $user['accRobot'];
+$userData['accStreak'] = $user['accStreak'];
+$userData['accGlow'] = $user['accGlow'];
+$userData['isRegistered'] = $user['isRegistered'];
+$userData['globalRank'] = $rank;
+$userData['accSpider'] = $user['accSpider'];
+$userData['twitter'] = $account['twitter'];
+$userData['twitch'] = $account['twitch'];
+$userData['diamonds'] = $user['diamonds'];
+$userData['accExplosion'] = $user['accExplosion'];
+$userData['modBadgeLevel'] = $userAppearance['modBadgeLevel'];
+$userData['commentHistoryState'] = $account['cS'];
+$userData['color3'] = $user['color3'];
+$userData['moons'] = $user['moons'];
+$userData['accSwing'] = $user['accSwing'];
+$userData['accJetpack'] = $user['accJetpack'];
+$userData['demonsInfo'] = $user['dinfo'];
+$userData['classicLevelsInfo'] = $user['sinfo'];
+$userData['platformerLevelsInfo'] = $user['pinfo'];
+$userData['discord'] = $account['discord'];
+$userData['instagram'] = $account['instagram'];
+$userData['tiktok'] = $account['tiktok'];
+$userData['custom'] = $account['custom'];
 
 if($accountID == $targetAccountID) {
-	$requestsCount = $db->prepare("SELECT count(*) FROM friendreqs WHERE toAccountID = :accountID AND isNew = 1");
-	$requestsCount->execute([':accountID' => $accountID]);
-	$requestsCount = $requestsCount->fetchColumn();
+	$accountFriendshipsStatsCount = Library::getAccountFriendshipsStatsCount($person);
 	
-	$newMessagesCount = $db->prepare("SELECT count(*) FROM messages WHERE toAccountID = :accountID AND isNew = 0");
-	$newMessagesCount->execute([':accountID' => $accountID]);
-	$newMessagesCount = $newMessagesCount->fetchColumn();
-	
-	$newFriendRequestsCount = $db->prepare("SELECT count(*) FROM friendships WHERE (person1 = :accountID AND isNew1 = 1) OR (person2 = :accountID AND isNew2 = 1)");
-	$newFriendRequestsCount->execute([':accountID' => $accountID]);
-	$newFriendRequestsCount = $newFriendRequestsCount->fetchColumn();
-	
-	$user['incomingRequestText'] = ":38:".$newMessagesCount.":39:".$requestsCount.":40:".$newFriendRequestsCount;
+	$userData['newMessagesCount'] = $accountFriendshipsStatsCount['newMessagesCount'];
+	$userData['newFriendRequestsCount'] = $accountFriendshipsStatsCount['newFriendRequestsCount'];
+	$userData['newFriendsCount'] = $accountFriendshipsStatsCount['newFriendsCount'];
 } else {
-	$isFriends = Library::isFriends($accountID, $targetAccountID);
-	if($isFriends) $user['friendsState'] = 1;
-	else {
-		$incomingFriendRequest = Library::getFriendRequest($targetAccountID, $accountID);
-		if($incomingFriendRequest) {
-			$incomingFriendRequestTime = Library::makeTime($incomingFriendRequest["uploadDate"]);
-			$user['incomingRequestText'] = ":32:".$incomingFriendRequest["ID"].":35:".$incomingFriendRequest["comment"].":37:".$incomingFriendRequestTime;
-			$user['friendsState'] = 3;
-		} else {
-			$outcomingFriendRequest = Library::getFriendRequest($accountID, $targetAccountID);
-			if($outcomingFriendRequest) $user['friendsState'] = 4;
-		}
+	$accountFriendshipInfo = Library::getAccountFriendshipInfo($person, $targetAccountID);
+	
+	$userData['friendshipState'] = $accountFriendshipInfo['friendshipState'];
+	if(!empty($accountFriendshipInfo['friendRequest'])) {
+		$userData['friendRequestID'] = $accountFriendshipInfo['friendRequest']['ID'];
+		$userData['friendRequestComment'] = $accountFriendshipInfo['friendRequest']['comment'];
+		$userData['friendRequestTimestamp'] = $accountFriendshipInfo['friendRequest']['timestamp'];
 	}
 }
-exit(Library::returnUserString($user));
+
+exit(Library::returnGeometryDashData($userData, Keys::User));
 ?>

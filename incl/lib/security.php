@@ -520,7 +520,7 @@ class Security {
 			case RateLimit::PerUserLevelsUpload:
 				if(!$perUserLevelsUploadDelay) return true;
 			
-				$lastUploadedLevelByUser = $db->prepare("SELECT count(*) FROM levels WHERE uploadDate >= :time AND isDeleted = 0 AND (userID = :userID OR IP REGEXP CONCAT('(', :IP, '.*)')");
+				$lastUploadedLevelByUser = $db->prepare("SELECT count(*) FROM levels WHERE uploadDate >= :time AND isDeleted = 0 AND (userID = :userID OR IP REGEXP CONCAT('(', :IP, '.*)'))");
 				$lastUploadedLevelByUser->execute([':time' => time() - $perUserLevelsUploadDelay, ':userID' => $userID, ':IP' => Library::convertIPForSearching($IP, true)]);
 				$lastUploadedLevelByUser = $lastUploadedLevelByUser->fetchColumn();
 				

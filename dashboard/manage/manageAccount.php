@@ -24,6 +24,10 @@ if(isset($_POST['accountID'])) {
 	$newSocialsYouTube = Escape::text($_POST["youtube"], 30);
 	$newSocialsTwitter = Escape::text($_POST["twitter"], 20);
 	$newSocialsTwitch = Escape::text($_POST["twitch"], 30);
+	$newSocialsInstagram = Escape::text($_POST["instagram"], 30);
+	$newSocialsTikTok = Escape::text($_POST["tiktok"], 30);
+	$newSocialsDiscord = Escape::text($_POST["discord"], 30);
+	$newSocialsCustom = Escape::text($_POST["custom"], 40);
 	
 	$newTimezone = Escape::text($_POST["timezone"]);
 	
@@ -35,8 +39,12 @@ if(isset($_POST['accountID'])) {
 		$account['сS'] != $newCommentsState ||
 		$account['youtubeurl'] != $newSocialsYouTube ||
 		$account['twitch'] != $newSocialsTwitter ||
-		$account['twitter'] != $newSocialsTwitch
-	) Library::updateAccountSettings($person, $accountID, $newMessagesState, $newFriendRequestsState, $newCommentsState, $newSocialsYouTube, $newSocialsTwitter, $newSocialsTwitch);
+		$account['twitter'] != $newSocialsTwitch ||
+		$account['instagram'] != $newSocialsInstagram ||
+		$account['tiktok'] != $newSocialsTikTok ||
+		$account['discord'] != $newSocialsDiscord ||
+		$account['custom'] != $newSocialsCustom
+	) Library::updateAccountSettings($person, $accountID, $newMessagesState, $newFriendRequestsState, $newCommentsState, $newSocialsYouTube, $newSocialsTwitter, $newSocialsTwitch, $newSocialsInstagram, $newSocialsTikTok, $newSocialsDiscord, $newSocialsCustom);
 	
 	if($account['timezone'] != $newTimezone) Library::updateAccountTimezone($accountID, $newTimezone);
 	

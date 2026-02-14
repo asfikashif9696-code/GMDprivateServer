@@ -408,8 +408,22 @@ async function updatePage() {
 		const modalElement = document.querySelector(`[dashboard-modal="${modalID}"]`);
 		const modalSearchElement = modalElement.querySelector("[dashboard-modal-search]");
 		
-		element.onclick = () => modalElement.classList.toggle("show");
-		dashboardBackground.onclick = () => modalElement.classList.remove("show");
+		const modalName = element.getAttribute("dashboard-modal-name");
+		const modalValue = element.getAttribute("dashboard-modal-value");
+		const modalInput = modalElement.querySelector("[dashboard-modal-input]");
+		
+		element.onclick = () => {
+			modalElement.classList.toggle("show");
+			if(modalName != null && modalValue != null && modalInput != null) {
+				modalInput.name = modalName;
+				modalInput.value = modalValue;
+			}
+		}
+		dashboardBackground.onclick = () => {
+			const modalElements = document.querySelectorAll(`[dashboard-modal]`);
+			modalElements.forEach((element) => element.classList.remove("show"));
+		}
+		
 		if(modalSearchElement != null) {
 			modalSearchElement.addEventListener("keyup", (event) => {
 				if(event.keyCode == 13) applyFilters(modalID);
@@ -447,11 +461,12 @@ async function updatePage() {
 			const searchValue = e.target.value;
 			clearTimeout(intervals[searchID]);
 			
+			searchValueInput.value = searchValue;
+			
 			intervals[searchID] = setTimeout(async () => {
 				const searchOptions = element.querySelector("[dashboard-select-options]");
 				const searchResults = await searchSomething(searchURL, searchValue);
 				
-				searchValueInput.value = 0;
 				searchOptions.innerHTML = "";
 				
 				if(!searchResults.length) return;
@@ -544,10 +559,9 @@ async function updatePage() {
 				});
 			}
 			
-			if(!searchValue.length) {
-				selectValueInput.value = "";
-				return;
-			}
+			selectValueInput.value = searchValue;
+			
+			if(!searchValue.length) return;
 			
 			const searchValueSplit = "(" + escapeRegex(searchValue).replaceAll(" ", ")(?=.*") + ")";
 			const searchValueRegex = new RegExp(searchValueSplit, 'gi');
@@ -801,6 +815,8 @@ async function updatePage() {
 			const searchValue = e.target.value;
 			clearTimeout(intervals[searchID]);
 			
+			searchValueInput.value = searchValue;
+			
 			intervals[searchID] = setTimeout(async () => {
 				const searchResults = await searchSomething(searchURL, searchValue);
 
@@ -1035,7 +1051,11 @@ function convertSeconds(time) { // https://stackoverflow.com/a/36981712
 function downloadSong(songAuthor, songTitle, songURL) {
 	fakeA = document.createElement("a");
 	fakeA.href = decodeURIComponent(songURL);
-	fakeA.download = songAuthor + " - " + songTitle + ".mp3";
+	
+	const urlFormatArray = fakeA.href.split(".");
+	const urlFormat = urlFormatArray[urlFormatArray.length - 1] ?? "mp3";
+	
+	fakeA.download = songAuthor + " - " + songTitle + "." + urlFormat;
 	fakeA.setAttribute("target", "_blank");
 	
 	fakeA.click();
@@ -1323,9 +1343,9 @@ async function showLoaderProgressBar(show, text = '', value = 0, min = 0, max = 
 	const progressTextElement = loaderProgressElement.querySelector("h1");
 	const progressElement = loaderProgressElement.querySelector("progress");
 	
-	if(!show) return loaderProgressElement.classList.add("hide");
+	if(!show) return activateLoaderOfType(false);
 	
-	loaderProgressElement.classList.remove("hide");
+	activateLoaderOfType("progress");
 	
 	progressTextElement.innerHTML = escapeHTML(text.toString());
 	

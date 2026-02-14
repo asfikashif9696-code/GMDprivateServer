@@ -8,9 +8,10 @@ $sec = new Security();
 $person = Dashboard::loginDashboardUser();
 
 $type = Escape::latin($_GET["type"]) ?: 'top';
+$mode = Escape::number($_GET["mode"]) ?: 0;
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 
-$leaderboard = Library::getLeaderboard($person, $type, 100);
+$leaderboard = Library::getLeaderboard($person, $type, 100, $mode);
 $rank = $leaderboard['rank'];
 
 $pageNumber = $pageOffset * -1;

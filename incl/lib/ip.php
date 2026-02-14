@@ -81,6 +81,10 @@ class IP {
 		
 		if(!$blockFreeProxies) return;
 		
+		$IP = self::getIP();
+		$IPArray = explode(".", $IP);
+		if(count($IPArray) != 4) return; // Not IPv4
+		
 		$fileExists = file_exists(__DIR__ .'/../../config/proxies.txt');
 		$lastUpdate = $fileExists ? filemtime(__DIR__ .'/../../config/proxies.txt') : 0;
 		$checkTime = time() - 3600;
@@ -90,7 +94,7 @@ class IP {
 			foreach($proxies AS $url) {
 				$IPs = Library::sendRequest($url, "", [], "GET");
 				$proxy = preg_split('/\r\n|\r|\n/', $IPs);
-				foreach($proxy AS $ip) $allProxies .= explode(':', $ip)[0].PHP_EOL;
+				foreach($proxy AS $ip) if(substr($ip, 0, 7) != "127.0.0") $allProxies .= explode(':', $ip)[0].PHP_EOL;
 			}
 			file_put_contents(__DIR__ .'/../../config/proxies.txt', $allProxies);
 		}
@@ -98,7 +102,7 @@ class IP {
 		if(empty($allProxies)) $allProxies = file(__DIR__ .'/../../config/proxies.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		else $allProxies = explode(PHP_EOL, $allProxies);
 		
-		if(in_array(self::getIP(), $allProxies)) {
+		if(in_array($IP, $allProxies)) {
 			http_response_code(404);
 			exit;
 		}
@@ -111,6 +115,10 @@ class IP {
 		if(!isset($vpns)) global $vpns;
 		
 		if(!$blockCommonVPNs) return;
+		
+		$IP = self::getIP();
+		$IPArray = explode(".", $IP);
+		if(count($IPArray) != 4) return; // Not IPv4
 		
 		$fileExists = file_exists(__DIR__ .'/../../config/vpns.txt');
 		$lastUpdate = $fileExists ? filemtime(__DIR__ .'/../../config/vpns.txt') : 0;
@@ -129,7 +137,9 @@ class IP {
 		else $allVPNs = explode(PHP_EOL, $allVPNs);
 		
 		foreach($allVPNs AS &$vpnCheck) {
-			if(self::ipv4inrange(self::getIP(), $vpnCheck)) {
+			$vpnArray = explode(".", $vpnCheck);
+			
+			if($IPArray[0] == $vpnArray[0] && $IPArray[1] == $vpnArray[1] && $IPArray[2] == $vpnArray[2] && self::ipv4inrange($IP, $vpnCheck)) {
 				http_response_code(404);
 				exit;
 			}

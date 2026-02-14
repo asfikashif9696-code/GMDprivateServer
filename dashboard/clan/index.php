@@ -91,6 +91,44 @@ switch($parameters[1]) {
 		$clan['CLAN_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('manage/clan', $additionalData);
 		$pageBase = "../../";
 		break;
+	case 'transfer':
+		if(!$isClanOwner && !Library::checkPermission($person, "dashboardManageClans")) exit(Dashboard::renderErrorPage(Dashboard::string("clans"), Dashboard::string("errorNoPermission"), '../../'));
+	
+		$pageBase = '../../';
+		
+		$dataArray = [
+			'INFO_TITLE' => Dashboard::string("transferClan"),
+			'INFO_DESCRIPTION' => Dashboard::string("transferClanQuestionDesc"),
+			'INFO_EXTRA' => Dashboard::renderClanCard($clan, $person).
+				'<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-user"></i>
+						%TEXT_newClanOwner%
+					</h2>
+					
+					<div class="select" dashboard-select-search="userSearch">
+						<input type="hidden" name="clanOwner" dashboard-select-value value="" />
+						<input type="text" placeholder="%TEXT_searchText%" dashboard-select-input="manage/getUsers" />
+						
+						<i class="fa-solid fa-caret-right" dashboard-caret></i>
+						
+						<div class="options" dashboard-select-options></div>
+					</div>
+				</div>',
+			
+			'INFO_BUTTON_TEXT_FIRST' => Dashboard::string("cancel"),
+			'INFO_BUTTON_ONCLICK_FIRST' => "getPage('clan/".htmlspecialchars($clan['clanName'])."/settings', 'list')",
+			'INFO_BUTTON_STYLE_FIRST' => "",
+			'INFO_BUTTON_TEXT_SECOND' => Dashboard::string("transferClan"),
+			'INFO_BUTTON_ONCLICK_SECOND' => "postPage('manage/transferClan', 'infoForm', 'list')",
+			'INFO_BUTTON_STYLE_SECOND' => "error",
+			
+			'INFO_INPUT_NAME' => 'clanID',
+			'INFO_INPUT_VALUE' => $clanID
+		];
+		
+		exit(Dashboard::renderPage("general/infoDialogue", Dashboard::string("deleteClan"), $pageBase, $dataArray));
+		break;
 	case 'delete':
 		if(!$isClanOwner && !Library::checkPermission($person, "dashboardManageClans")) exit(Dashboard::renderErrorPage(Dashboard::string("clans"), Dashboard::string("errorNoPermission"), '../../'));
 	
@@ -204,6 +242,7 @@ $contextMenuData['MENU_SHOW_NAME'] = 'false';
 
 $clan['CLAN_CAN_OPEN_SETTINGS'] = $contextMenuData['MENU_CAN_OPEN_SETTINGS'] = $canOpenSettings ? 'true' : 'false';
 
+$contextMenuData['MENU_ID'] = $clan['clanID'];
 $contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true') ? 'true' : 'false';
 
 $clan['CLAN_CONTEXT_MENU'] = Dashboard::renderTemplate('components/menus/clan', $contextMenuData);

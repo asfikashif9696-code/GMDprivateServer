@@ -434,6 +434,9 @@ $dataArray = [
 	'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'list')"
 ];
 
+$reportDataArray = [];
+$dataArray["ADDITIONAL_PAGE"] .= Dashboard::renderTemplate("components/report", $reportDataArray);
+
 $fullPage = Dashboard::renderTemplate("browse/levels", $dataArray);
 
 exit(Dashboard::renderPage("general/wide", Dashboard::string("levelsTitle"), "../", $fullPage));

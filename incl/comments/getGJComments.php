@@ -73,10 +73,8 @@ foreach($comments['comments'] AS &$comment) {
 	$commentText = $gameVersion < 20 ? (trim(Escape::gd($comment["comment"])) ?: '(Empty comment)') : Escape::url_base64_encode(trim($comment["comment"]) ?: '(Empty comment)');
 	
 	$likes = $comment['likes'] - $comment['dislikes'];
-	if($commentAutoLike && isset($specialCommentLikes[$comment["commentID"]])) $likes = $likes * $specialCommentLikes[$comment["commentID"]]; // Multiply by the specified value
 	
 	$user = Library::getUserByID($comment['userID']);
-	
 	$user["userName"] = Library::makeClanUsername($user["extID"]);
 	
 	if($binaryVersion > 31) {
@@ -89,9 +87,12 @@ foreach($comments['comments'] AS &$comment) {
 		$appearance = Library::getPersonCommentAppearance($playerPerson);
 		if(!empty($appearance['commentsExtraText'])) $extraTextArray[] = Escape::gd($appearance['commentsExtraText']);
 		
+		if(!$user["userName"]) $user["userName"] = 'Unknown user';
+		
 		$personString = "~11~".$appearance['modBadgeLevel'].'~12~'.$appearance['commentColor'].":1~".$user["userName"]."~7~1~9~".$user["icon"]."~10~".$user["color1"]."~11~".$user["color2"]."~14~".$user["iconType"]."~15~".$user["special"]."~16~".$user["extID"];
 	} elseif(!isset($users[$user["userID"]])) {
 		$users[$user["userID"]] = true;
+		if(!$user["userName"]) $user["userName"] = 'Unknown user';
 		$usersString .=  $user["userID"].":".$user["userName"].":".$user["extID"]."|";
 	}
 	$timestamp = Library::makeTime($comment['timestamp'], $extraTextArray);

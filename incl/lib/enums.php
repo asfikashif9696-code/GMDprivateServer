@@ -1,4 +1,7 @@
 <?php
+/*
+	Various error codes
+*/
 class RegisterError {
 	const Success = "1";
 
@@ -55,6 +58,7 @@ class CommonError {
 	const Automod = "-16";
 	
 	const BannedByServer = "-17";
+	const Blocked = "-18";
 }
 
 class LevelUploadError {
@@ -87,6 +91,9 @@ class ClanError {
 	const NoPermissions = "-4";
 }
 
+/*
+	IDs of various stuff in-game
+*/
 class RatingItem {
 	const Level = 1;
 	const Comment = 2;
@@ -94,7 +101,7 @@ class RatingItem {
 	const List = 4;
 }
 
-class Action { // Last action ID is 74
+class Action { // Last action ID is 75
 	const AccountRegister = 1;
 	const UserCreate = 51;
 	
@@ -191,13 +198,14 @@ class Action { // Last action ID is 74
 	const ClanCreation = 72;
 	const ClanChange = 73;
 	const ClanDeletion = 74;
+	const ClanTransfer = 75;
 	
 	// Unused
 	const LevelReport = 20;
 	const LevelDescriptionChange = 21;
 }
 
-class ModeratorAction { // Last action ID is 63
+class ModeratorAction { // Last action ID is 64
 	const LevelRate = 1;
 	const LevelDailySet = 5;
 	const LevelDeletion = 6;
@@ -265,6 +273,7 @@ class ModeratorAction { // Last action ID is 63
 	const ClanCreation = 61;
 	const ClanChange = 62;
 	const ClanDeletion = 63;
+	const ClanTransfer = 64;
 	
 	// Unused
 	const LevelFeature = 2;
@@ -340,6 +349,16 @@ class RateLimit {
 	const ACEExploit = 6;
 	const AccountBackup = 7;
 	const AudioUpload = 8;
+}
+
+class Report {
+	const InappropriateContent = 0;
+	const Hacker = 1;
+	const Spam = 2;
+	const HarmfulMisinformation = 3;
+	const PrivacyViolation = 4;
+	const Abuse = 5;
+	const DontLike = 6;
 }
 
 class AutomodAction { // Last action ID is 17
@@ -480,6 +499,73 @@ class Permission { // Last permission ID is 34
 		'dashboardManageVaultCodes' => 32,
 		'dashboardBypassMaintenance' => 33,
 		'dashboardSetAccountRoles' => 34
+	];
+}
+
+/*
+	Keys arrays to convert from JSON to Geometry Dash
+*/
+
+class Keys {
+	const User = [
+		'DELIMITER' => ":",
+		
+		'userName' => 1,
+		'userID' => 2,
+		'stars' => 3,
+		'demons' => 4,
+		'rank' => 6,
+		'udid' => 7,
+		'creatorPoints' => 8,
+		'iconID' => 9,
+		'color1' => 10,
+		'color2' => 11,
+		'shipID' => 12,
+		'coins' => 13,
+		'iconType' => 14,
+		'special' => 15,
+		'accountID' => 16,
+		'userCoins' => 17,
+		'messagingState' => 18,
+		'friendRequetsState' => 19,
+		'youtube' => 20,
+		'accIcon' => 21,
+		'accShip' => 22,
+		'accBall' => 23,
+		'accBird' => 24,
+		'accDart' => 25,
+		'accRobot' => 26,
+		'accStreak' => 27,
+		'accGlow' => 28,
+		'isRegistered' => 29,
+		'globalRank' => 30,
+		'friendshipState' => 31,
+		'friendRequestID' => 32,
+		'friendRequestComment' => 35,
+		'friendRequestTimestamp' => 37,
+		'newMessagesCount' => 38,
+		'newFriendRequestsCount' => 39,
+		'newFriendsCount' => 40,
+		'isFriendRequestNew' => 41,
+		'scoreTimestamp' => 42,
+		'accSpider' => 43,
+		'twitter' => 44,
+		'twitch' => 45,
+		'diamonds' => 46,
+		'accExplosion' => 48,
+		'modBadgeLevel' => 49,
+		'commentHistoryState' => 50,
+		'color3' => 51,
+		'moons' => 52,
+		'accSwing' => 53,
+		'accJetpack' => 54,
+		'demonsInfo' => 55,
+		'classicLevelsInfo' => 56,
+		'platformerLevelsInfo' => 57,
+		'discord' => 58,
+		'instagram' => 59,
+		'tiktok' => 60,
+		'custom' => 61,
 	];
 }
 ?>

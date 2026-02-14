@@ -1,5 +1,5 @@
 <div class="contextMenuDiv" dashboard-context-menu>
-	<button class="contextMenuButton contextMenuTitle" %MENU_NAME_ATTRIBUTES% type="button" dashboard-show="%MENU_SHOW_NAME%">
+	<button class="contextMenuButton contextMenuTitle" %MENU_NAME_ATTRIBUTES% type="button" href="clan/%MENU_NAME%" dashboard-loader-type="settings" dashboard-show="%MENU_SHOW_NAME%">
 		<i class="fa-solid fa-shield-halved"></i>
 		<text>%MENU_NAME%</text>
 	</button>
@@ -11,13 +11,6 @@
 		<text>%TEXT_viewClan%</text>
 	</button>
 	
-	<button class="contextMenuButton" title="%TEXT_copyLink%" type="button" onclick="copyElementContent('clan/%MENU_NAME%', true)">
-		<i class="fa-solid fa-chain"></i>
-		<text>%TEXT_copyLink%</text>
-	</button>
-	
-	<hr>
-	
 	<button class="contextMenuButton" title="%TEXT_clanPosts%" type="button" href="clan/%MENU_NAME%/posts" dashboard-loader-type="settings">
 		<i class="fa-solid fa-comment"></i>
 		<text>%TEXT_clanPosts%</text>
@@ -28,5 +21,17 @@
 	<button class="contextMenuButton" title="%TEXT_clanSettings%" type="button" href="clan/%MENU_NAME%/settings" dashboard-loader-type="settings" dashboard-show="%MENU_CAN_OPEN_SETTINGS%">
 		<i class="fa-solid fa-gear"></i>
 		<text>%TEXT_clanSettings%</text>
+	</button>
+	
+	<hr>
+	
+	<button class="contextMenuButton" title="%TEXT_copyLink%" type="button" onclick="copyElementContent('clan/%MENU_NAME%', true)">
+		<i class="fa-solid fa-chain"></i>
+		<text>%TEXT_copyLink%</text>
+	</button>
+	
+	<button class="contextMenuButton" title="%TEXT_copyClanID%" type="button" onclick="copyElementContent('%MENU_ID%')">
+		<i class="fa-solid fa-shield-halved"></i>
+		<text>%TEXT_copyClanID%</text>
 	</button>
 </div>

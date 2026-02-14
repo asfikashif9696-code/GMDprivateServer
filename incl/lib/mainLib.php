@@ -320,10 +320,11 @@ class Library {
 	public static function getAccountComments($person, $userID, $commentsPage, $mode = 'timestamp') {
 		require __DIR__."/connection.php";
 		
-		$commentsIDs = $commentsRatings = [];
-		
 		$accountID = $person["accountID"];
 		$IP = self::convertIPForSearching($person["IP"], true);
+		
+		$commentsRatings = $commentsIDs = [];
+		$commentsIDsString = "";
 
 		$accountComments = $db->prepare("SELECT * FROM acccomments WHERE userID = :userID ".($mode ? 'ORDER BY '.$mode.' DESC' : '')." LIMIT 10 OFFSET ".$commentsPage);
 		$accountComments->execute([':userID' => $userID]);
@@ -378,16 +379,19 @@ class Library {
 		return $commentID;
 	}
 	
-	public static function updateAccountSettings($person, $accountID, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch) {
+	public static function updateAccountSettings($person, $accountID, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch, $socialsInstagram, $socialsTikTok, $socialsDiscord, $socialsCustom) {
 		require __DIR__."/connection.php";
+		require_once __DIR__."/exploitPatch.php";
 		
 		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
 		
-		$updateAccountSettings = $db->prepare("UPDATE accounts SET mS = :messagesState, frS = :friendRequestsState, cS = :commentsState, youtubeurl = :socialsYouTube, twitter = :socialsTwitter, twitch = :socialsTwitch WHERE accountID = :accountID");
-		$updateAccountSettings->execute([':accountID' => $accountID, ':messagesState' => $messagesState, ':friendRequestsState' => $friendRequestsState, ':commentsState' => $commentsState, ':socialsYouTube' => $socialsYouTube, ':socialsTwitter' => $socialsTwitter, ':socialsTwitch' => $socialsTwitch]);
+		$updateAccountSettings = $db->prepare("UPDATE accounts SET mS = :messagesState, frS = :friendRequestsState, cS = :commentsState, youtubeurl = :socialsYouTube, twitter = :socialsTwitter, twitch = :socialsTwitch, instagram = :socialsInstagram, tiktok = :socialsTikTok, discord = :socialsDiscord, custom = :socialsCustom WHERE accountID = :accountID");
+		$updateAccountSettings->execute([':accountID' => $accountID, ':messagesState' => $messagesState, ':friendRequestsState' => $friendRequestsState, ':commentsState' => $commentsState, ':socialsYouTube' => $socialsYouTube, ':socialsTwitter' => $socialsTwitter, ':socialsTwitch' => $socialsTwitch, ':socialsInstagram' => $socialsInstagram, ':socialsTikTok' => $socialsTikTok, ':socialsDiscord' => $socialsDiscord, ':socialsCustom' => $socialsCustom]);
 		
-		if($person['accountID'] == $accountID) self::logAction($person, Action::ProfileSettingsChange, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch);
-		else self::logModeratorAction($person, ModeratorAction::ProfileSettingsChange, $accountID, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch);
+		$socialsOther = "ig:".Escape::url_base64_encode($socialsInstagram).",tt:".Escape::url_base64_encode($socialsTikTok).",dc:".Escape::url_base64_encode($socialsDiscord).",cs:".Escape::url_base64_encode($socialsCustom); // Yes yes im bad coder
+		
+		if($person['accountID'] == $accountID) self::logAction($person, Action::ProfileSettingsChange, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch, $socialsOther);
+		else self::logModeratorAction($person, ModeratorAction::ProfileSettingsChange, $accountID, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch, $socialsOther);
 			
 		return true;
 	}
@@ -409,6 +413,8 @@ class Library {
 	public static function getUserString($user) {
 		$user['userName'] = self::makeClanUsername($user['extID']);
 		
+		if(!$user["userName"]) $user["userName"] = 'Unknown user';
+		
 		return $user['userID'].':'.$user["userName"].':'.$user['extID'];
 	}
 	
@@ -428,6 +434,9 @@ class Library {
 		
 		$accountID = $person["accountID"];
 		$IP = self::convertIPForSearching($person["IP"], true);
+		
+		$commentsRatings = $commentsIDs = [];
+		$commentsIDsString = "";
 		
 		$comments = $db->prepare("SELECT * FROM comments
 			JOIN (
@@ -478,7 +487,7 @@ class Library {
 		$userID = $person['userID'];
 		
 		$getComment = $db->prepare("SELECT * FROM acccomments WHERE commentID = :commentID");
-		$getComment->execute([':userID' => $userID, ':commentID' => $commentID]);
+		$getComment->execute([':commentID' => $commentID]);
 		$getComment = $getComment->fetch();
 		if(!$getComment || ($getComment['userID'] != $userID && !self::checkPermission($person, 'gameDeleteComments'))) return false;
 		
@@ -539,6 +548,7 @@ class Library {
 	
 	public static function banPerson($modID, $person, $reason, $banType, $personType, $expires, $modReason = '') {
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/ip.php";
 		
 		$IP = IP::getIP();
@@ -587,6 +597,7 @@ class Library {
 		
 		self::logModeratorAction($moderatorPerson, ModeratorAction::PersonBan, $person, $reason, $personType, $banType, $expires, $modReason);
 		//$this->sendBanWebhook($banID, $modID);
+		if($automaticCron) Cron::miscFixes($person, $enableTimeoutForAutomaticCron);
 		
 		return $banID;
 	}
@@ -603,6 +614,7 @@ class Library {
 	
 	public static function unbanPerson($banID, $modID) {
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/ip.php";
 		
 		$IP = IP::getIP();
@@ -622,8 +634,10 @@ class Library {
 		
 		$unban = $db->prepare('UPDATE bans SET isActive = 0 WHERE banID = :banID');
 		$unban->execute([':banID' => $banID]);
+		
 		self::logModeratorAction($moderatorPerson, ModeratorAction::PersonUnban, $ban['person'], $ban['reason'], $ban['personType'], $ban['banType'], $ban['expires'], $ban['modReason']);
 		//$this->sendBanWebhook($banID, $modID);
+		if($automaticCron) Cron::miscFixes($person, $enableTimeoutForAutomaticCron);
 		
 		return true;
 	}
@@ -640,11 +654,14 @@ class Library {
 	
 	public static function getPersonBan($person, $banType) {
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/ip.php";
 		
 		$accountID = $person['accountID'];
 		$userID = $person['userID'];
 		$IP = self::convertIPForSearching($person['IP']);
+		
+		if($automaticCron) Cron::miscFixes($person, $enableTimeoutForAutomaticCron);
 		
 		$ban = $db->prepare('SELECT * FROM bans WHERE ((person = :accountID AND personType = 0) OR (person = :userID AND personType = 1) OR (person = :IP AND personType = 2)) AND banType = :banType AND isActive = 1 ORDER BY expires DESC');
 		$ban->execute([':accountID' => $accountID, ':userID' => $userID, ':IP' => $IP, ':banType' => $banType]);
@@ -843,7 +860,7 @@ class Library {
 		return $queryText;
 	}
 	
-	public static function getLeaderboard($person, $type, $count) {
+	public static function getLeaderboard($person, $type, $count, $stat = 0) {
 		require __DIR__."/../../config/misc.php";
 		require __DIR__."/connection.php";
 		
@@ -854,11 +871,14 @@ class Library {
 		$user = self::getUserByID($userID);
 		$rank = 0;
 		
+		$statTypes = ['stars', 'moons', 'demons', 'userCoins'];
+		$leaderboardSortStat = $statTypes[$stat] ?: 'stars';
+		
 		switch($type) {
 			case 'top':
 				$queryText = self::getBannedPeopleQuery(Ban::Leaderboards, true);
 				
-				$leaderboard = $db->prepare("SELECT * FROM users WHERE ".$queryText." stars + moons >= :stars ORDER BY stars + moons DESC, userName ASC LIMIT 100");
+				$leaderboard = $db->prepare("SELECT * FROM users WHERE ".$queryText." stars >= :stars ORDER BY ".$leaderboardSortStat." DESC, userName ASC LIMIT 100");
 				$leaderboard->execute([':stars' => $leaderboardMinStars]);
 				
 				break;
@@ -872,11 +892,13 @@ class Library {
 				if($moderatorsListInGlobal) {
 					$leaderboard = $db->prepare("SELECT * FROM users
 						INNER JOIN roleassign ON
-							(users.extID = roleassign.person AND roleassign.personType = 0) OR
-							(users.userID = roleassign.person AND roleassign.personType = 1)
+							(CONVERT(users.extID, CHAR(255)) = CONVERT(roleassign.person, CHAR(255)) AND roleassign.personType = 0) OR
+							(CONVERT(users.userID, CHAR(255)) = CONVERT(roleassign.person, CHAR(255)) AND roleassign.personType = 1)
 						INNER JOIN roles ON roleassign.roleID = roles.roleID
+						GROUP BY users.userID
 						ORDER BY roles.priority DESC, users.userName ASC");
 					$leaderboard ->execute();
+					
 					break;
 				}
 				
@@ -888,29 +910,27 @@ class Library {
 						(
 							SELECT * FROM users
 							WHERE ".$queryText."
-							stars + moons <= :stars
-							ORDER BY stars + moons DESC, userName ASC
+							".$leaderboardSortStat." >= :stats AND IF(".$leaderboardSortStat." = :stats, userName >= :userName, 1)
+							ORDER BY ".$leaderboardSortStat." ASC, userName ASC
 							LIMIT ".$count."
 						)
 						UNION
 						(
 							SELECT * FROM users
 							WHERE ".$queryText."
-							stars + moons >= :stars
-							ORDER BY stars + moons ASC, userName ASC
+							".$leaderboardSortStat." <= :stats AND IF(".$leaderboardSortStat." = :stats, userName <= :userName, 1)
+							ORDER BY ".$leaderboardSortStat." DESC, userName DESC
 							LIMIT ".$count."
 						)
 					) as leaderboards
-					ORDER BY leaderboards.stars + leaderboards.moons DESC, leaderboards.userName ASC");
-				$leaderboard->execute([':stars' => $user['stars'] + $user['moons']]);
-				
-				$rank = max(0, self::getUserRank($user['stars'], $user['moons'], $userName, true) - $count);
+					ORDER BY leaderboards.".$leaderboardSortStat." DESC, leaderboards.userName ASC");
+				$leaderboard->execute([':stats' => $user[$leaderboardSortStat], ':userName' => $userName]);
 				
 				break;
 			case 'friends':
 				$friendsString = self::getFriendsQueryString($accountID);
 				
-				$leaderboard = $db->prepare("SELECT * FROM users WHERE extID IN (".$friendsString.") ORDER BY stars + moons DESC, userName ASC");
+				$leaderboard = $db->prepare("SELECT * FROM users WHERE extID IN (".$friendsString.") ORDER BY ".$leaderboardSortStat." DESC, userName ASC");
 				$leaderboard->execute();
 				break;
 			case 'week':
@@ -925,19 +945,23 @@ class Library {
 		
 		$leaderboard = $leaderboard->fetchAll();
 		
+		if($type == "relative") {
+			$rank = self::getUserRank($leaderboardSortStat, $leaderboard[0][$leaderboardSortStat], $leaderboard[0]["stars"], $leaderboard[0]['userName'], true) - 1;
+		}
+		
 		return ["rank" => $rank, "leaderboard" => $leaderboard, "count" => count($leaderboard)];
 	}
 	
-	public static function getUserRank($stars, $moons, $userName, $ignoreMinStars = false) {
+	public static function getUserRank($leaderboardSortStat, $stats, $stars, $userName, $ignoreMinStars = false) {
 		require __DIR__."/../../config/misc.php";
 		require __DIR__."/connection.php";
 		
-		if(!$ignoreMinStars && $stars + $moons < $leaderboardMinStars) return 0;
+		if(!$ignoreMinStars && $stars < $leaderboardMinStars) return 0;
 		
 		$queryText = self::getBannedPeopleQuery(Ban::Leaderboards, true);
 		
-		$rank = $db->prepare("SELECT count(*) FROM users WHERE ".$queryText." stars + moons >= :stars AND IF(stars + moons = :stars, userName <= :userName, 1)");
-		$rank->execute([':stars' => $stars + $moons, ':userName' => $userName]);
+		$rank = $db->prepare("SELECT count(*) FROM users WHERE ".$queryText." ".$leaderboardSortStat." >= :stats AND IF(".$leaderboardSortStat." = :stats, userName <= :userName, 1)");
+		$rank->execute([':stats' => $stats, ':userName' => $userName]);
 		$rank = $rank->fetchColumn();
 		
 		return $rank;
@@ -992,7 +1016,10 @@ class Library {
 		
 		if(isset($GLOBALS['core_cache']['canSendMessage'][$person['accountID']][$toAccountID])) return $GLOBALS['core_cache']['canSendMessage'][$person['accountID']][$toAccountID];
 		
-		if(Automod::isAccountsDisabled(3)) return false;
+		if(Automod::isAccountsDisabled(3)) {
+			$GLOBALS['core_cache']['canSendMessage'][$person['accountID']][$toAccountID] = false;
+			return false;
+		}
 		
 		if($person['accountID'] == $toAccountID) {
 			$GLOBALS['core_cache']['canSendMessage'][$person['accountID']][$toAccountID] = false;
@@ -1034,7 +1061,7 @@ class Library {
 		return true;
 	}
 	
-	public static function isPersonBlocked($accountID, $targetAccountID) {
+	public static function isPersonBlocked($accountID, $targetAccountID, $explicitOrder = false) {
 		require __DIR__."/connection.php";
 		
 		if(isset($GLOBALS['core_cache']['personBlocked'][$accountID][$targetAccountID])) return $GLOBALS['core_cache']['personBlocked'][$accountID][$targetAccountID];
@@ -1044,7 +1071,9 @@ class Library {
 			return false;
 		}
 		
-		$isBlocked = $db->prepare("SELECT count(*) FROM blocks WHERE (person1 = :accountID AND person2 = :targetAccountID) OR (person1 = :targetAccountID AND person2 = :accountID)");
+		$queryText = $explicitOrder ? 'person1 = :accountID AND person2 = :targetAccountID' : '(person1 = :accountID AND person2 = :targetAccountID) OR (person1 = :targetAccountID AND person2 = :accountID)';
+		
+		$isBlocked = $db->prepare("SELECT count(*) FROM blocks WHERE ".$queryText);
 		$isBlocked->execute([':accountID' => $accountID, ':targetAccountID' => $targetAccountID]);
 		$isBlocked = $isBlocked->fetchColumn() > 0;
 		
@@ -1194,7 +1223,7 @@ class Library {
 		
 		$accountID = $person['accountID'];
 		
-		$isBlocked = self::isPersonBlocked($accountID, $targetAccountID);
+		$isBlocked = self::isPersonBlocked($accountID, $targetAccountID, true);
 		if(!$isBlocked) return false;
 		
 		$unblockUser = $db->prepare("DELETE FROM blocks WHERE person1 = :accountID AND person2 = :targetAccountID");
@@ -1337,7 +1366,7 @@ class Library {
 		
 		$accountID = $person['accountID'];
 		
-		$isBlocked = self::isPersonBlocked($accountID, $targetAccountID);
+		$isBlocked = self::isPersonBlocked($accountID, $targetAccountID, true);
 		if($isBlocked) return false;
 		
 		$blockUser = $db->prepare("INSERT INTO blocks (person1, person2)
@@ -1812,6 +1841,52 @@ class Library {
 		return true;
 	}
 	
+	public static function getAccountFriendshipsStatsCount($person) {
+		require __DIR__."/connection.php";
+		
+		$accountID = $person['accountID'];
+		
+		$newFriendRequestsCount = $db->prepare("SELECT count(*) FROM friendreqs WHERE toAccountID = :accountID AND isNew = 1");
+		$newFriendRequestsCount->execute([':accountID' => $accountID]);
+		$newFriendRequestsCount = $newFriendRequestsCount->fetchColumn();
+		
+		$newMessagesCount = $db->prepare("SELECT count(*) FROM messages WHERE toAccountID = :accountID AND isNew = 0");
+		$newMessagesCount->execute([':accountID' => $accountID]);
+		$newMessagesCount = $newMessagesCount->fetchColumn();
+		
+		$newFriendsCount = $db->prepare("SELECT count(*) FROM friendships WHERE (person1 = :accountID AND isNew1 = 1) OR (person2 = :accountID AND isNew2 = 1)");
+		$newFriendsCount->execute([':accountID' => $accountID]);
+		$newFriendsCount = $newFriendsCount->fetchColumn();
+		
+		return ['newFriendRequestsCount' => $newFriendRequestsCount, 'newMessagesCount' => $newMessagesCount, 'newFriendsCount' => $newFriendsCount];
+	}
+	
+	public static function getAccountFriendshipInfo($person, $targetAccountID) {
+		require __DIR__."/connection.php";
+		
+		$accountID = $person['accountID'];
+		
+		$friendshipState = 0;
+		$newFriendRequestArray = [];
+		
+		$isFriends = self::isFriends($accountID, $targetAccountID);
+		
+		if($isFriends) $friendshipState = 1;
+		else {
+			$incomingFriendRequest = self::getFriendRequest($targetAccountID, $accountID);
+			if($incomingFriendRequest) {
+				$incomingFriendRequestTime = self::makeTime($incomingFriendRequest["uploadDate"]);
+				$friendshipState = 3;
+				$newFriendRequestArray = ['ID' => $incomingFriendRequest["ID"], 'comment' => $incomingFriendRequest["comment"], 'timestamp' => $incomingFriendRequestTime];
+			} else {
+				$outcomingFriendRequest = self::getFriendRequest($accountID, $targetAccountID);
+				if($outcomingFriendRequest) $friendshipState = 4;
+			}
+		}
+		
+		return ['friendshipState' => $friendshipState, 'friendRequest' => $newFriendRequestArray];
+	}
+	
 	/*
 		Levels-related functions
 	*/
@@ -1867,8 +1942,8 @@ class Library {
 	}
 	
 	public static function uploadLevel($person, $levelID, $levelName, $levelString, $levelDetails) {
-		require __DIR__."/../../config/misc.php";
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/automod.php";
 		require_once __DIR__."/security.php";
 		
@@ -1889,17 +1964,24 @@ class Library {
 		$checkLevelExistenceByID->execute([':levelID' => $levelID, ':userID' => $userID]);
 		$checkLevelExistenceByID = $checkLevelExistenceByID->fetch();
 		if($checkLevelExistenceByID) {
-			if($checkLevelExistenceByID['updateLocked'] || (!$ratedLevelsUpdates && $checkLevelExistenceByID['starStars'] > 0 && !in_array($levelID, $ratedLevelsUpdatesExceptions))) return ['success' => false, 'error' => LevelUploadError::UploadingDisabled];
+			if(
+				(!$ratedLevelsUpdates && $checkLevelExistenceByID['starStars'] && !$checkLevelExistenceByID['updateLocked']) ||
+				(!$ratedLevelsUpdates && !$checkLevelExistenceByID['starStars'] && $checkLevelExistenceByID['updateLocked']) ||
+				($ratedLevelsUpdates && $checkLevelExistenceByID['updateLocked'])
+			) return ['success' => false, 'error' => LevelUploadError::UploadingDisabled];
 			
 			$levelVersion = (int)$checkLevelExistenceByID['levelVersion'];
 			
-			$writeLevel = self::writeLevelData($person, $levelID, $levelString, $levelVersion);
-			if(!$writeFile) return ['success' => false, 'error' => LevelUploadError::FailedToWriteLevel];
+			$writeLevel = self::writeLevelData($person, $checkLevelExistenceByID['levelID'], $levelString, $levelVersion);
+			if(!$writeLevel) return ['success' => false, 'error' => LevelUploadError::FailedToWriteLevel];
 			
 			$updateLevel = $db->prepare('UPDATE levels SET gameVersion = :gameVersion, binaryVersion = :binaryVersion, levelDesc = :levelDesc, levelVersion = levelVersion + 1, levelLength = :levelLength, audioTrack = :audioTrack, auto = :auto, original = :original, twoPlayer = :twoPlayer, songID = :songID, objects = :objects, coins = :coins, requestedStars = :requestedStars, extraString = :extraString, levelString = "", levelInfo = :levelInfo, unlisted = :unlisted, IP = :IP, isLDM = :isLDM, wt = :wt, wt2 = :wt2, unlisted2 = :unlisted, settingsString = :settingsString, songIDs = :songIDs, sfxIDs = :sfxIDs, ts = :ts, password = :password, updateDate = :timestamp, hasMagicString = 1 WHERE levelID = :levelID');
 			$updateLevel->execute([':levelID' => $levelID, ':gameVersion' => $levelDetails['gameVersion'], ':binaryVersion' => $levelDetails['binaryVersion'], ':levelDesc' => $levelDetails['levelDesc'], ':levelLength' => $levelDetails['levelLength'], ':audioTrack' => $levelDetails['audioTrack'], ':auto' => $levelDetails['auto'], ':original' => $levelDetails['original'], ':twoPlayer' => $levelDetails['twoPlayer'], ':songID' => $levelDetails['songID'], ':objects' => $levelDetails['objects'], ':coins' => $levelDetails['coins'], ':requestedStars' => $levelDetails['requestedStars'], ':extraString' => $levelDetails['extraString'], ':levelInfo' => $levelDetails['levelInfo'], ':unlisted' => $levelDetails['unlisted'], ':isLDM' => $levelDetails['isLDM'], ':wt' => $levelDetails['wt'], ':wt2' => $levelDetails['wt2'], ':settingsString' => $levelDetails['settingsString'], ':songIDs' => $levelDetails['songIDs'], ':sfxIDs' => $levelDetails['sfxIDs'], ':ts' => $levelDetails['ts'], ':password' => $levelDetails['password'], ':timestamp' => time(), ':IP' => $IP]);
 			
 			self::logAction($person, Action::LevelChange, $levelName, $levelDetails['levelDesc'], $levelID);
+			
+			if($automaticCron) Cron::updateSongsUsage($person, $enableTimeoutForAutomaticCron);
+			
 			return ["success" => true, "levelID" => (string)$levelID];
 		}
 		
@@ -1907,17 +1989,24 @@ class Library {
 		$checkLevelExistenceByName->execute([':levelName' => $levelName, ':userID' => $userID]);
 		$checkLevelExistenceByName = $checkLevelExistenceByName->fetch();
 		if($checkLevelExistenceByName) {
-			if($checkLevelExistenceByName['updateLocked'] || (!$ratedLevelsUpdates && $checkLevelExistenceByName['starStars'] > 0 && !in_array($checkLevelExistenceByName['levelID'], $ratedLevelsUpdatesExceptions))) return ['success' => false, 'error' => LevelUploadError::UploadingDisabled];
+			if(
+				(!$ratedLevelsUpdates && $checkLevelExistenceByName['starStars'] && !$checkLevelExistenceByName['updateLocked']) ||
+				(!$ratedLevelsUpdates && !$checkLevelExistenceByName['starStars'] && $checkLevelExistenceByName['updateLocked']) ||
+				($ratedLevelsUpdates && $checkLevelExistenceByName['updateLocked'])
+			) return ['success' => false, 'error' => LevelUploadError::UploadingDisabled];
 			
 			$levelVersion = (int)$checkLevelExistenceByName['levelVersion'];
 			
-			$writeLevel = self::writeLevelData($person, $levelID, $levelString, $levelVersion);
-			if(!$writeFile) return ['success' => false, 'error' => LevelUploadError::FailedToWriteLevel];
+			$writeLevel = self::writeLevelData($person, $checkLevelExistenceByName['levelID'], $levelString, $levelVersion);
+			if(!$writeLevel) return ['success' => false, 'error' => LevelUploadError::FailedToWriteLevel];
 			
 			$updateLevel = $db->prepare('UPDATE levels SET gameVersion = :gameVersion, binaryVersion = :binaryVersion, levelDesc = :levelDesc, levelVersion = levelVersion + 1, levelLength = :levelLength, audioTrack = :audioTrack, auto = :auto, original = :original, twoPlayer = :twoPlayer, songID = :songID, objects = :objects, coins = :coins, requestedStars = :requestedStars, extraString = :extraString, levelString = "", levelInfo = :levelInfo, unlisted = :unlisted, IP = :IP, isLDM = :isLDM, wt = :wt, wt2 = :wt2, unlisted2 = :unlisted, settingsString = :settingsString, songIDs = :songIDs, sfxIDs = :sfxIDs, ts = :ts, password = :password, updateDate = :timestamp, hasMagicString = 1 WHERE levelID = :levelID AND isDeleted = 0');
 			$updateLevel->execute([':levelID' => $checkLevelExistenceByName['levelID'], ':gameVersion' => $levelDetails['gameVersion'], ':binaryVersion' => $levelDetails['binaryVersion'], ':levelDesc' => $levelDetails['levelDesc'], ':levelLength' => $levelDetails['levelLength'], ':audioTrack' => $levelDetails['audioTrack'], ':auto' => $levelDetails['auto'], ':original' => $levelDetails['original'], ':twoPlayer' => $levelDetails['twoPlayer'], ':songID' => $levelDetails['songID'], ':objects' => $levelDetails['objects'], ':coins' => $levelDetails['coins'], ':requestedStars' => $levelDetails['requestedStars'], ':extraString' => $levelDetails['extraString'], ':levelInfo' => $levelDetails['levelInfo'], ':unlisted' => $levelDetails['unlisted'], ':isLDM' => $levelDetails['isLDM'], ':wt' => $levelDetails['wt'], ':wt2' => $levelDetails['wt2'], ':settingsString' => $levelDetails['settingsString'], ':songIDs' => $levelDetails['songIDs'], ':sfxIDs' => $levelDetails['sfxIDs'], ':ts' => $levelDetails['ts'], ':password' => $levelDetails['password'], ':timestamp' => time(), ':IP' => $IP]);
 			
 			self::logAction($person, Action::LevelChange, $levelName, $levelDetails['levelDesc'], $checkLevelExistenceByName['levelID']);
+			
+			if($automaticCron) Cron::updateSongsUsage($person, $enableTimeoutForAutomaticCron);
+			
 			return ["success" => true, "levelID" => (string)$checkLevelExistenceByName['levelID']];
 		}
 		
@@ -1935,6 +2024,8 @@ class Library {
 		self::logAction($person, Action::LevelUpload, $levelName, $levelDetails['levelDesc'], $levelID);
 		
 		Automod::checkLevelsCount();
+		
+		if($automaticCron) Cron::updateSongsUsage($person, $enableTimeoutForAutomaticCron);
 		
 		return ["success" => true, "levelID" => (string)$levelID];
 	}
@@ -2453,11 +2544,18 @@ class Library {
 	
 	public static function lockUpdatingLevel($levelID, $person, $lockUpdating) {
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		
 		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
 		
+		$level = self::getLevelByID($levelID);
+		if(!$level) return false;
+		
+		$lockUpdatingValue = $lockUpdating;
+		if(!$ratedLevelsUpdates && $level["starStars"]) $lockUpdatingValue = $lockUpdatingValue ? 0 : 1;
+		
 		$lockLevel = $db->prepare("UPDATE levels SET updateLocked = :updateLocked WHERE levelID = :levelID AND isDeleted = 0");
-		$lockLevel->execute([':updateLocked' => $lockUpdating, ':levelID' => $levelID]);
+		$lockLevel->execute([':updateLocked' => $lockUpdatingValue, ':levelID' => $levelID]);
 		
 		self::logModeratorAction($person, ModeratorAction::LevelLockUpdating, $lockUpdating, '', $levelID);
 		
@@ -2520,8 +2618,8 @@ class Library {
 	}
 	
 	public static function changeLevelSong($levelID, $person, $songID, $isCustomSong = 1) {
-		require __DIR__."/../../config/misc.php";
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/cron.php";
 		
 		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
@@ -2637,6 +2735,9 @@ class Library {
 		$item = $levelID > 0 ? self::getLevelByID($levelID) : self::getListByID($levelID * -1);
 		if($item['commentLocked']) return ["success" => false, "error" => CommonError::Disabled];
 		
+		$targetAccountID = isset($item['extID']) ? $item['extID'] : $item['accountID'];
+		if(self::isPersonBlocked($targetAccountID, $accountID, true)) return ["success" => false, "error" => CommonError::Blocked];
+		
 		if(Security::checkFilterViolation($person, $comment, 3)) return ["success" => false, "error" => CommonError::Filter];
 		
 		if(Automod::isLevelsDisabled(1)) return ["success" => false, "error" => CommonError::Automod];
@@ -2668,8 +2769,8 @@ class Library {
 	}
 	
 	public static function deleteLevel($levelID, $person) {
-		require __DIR__."/../../config/misc.php";
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/cron.php";
 		
 		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
@@ -2678,7 +2779,13 @@ class Library {
 		
 		$level = self::getLevelByID($levelID);
 		
-		if($disallowDeletingUpdateLockedLevel && $level['updateLocked']) return false;
+		if($disallowDeletingUpdateLockedLevel) {
+			if(
+				(!$ratedLevelsUpdates && $level['starStars'] && !$level['updateLocked']) ||
+				(!$ratedLevelsUpdates && !$level['starStars'] && $level['updateLocked']) ||
+				($ratedLevelsUpdates && $level['updateLocked'])
+			) return false;
+		}
 		
 		if($disallowDeletingLevelByBannedPerson) {
 			$checkBan = self::getPersonBan($person, Ban::UploadingLevels);
@@ -3186,8 +3293,9 @@ class Library {
 	}
 	
 	public static function reuploadLevel($person, $reuploadType, $serverURL, $levelID, $reuploadUserName, $reuploadPassword) {
-		require __DIR__."/../../config/dashboard.php";
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/dashboard.php";
+		require __DIR__."/../../config/misc.php";
 		require_once __DIR__."/automod.php";
 		require_once __DIR__."/security.php";
 		require_once __DIR__."/XOR.php";
@@ -3300,6 +3408,8 @@ class Library {
 				if(!$writeFile) return ['success' => false, 'error' => LevelUploadError::FailedToWriteLevel];
 				
 				self::logAction($person, Action::ReuploadLevelToGDPS, $serverHost, $levelID, $levelName, $levelDesc, $realLevelID);
+				
+				if($automaticCron) Cron::updateSongsUsage($person, $enableTimeoutForAutomaticCron);
 				
 				Automod::checkLevelsCount();
 				
@@ -3622,6 +3732,9 @@ class Library {
 		
 		$accountID = $person["accountID"];
 		$IP = self::convertIPForSearching($person["IP"], true);
+		
+		$commentsRatings = $commentsIDs = [];
+		$commentsIDsString = "";
 		
 		$comments = $db->prepare("SELECT *, lists.accountID AS creatorAccountID FROM lists INNER JOIN comments ON comments.levelID = (lists.listID * -1) WHERE lists.listID = :listID ORDER BY ".$sortMode." DESC LIMIT ".$count." OFFSET ".$pageOffset);
 		$comments->execute([':listID' => $listID]);
@@ -4058,7 +4171,7 @@ class Library {
 	}
 	
 	public static function getGauntletNames() {
-		$gauntlets = ["Fire", "Ice", "Poison", "Shadow", "Lava", "Bonus", "Chaos", "Demon", "Time", "Crystal", "Magic", "Spike", "Monster", "Doom", "Death", 'Forest', 'Rune', 'Force', 'Spooky', 'Dragon', 'Water', 'Haunted', 'Acid', 'Witch', 'Power', 'Potion', 'Snake', 'Toxic', 'Halloween', 'Treasure', 'Ghost', 'Spider', 'Gem', 'Inferno', 'Portal', 'Strange', 'Fantasy', 'Christmas', 'Surprise', 'Mystery', 'Cursed', 'Cyborg', 'Castle', 'Grave', 'Temple', 'World', 'Galaxy', 'Universe', 'Discord', 'Split', 'NCS I', 'NCS II', 'Space', 'Cosmos'];
+		$gauntlets = ["Fire", "Ice", "Poison", "Shadow", "Lava", "Bonus", "Chaos", "Demon", "Time", "Crystal", "Magic", "Spike", "Monster", "Doom", "Death", 'Forest', 'Rune', 'Force', 'Spooky', 'Dragon', 'Water', 'Haunted', 'Acid', 'Witch', 'Power', 'Potion', 'Snake', 'Toxic', 'Halloween', 'Treasure', 'Ghost', 'Spider', 'Gem', 'Inferno', 'Portal', 'Strange', 'Fantasy', 'Christmas', 'Surprise', 'Mystery', 'Cursed', 'Cyborg', 'Castle', 'Grave', 'Temple', 'World', 'Galaxy', 'Universe', 'Discord', 'Split', 'NCS I', 'NCS II', 'Space', 'Cosmos', 'Random', 'Chance', 'Future', 'Utopia', 'Cinema', 'Love'];
 		
 		return $gauntlets;
 	}
@@ -4142,6 +4255,7 @@ class Library {
 	
 	public static function deleteMapPack($person, $mapPackID) {
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		
 		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
 		
@@ -4155,11 +4269,14 @@ class Library {
 		
 		self::logModeratorAction($person, ModeratorAction::MapPackDeletion, $mapPackID, $mapPack['name'], $mapPack['stars'].','.$mapPack['coins'], $mapPack['difficulty'], $mapPack['colors2'], $mapPack['rgbcolors'], $mapPack['levels']);
 		
+		if($automaticCron) Cron::updateCreatorPoints($person, $enableTimeoutForAutomaticCron);
+		
 		return true;
 	}
 	
 	public static function deleteGauntlet($person, $gauntletID) {
 		require __DIR__."/connection.php";
+		require __DIR__."/../../config/misc.php";
 		
 		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
 		
@@ -4172,6 +4289,8 @@ class Library {
 		$deleteGauntlet->execute([':gauntletID' => $gauntletID]);
 		
 		self::logModeratorAction($person, ModeratorAction::GauntletDeletion, $gauntletID, $gauntlet['level1'], $gauntlet['level2'], $gauntlet['level3'], $gauntlet['level4'], $gauntlet['level5']);
+		
+		if($automaticCron) Cron::updateCreatorPoints($person, $enableTimeoutForAutomaticCron);
 		
 		return true;
 	}
@@ -5069,8 +5188,8 @@ class Library {
 				$songInfo = self::getAudioInfo($filePath);
 				$songDuration = isset($songInfo['playtime_seconds']) ? (int)$songInfo['playtime_seconds'] : 0;
 				
-				$songAuthor = Escape::text($songAuthor, 40) ?: Escape::text($songInfo['tags']["vorbiscomment"]['artist'][0]) ?: 'Reupload';
-				$songTitle = Escape::text($songTitle, 35) ?: Escape::text($songInfo['tags']["vorbiscomment"]['title'][0]) ?: 'Unknown';
+				$songAuthor = Escape::text($songAuthor, 40) ?: Escape::text($songInfo['tags']["vorbiscomment"]['artist'][0], 40) ?: 'Reupload';
+				$songTitle = Escape::text($songTitle, 35) ?: Escape::text($songInfo['tags']["vorbiscomment"]['title'][0], 35) ?: 'Unknown';
 				
 				$songURL = (isset($_SERVER['HTTPS']) ? "https" : "http")."://".$_SERVER["HTTP_HOST"].dirname(dirname($_SERVER["REQUEST_URI"]))."/songs/".$songID.".ogg";
 				
@@ -5090,16 +5209,39 @@ class Library {
 				$fileInfo = self::getURLFileInfo($songURL);
 				
 				$allowedFileTypes = ["audio/mpeg", "audio/ogg", "audio/wav"];
-				
 				$fileType = $fileInfo['mime'];
-				if(!in_array($fileType, $allowedFileTypes)) return ['success' => false, 'error' => SongError::NotAnAudio];
 				
-				$realSongSize = round($fileInfo['size'] / 1048576, 2);
+				if(!in_array($fileType, $allowedFileTypes)) {
+					if(strpos($songEnabled, '1') === false) return ['success' => false, 'error' => SongError::NotAnAudio];
+					
+					$songData = self::getSongByURLWithCobalt($songURL);
+					if(!$songData) return ['success' => false, 'error' => SongError::InvalidURL];
+					
+					$realSongSize = round(strlen($songData) / 1048576, 2);
 				
-				$songAuthor = Escape::text($songAuthor, 40) ?: 'Reupload';
-				$songTitle = Escape::text($songTitle, 35) ?: 'Unknown';
+					$finfo = new finfo(FILEINFO_MIME_TYPE);
+					$fileType = $finfo->buffer($songData);
+					
+					if($fileType != "audio/ogg") return ['success' => false, 'error' => SongError::NotAnAudio];
+					
+					$filePath = $pathToSongsFolder.'/'.$songID.'.ogg';
+					file_put_contents($filePath, $songData);
 				
-				$songDuration = 0; // We can't get duration of an audio from URL
+					$songInfo = self::getAudioInfo($filePath);
+					$songDuration = isset($songInfo['playtime_seconds']) ? (int)$songInfo['playtime_seconds'] : 0;
+					
+					$songAuthor = Escape::text($songAuthor, 40) ?: Escape::text($songInfo['tags']["vorbiscomment"]['artist'][0], 40) ?: 'Reupload';
+					$songTitle = Escape::text($songTitle, 35) ?: Escape::text($songInfo['tags']["vorbiscomment"]['title'][0], 35) ?: 'Unknown';
+					
+					$songURL = (isset($_SERVER['HTTPS']) ? "https" : "http")."://".$_SERVER["HTTP_HOST"].dirname(dirname($_SERVER["REQUEST_URI"]))."/songs/".$songID.".ogg";
+				} else {
+					$realSongSize = round($fileInfo['size'] / 1048576, 2);
+					
+					$songAuthor = Escape::text($songAuthor, 40) ?: 'Reupload';
+					$songTitle = Escape::text($songTitle, 35) ?: 'Unknown';
+					
+					$songDuration = 0; // We can't get duration of an audio from URL
+				}
 				
 				break;
 			default:
@@ -5152,7 +5294,7 @@ class Library {
 		$sfxInfo = self::getAudioInfo($filePath);
 		$sfxDuration = isset($sfxInfo['playtime_seconds']) ? (int)$sfxInfo['playtime_seconds'] * 1000 : 0;
 		
-		$sfxTitle = Escape::text($sfxTitle, 40) ?: Escape::text($sfxInfo['tags']["vorbiscomment"]['title'][0]) ?: 'Unknown';
+		$sfxTitle = Escape::text($sfxTitle, 40) ?: Escape::text($sfxInfo['tags']["vorbiscomment"]['title'][0], 40) ?: 'Unknown';
 				
 		$insertSFX = $db->prepare("INSERT INTO sfxs (ID, name, authorName, size, milliseconds, download, reuploadTime, reuploadID, isDisabled) VALUES (:id, :name, :author, :size, :duration, :download, :reuploadTime, :reuploadID, :isDisabled)");
 		$insertSFX->execute([':id' => $sfxID, ':name' => $sfxTitle, ':download' => '', ':author' => $userName, ':size' => $realSFXSize, ':duration' => $sfxDuration, ':reuploadTime' => time(), ':reuploadID' => $accountID, ':isDisabled' => ($preenableSFXs ? 0 : 1)]);
@@ -5303,6 +5445,32 @@ class Library {
 		else self::logModeratorAction($person, ModeratorAction::SFXDeletion, $sfx['reuploadID'], $sfx['name'], $sfxID, $sfx['isDisabled']);
 		
 		return true;
+	}
+	
+	public static function getSongByURLWithCobalt($songURL) {
+		require __DIR__."/../../config/dashboard.php";
+		
+		if(!$useCobalt || !$cobaltAPI) return false;
+		
+		$dataArray = array(
+			"url" => $songURL,
+			"audioFormat" => "ogg",
+			"downloadMode" => "audio",
+			"alwaysProxy" => false
+		);
+		$cobaltData = json_encode($dataArray);
+		
+		$cobaltHeaders = ['Content-Type: application/json', 'Accept: application/json'];
+		if(!empty($cobaltAPIKey)) $cobaltHeaders[] = 'Authorization: Api-Key '.$cobaltAPIKey;
+		
+		$cobaltSong = json_decode(self::sendRequest($cobaltAPI, $cobaltData, $cobaltHeaders, "POST"), true);
+		
+		$cobaltSongURL = $cobaltSong["url"];
+		if(!$cobaltSongURL) return false;
+		
+		$cobaltSongData = self::sendRequest($cobaltSongURL);
+		
+		return $cobaltSongData ?: false;
 	}
 	
 	/*
@@ -5545,8 +5713,30 @@ class Library {
 		$kickFromClan = $db->prepare("UPDATE users SET clanID = 0 WHERE clanID = :clanID");
 		$kickFromClan->execute([':clanID' => $clanID]);
 		
-		if($clan['clanOwner'] == $accountID) self::logAction($person, Action::ClanDeletion, $clanID, $clan['clanName'], $clan['clanDesc'], $clan['clanTag'], $clan['clanColor'], $clan['isClosed'], $clan['clanMembers']);
-		else self::logModeratorAction($person, ModeratorAction::ClanDeletion, $clanID, $clan['clanName'], $clan['clanDesc'], $clan['clanTag'], $clan['clanColor'], $clan['isClosed'], $clan['clanMembers']);
+		if($clan['clanOwner'] == $accountID) self::logAction($person, Action::ClanDeletion, $clanID, base64_encode($clan['clanName']), base64_encode($clan['clanDesc']), base64_encode($clan['clanTag']), $clan['clanColor'], $clan['isClosed'], $clan['clanMembers']);
+		else self::logModeratorAction($person, ModeratorAction::ClanDeletion, $clanID, base64_encode($clan['clanName']), base64_encode($clan['clanDesc']), base64_encode($clan['clanTag']), $clan['clanColor'], $clan['isClosed'], $clan['clanMembers']);
+		
+		return true;
+	}
+	
+	public static function transferClan($person, $clanID, $clanOwner) {
+		require __DIR__."/connection.php";
+		
+		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
+		
+		$accountID = $person['accountID'];
+		
+		$clan = self::getClanByID($clanID);
+		if(!$clan || ($clan['clanOwner'] != $accountID && !self::checkPermission($person, 'dashboardManageClans'))) return false;
+	
+		$user = self::getUserByAccountID($clanOwner);
+		if(!$user || $user['clanID'] != $clanID) return false;
+		
+		$deleteClan = $db->prepare("UPDATE clans SET clanOwner = :clanOwner WHERE clanID = :clanID");
+		$deleteClan->execute([':clanOwner' => $clanOwner, ':clanID' => $clanID]);
+		
+		if($clan['clanOwner'] == $accountID) self::logAction($person, Action::ClanTransfer, $clanID, base64_encode($clan['clanName']), base64_encode($clan['clanDesc']), base64_encode($clan['clanTag']), $clan['clanOwner'], $clanOwner);
+		else self::logModeratorAction($person, ModeratorAction::ClanTransfer, $clanID, base64_encode($clan['clanName']), base64_encode($clan['clanDesc']), base64_encode($clan['clanTag']), $clan['clanOwner'], $clanOwner);
 		
 		return true;
 	}
@@ -5730,7 +5920,7 @@ class Library {
 		return $getActions;
 	}
 	
-	public static function sendRequest($url, $data, $headers = [], $method = "GET", $includeUserAgent = true) {
+	public static function sendRequest($url, $data = "", $headers = [], $method = "GET", $includeUserAgent = true) {
 		require __DIR__."/../../config/proxy.php";
 		require __DIR__."/../../config/dashboard.php";
 		
@@ -5889,6 +6079,45 @@ class Library {
 		return dirname($https."://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
 	}
 	
+	public static function returnGeometryDashData($data, $keysArray) {
+		require_once __DIR__."/exploitPatch.php";
+		
+		if(isset($_REQUEST['json'])) {
+			header("Content-Type: application/json");
+			$data['success'] = true;
+			return json_encode($data);
+		}
+		
+		$processedData = [];
+		
+		foreach($data AS $key => $value) {
+			$processedData[] = $keysArray[$key];
+			$processedData[] = Escape::gd($value);
+		}
+		
+		return implode($keysArray['DELIMITER'], $processedData);
+	}
+	
+	public static function returnGeometryDashResponse($response, $key = 'data') {
+		$data = [];
+		
+		if(isset($_REQUEST['json'])) {
+			header("Content-Type: application/json");
+			
+			if((int)$response < 0) {
+				$data['success'] = false;
+				$data['error'] = $response;
+			} else {
+				$data['success'] = true;
+				$data[$key] = $response;
+			}
+			
+			return json_encode($data);
+		}
+		
+		return $response;
+	}
+	
 	/*
 		Return to Geometry Dash-related functions
 	*/
@@ -5896,7 +6125,7 @@ class Library {
 	public static function returnUserString($user) {
 		$user['userName'] = self::makeClanUsername($user['extID']);
 		
-		return "1:".$user["userName"].":2:".$user["userID"].":13:".$user["coins"].":17:".$user["userCoins"].":10:".$user["color1"].":11:".$user["color2"].":51:".$user["color3"].":3:".$user["stars"].":46:".$user["diamonds"].":52:".$user["moons"].":4:".$user["demons"].":8:".$user['creatorPoints'].":18:".$user['messagesState'].":19:".$user['friendRequestsState'].":50:".$user['commentsState'].":20:".$user["youtubeurl"].":21:".$user["accIcon"].":22:".$user["accShip"].":23:".$user["accBall"].":24:".$user["accBird"].":25:".$user["accDart"].":26:".$user["accRobot"].":28:".$user["accGlow"].":43:".$user["accSpider"].":48:".$user["accExplosion"].":53:".$user["accSwing"].":54:".$user["accJetpack"].":30:".$user['rank'].":16:".$user["extID"].":31:".$user['friendsState'].":44:".$user["twitter"].":45:".$user["twitch"].":49:".$user['badge'].":55:".$user["dinfo"].":56:".$user["sinfo"].":57:".$user["pinfo"].$user['incomingRequestText'].":29:".$user['isRegistered'];
+		return "1:".$user["userName"].":2:".$user["userID"].":13:".$user["coins"].":17:".$user["userCoins"].":10:".$user["color1"].":11:".$user["color2"].":51:".$user["color3"].":3:".$user["stars"].":46:".$user["diamonds"].":52:".$user["moons"].":4:".$user["demons"].":8:".$user['creatorPoints'].":18:".$user['messagesState'].":19:".$user['friendRequestsState'].":50:".$user['commentsState'].":20:".$user["youtubeurl"].":21:".$user["accIcon"].":22:".$user["accShip"].":23:".$user["accBall"].":24:".$user["accBird"].":25:".$user["accDart"].":26:".$user["accRobot"].":28:".$user["accGlow"].":43:".$user["accSpider"].":48:".$user["accExplosion"].":53:".$user["accSwing"].":54:".$user["accJetpack"].":30:".$user['rank'].":16:".$user["extID"].":31:".$user['friendsState'].":44:".$user["twitter"].":45:".$user["twitch"].":59:".$user["instagram"].":60:".$user["tiktok"].":58:".$user["discord"].":61:".$user["custom"].":49:".$user['badge'].":55:".$user["dinfo"].":56:".$user["sinfo"].":57:".$user["pinfo"].$user['incomingRequestText'].":29:".$user['isRegistered'];
 	}
 	
 	public static function returnFriendshipsString($person, $user, $isBlocks) {

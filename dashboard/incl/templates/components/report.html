@@ -1,0 +1,106 @@
+<form class="modalPage" dashboard-modal="reportModal">
+	<input type="hidden" dashboard-modal-input />
+	
+	<div class="box">
+		<h1>%TEXT_reportDesc%</h1>
+		
+		<div class="vertical">
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-eye-slash"></i> %TEXT_inappropriateContentTitle%
+					</h2>
+					<h3>%TEXT_inappropriateContentDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="0"></input>
+			</div>
+			
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-gavel"></i> %TEXT_hackerTitle%
+					</h2>
+					<h3>%TEXT_hackerDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="1"></input>
+			</div>
+			
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-circle-exclamation"></i> %TEXT_spamTitle%
+					</h2>
+					<h3>%TEXT_spamDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="2"></input>
+			</div>
+			
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-circle-question"></i> %TEXT_harmfulMisinformationTitle%
+					</h2>
+					<h3>%TEXT_harmfulMisinformationDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="3"></input>
+			</div>
+			
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-id-card"></i> %TEXT_privacyViolationTitle%
+					</h2>
+					<h3>%TEXT_privacyViolationDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="4"></input>
+			</div>
+			
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-face-angry"></i> %TEXT_abuseTitle%
+					</h2>
+					<h3>%TEXT_abuseDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="5"></input>
+			</div>
+			
+			<div class="languageDiv">
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-face-frown"></i> %TEXT_dontLikeTitle%
+					</h2>
+					<h3>%TEXT_dontLikeDesc%</h3>
+				</div>
+				
+				<input class="radio" type="radio" name="reportType" value="6"></input>
+			</div>
+			
+			<div class="settingDescription">
+				<h2>
+					<i class="fa-solid fa-question"></i>
+					%TEXT_extraInformationTitle%
+					
+					<span class="infoIcon" title="%TEXT_extraInformationDesc%">
+						<i class="fa-solid fa-circle-info"></i>
+					</span>
+				</h2>
+				
+		
+				<div class="horisontal spaceBetween">
+					<input class="inputStyle" type="text" name="extraInfo" autocomplete="gdps-dashboard-extraInfo" placeholder="I'm reporting this, because..." dashboard-not-required maxlength="255" />
+					
+					<button type="button" class="button squareButton" onclick="applyFilters('levelFilters')">
+						<i class="fa-solid fa-check"></i> %TEXT_submitReport%
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

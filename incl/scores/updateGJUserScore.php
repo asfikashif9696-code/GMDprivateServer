@@ -107,7 +107,12 @@ $diamondsDifference = $diamonds - $user["diamonds"];
 $moonsDifference = $moons - $user["moons"];
 
 Library::logAction($person, Action::ProfileStatsChange, $starsDifference, $coinsDifference, $demonsDifference, $userCoinsDifference, $diamondsDifference, $moonsDifference);
-if($automaticCron) Cron::autoban($person, $enableTimeoutForAutomaticCron);
+
+if($automaticCron) {
+	Cron::autoban($person, $enableTimeoutForAutomaticCron);
+	Cron::updateClansRanks($person, $enableTimeoutForAutomaticCron);
+}
+
 Automod::checkStatsSpeed($person);
 
 if($gameVersion < 20 && !is_numeric($accountID) && $starsDifference + $coinsDifference + $demonsDifference + $userCoinsDifference + $diamondsDifference + $moonsDifference != 0) exit(CommonError::SubmitRestoreInfo);

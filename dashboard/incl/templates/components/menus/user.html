@@ -1,5 +1,5 @@
 <div class="contextMenuDiv" dashboard-context-menu>
-	<button class="contextMenuButton contextMenuTitle" %MENU_NAME_ATTRIBUTES% type="button" dashboard-show="%MENU_SHOW_NAME%">
+	<button class="contextMenuButton contextMenuTitle" %MENU_NAME_ATTRIBUTES% type="button" href="profile/%MENU_NAME%" dashboard-loader-type="settings" dashboard-show="%MENU_SHOW_NAME%">
 		<span>
 			<img loading="lazy" src="%MENU_PFP%"></img>
 			%MENU_NAME%
@@ -16,13 +16,6 @@
 		<i class="fa-solid fa-eye"></i>
 		<text>%TEXT_viewAccount%</text>
 	</button>
-	
-	<button class="contextMenuButton" title="%TEXT_copyLink%" type="button" onclick="copyElementContent('profile/%MENU_NAME%', true)">
-		<i class="fa-solid fa-chain"></i>
-		<text>%TEXT_copyLink%</text>
-	</button>
-	
-	<hr>
 	
 	<button class="contextMenuButton" title="%TEXT_personComments%" type="button" href="profile/%MENU_NAME%/comments" dashboard-loader-type="settings" dashboard-show="%MENU_CAN_SEE_COMMENT_HISTORY%">
 		<i class="fa-solid fa-comment"></i>
@@ -64,5 +57,22 @@
 	<button class="contextMenuButton" title="%TEXT_banPerson%" type="button" href="profile/%MENU_NAME%/ban" dashboard-loader-type="settings" dashboard-show="%MENU_CAN_BAN%" style="--button-color: #ff9999;">
 		<i class="fa-solid fa-gavel"></i>
 		<text>%TEXT_banPerson%</text>
+	</button>
+	
+	<hr>
+	
+	<button class="contextMenuButton" title="%TEXT_copyLink%" type="button" onclick="copyElementContent('profile/%MENU_NAME%', true)">
+		<i class="fa-solid fa-chain"></i>
+		<text>%TEXT_copyLink%</text>
+	</button>
+	
+	<button class="contextMenuButton" title="%TEXT_copyAccountID%" type="button" onclick="copyElementContent('%MENU_ACCOUNT_ID%')">
+		<i class="fa-solid fa-user"></i>
+		<text>%TEXT_copyAccountID%</text>
+	</button>
+	
+	<button class="contextMenuButton" title="%TEXT_copyUserID%" type="button" onclick="copyElementContent('%MENU_USER_ID%')">
+		<i class="fa-regular fa-user"></i>
+		<text>%TEXT_copyUserID%</text>
 	</button>
 </div>

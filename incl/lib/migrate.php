@@ -76,6 +76,11 @@ if(!$installed) {
 		['passCode', 'varchar(66)', '', 'mail'],
 		['timezone', 'varchar(255)', 'America/Danmarkshavn', 'passCode'],
 		
+		['instagram', 'varchar(255)', '', 'twitch'],
+		['tiktok', 'varchar(255)', '', 'instagram'],
+		['discord', 'varchar(255)', '', 'tiktok'],
+		['custom', 'varchar(255)', '', 'discord'],
+		
 		['registerIP', 'varchar(255)', '', 'registerDate'],
 		['isDeleted', 'tinyint(1)', '0', 'isActive'],
 		['mailExpires', 'int(11)', '0', 'mail'],

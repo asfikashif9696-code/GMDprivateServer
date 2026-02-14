@@ -1,9 +1,4 @@
 <div class="contextMenuDiv" dashboard-context-menu>
-	<button class="contextMenuButton" title="%TEXT_downloadSong%" type="button" onclick="downloadSong('%MENU_SFX_AUTHOR%', '%MENU_SFX_NAME%', '%MENU_SFX_URL%')">
-		<i class="fa-solid fa-arrow-down"></i>
-		<text>%TEXT_downloadSFX%</text>
-	</button>
-	
 	<button class="contextMenuButton" title="%TEXT_editSong%" type="button" href="browse/sfxs/%MENU_ID%/manage" dashboard-loader-type="box" dashboard-show="%MENU_CAN_CHANGE%">
 		<i class="fa-solid fa-pencil"></i>
 		<text>%TEXT_editSFX%</text>
@@ -19,5 +14,17 @@
 	<button class="contextMenuButton" title="%TEXT_banPerson%" type="button" href="profile/%MENU_NAME%/ban" dashboard-loader-type="settings" dashboard-show="%MENU_CAN_BAN%" style="--button-color: #ff9999;">
 		<i class="fa-solid fa-gavel"></i>
 		<text>%TEXT_banPerson%</text>
+	</button>
+
+	<hr>
+	
+	<button class="contextMenuButton" title="%TEXT_downloadSong%" type="button" onclick="downloadSong('%MENU_SFX_AUTHOR%', '%MENU_SFX_NAME%', '%MENU_SFX_URL%')">
+		<i class="fa-solid fa-arrow-down"></i>
+		<text>%TEXT_downloadSFX%</text>
+	</button>
+	
+	<button class="contextMenuButton" title="%TEXT_copySFXID%" type="button" onclick="copyElementContent('%MENU_ID%')">
+		<i class="fa-solid fa-drum"></i>
+		<text>%TEXT_copySFXID%</text>
 	</button>
 </div>

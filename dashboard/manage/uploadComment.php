@@ -23,6 +23,8 @@ if(isset($_POST['levelID']) && isset($_POST['comment'])) {
 				exit(Dashboard::renderToast("xmark", Dashboard::string("errorBadComment"), "error"));
 			case CommonError::Automod:
 				exit(Dashboard::renderToast("xmark", Dashboard::string("errorCommentingIsDisabled"), "error"));
+			case CommonError::Blocked:
+				exit(Dashboard::renderToast("xmark", Dashboard::string("errorCantComment"), "error"));
 			default:
 				exit(Dashboard::renderToast("xmark", Dashboard::string(($levelID > 0 ? 'errorLevelCommentingIsDisabled' : 'errorListCommentingIsDisabled')), "error"));
 		}

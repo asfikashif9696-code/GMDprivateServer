@@ -639,6 +639,9 @@ class Dashboard {
 			
 			$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true' || $contextMenuData['MENU_CAN_BLOCK'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
 			
+			$contextMenuData['MENU_ACCOUNT_ID'] = $user['extID'];
+			$contextMenuData['MENU_USER_ID'] = $user['userID'];
+			
 			$usernameData['USERNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
 		}
 		
@@ -734,7 +737,7 @@ class Dashboard {
 		$contextMenuData = [];
 		
 		$user = Library::getUserByID($level['userID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 	
 		$levelLengths = ['Tiny', 'Short', 'Medium', 'Long', 'XL', 'Platformer'];
 		
@@ -805,7 +808,7 @@ class Dashboard {
 		$isCreatorThemselves = (isset($comment['userID']) && $comment['userID'] == $comment['creatorUserID']) || (isset($comment['accountID']) && $comment['accountID'] == $comment['creatorAccountID']);
 		
 		$user = Library::getUserByID($comment['userID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		
 		$userMetadata = self::getUserMetadata($user);
 		
@@ -857,7 +860,7 @@ class Dashboard {
 		$isPersonThemselves = $person['userID'] == $accountPost['userID'];
 		
 		$user = Library::getUserByID($accountPost['userID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		
 		$userMetadata = self::getUserMetadata($user);
 		
@@ -891,7 +894,7 @@ class Dashboard {
 		$isPersonThemselves = $person['accountID'] == $score['accountID'];
 		
 		$user = Library::getUserByAccountID($score['accountID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		
 		$userMetadata = self::getUserMetadata($user);
 		
@@ -937,7 +940,7 @@ class Dashboard {
 		$isPersonThemselves = $person['accountID'] == $song['reuploadID'];
 		
 		$user = Library::getUserByAccountID($song['reuploadID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		
 		$userMetadata = self::getUserMetadata($user);
 		
@@ -978,7 +981,7 @@ class Dashboard {
 		$isPersonThemselves = $person['accountID'] == $sfx['reuploadID'];
 		
 		$user = Library::getUserByAccountID($sfx['reuploadID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		
 		$userMetadata = self::getUserMetadata($user);
 		
@@ -988,7 +991,7 @@ class Dashboard {
 		
 		$sfx['SFX_USER'] = $sfx['isLocalSFX'] ? self::getUsernameString($person, $user, $user['userName'], $userMetadata['mainIcon'], $userMetadata['userAppearance'], $userMetadata['userAttributes']) : '';
 		
-		$sfx['SFX_AUTHOR'] =$contextMenuData['MENU_SONG_AUTHOR'] =  $sfx['isLocalSFX'] ? htmlspecialchars($user['userName']) : htmlspecialchars($sfx['authorName']);
+		$sfx['SFX_AUTHOR'] = $contextMenuData['MENU_SONG_AUTHOR'] =  $sfx['isLocalSFX'] ? htmlspecialchars($user['userName']) : htmlspecialchars($sfx['authorName']);
 		$sfx['SFX_NAME'] = $contextMenuData['MENU_SFX_NAME'] = htmlspecialchars($sfx['name']);
 		$sfx['SFX_URL'] = $contextMenuData['MENU_SFX_URL'] = htmlspecialchars($downloadLink);
 		
@@ -1012,7 +1015,7 @@ class Dashboard {
 		$isPersonThemselves = $person['accountID'] == $list['accountID'];
 		
 		$user = Library::getUserByAccountID($list['accountID']);
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		
 		$userMetadata = self::getUserMetadata($user);
 		
@@ -1141,7 +1144,7 @@ class Dashboard {
 		
 		$isPersonThemselves = $person['accountID'] == $user['extID'];
 		
-		$userName = $user ? $user['userName'] : 'Undefined';
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
 		$userMetadata = self::getUserMetadata($user);
 
 		$canSeeCommentHistory = Library::canSeeCommentsHistory($person, $user['userID']);
@@ -1177,6 +1180,9 @@ class Dashboard {
 		
 		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true' || $contextMenuData['MENU_CAN_BLOCK'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
 		
+		$contextMenuData['MENU_ACCOUNT_ID'] = $user['extID'];
+		$contextMenuData['MENU_USER_ID'] = $user['userID'];
+		
 		$user['USER_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
 		
 		return self::renderTemplate('components/user', $user);
@@ -1189,7 +1195,7 @@ class Dashboard {
 		$isClanOwner = $person['accountID'] == $clan['clanOwner'];
 	
 		$ownerUser = Library::getUserByAccountID($clan['clanOwner']);
-		$ownerUserName = $ownerUser ? $ownerUser['userName'] : 'Undefined';
+		$ownerUserName = $ownerUser ? $ownerUser['userName'] : self::string("unknownPlayer");
 		$userMetadata = self::getUserMetadata($ownerUser);
 
 		$canOpenSettings = $isClanOwner || Library::checkPermission($person, 'dashboardManageClans');
@@ -1216,7 +1222,8 @@ class Dashboard {
 		$clan['CLAN_OWNER_CARD'] = self::getUsernameString($person, $ownerUser, $ownerUserName, $userMetadata['mainIcon'], $userMetadata['userAppearance'], $userMetadata['userAttributes']);
 
 		$clan['CLAN_CAN_OPEN_SETTINGS'] = $contextMenuData['MENU_CAN_OPEN_SETTINGS'] = $canOpenSettings ? 'true' : 'false';
-
+		
+		$contextMenuData['MENU_ID'] = $clan['clanID'];
 		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true') ? 'true' : 'false';
 		
 		$clan['CLAN_CONTEXT_MENU'] = self::renderTemplate('components/menus/clan', $contextMenuData);

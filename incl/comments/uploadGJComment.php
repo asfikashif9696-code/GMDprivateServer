@@ -44,6 +44,8 @@ if(!$ableToComment['success']) {
 			exit(Library::showCommentsBanScreen("Your comment contains a ".Library::textColor("bad", Color::Red)." word.", 0));
 		case CommonError::Automod:
 			exit(Library::showCommentsBanScreen("Commenting is currently ".Library::textColor("disabled", Color::Red).".", 0));
+		case CommonError::Blocked:
+			exit(Library::showCommentsBanScreen("You ".Library::textColor("can't", Color::Red)." leave a comment on this ".($levelID > 0 ? 'level' : 'list').".", 0));
 		default:
 			exit(Library::showCommentsBanScreen("Commenting on this ".($levelID > 0 ? 'level' : 'list')." is currently ".Library::textColor("disabled", Color::Red)."!", 0));
 	}

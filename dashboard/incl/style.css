@@ -565,6 +565,8 @@ form {
 	
 	font-size: 20px;
 	
+	width: 100%;
+	
 	outline: none;
 	
 	transition: 0.2s;
@@ -977,7 +979,7 @@ h1.username[href],
 	height: 70px;
 	
 	margin: -20px;
-	margin-right: -15px;
+	margin-right: -10px;
 }
 
 .levelStats {
@@ -1057,7 +1059,7 @@ h1.username[href],
 	display: contents !important;
 }
 
-.songCard button {
+.songCard button:not(.contextMenuButton) {
 	font-size: 21px;
 }
 
@@ -1319,6 +1321,15 @@ i[onclick],
 	transition: 0.2s;
 }
 
+.levelPage .levelStats:not(.card) .levelStat.dashed {
+	background-color: transparent;
+	border: 3px dashed #8686865c;
+}
+
+.levelPage .levelStats:not(.card) .levelStat.dashed:hover {
+	background-color: #86868614;
+}
+
 .levelPage .levelStat.several {
 	gap: 20px;
 	
@@ -1525,6 +1536,8 @@ i[onclick],
 
 .squareButton {
 	width: max-content;
+	
+	white-space: nowrap;
 	
 	padding: 6px 10px !important;
 }
@@ -1797,7 +1810,7 @@ nav [title]::after,
 	flex-direction: row;
 	align-items: center;
 	
-	gap: 5px;
+	gap: 15px;
 	
 	width: 100%;
 }
@@ -2012,7 +2025,7 @@ span.background {
 	width: 100vw;
 	height: 100vh;
 	
-	background: #00000070;
+	background: #000000a0;
 	
 	transition: 0.2s;
 	
@@ -2023,7 +2036,7 @@ span.background {
 }
 
 .modalPage .box {
-	min-width: 60%;
+	min-width: 70%;
 	pointer-events: all;
 }
 
@@ -2278,6 +2291,10 @@ body:has(.modalPage.show) span.background {
 	width: 100%;
 }
 
+.difficultiesDiv.start {
+	justify-content: flex-start;
+}
+
 .difficultyButton {
 	display: flex;
 	justify-content: center;
@@ -2405,11 +2422,6 @@ body:has(.modalPage.show) span.background {
 	display: flex;
 	
 	gap: 7px;
-	
-	position: absolute;
-	
-	right: 20px;
-	bottom: 20px;
 }
 
 .applyButtons button {
@@ -2508,12 +2520,14 @@ body:has(.modalPage.show) span.background {
 	pointer-events: initial;
 }
 
-.contextMenuButton:not(.contextMenuTitle):hover {
+.contextMenuButton:hover {
 	background-color: #86868634;
 	border: 1px solid #86868644;
+	
+	cursor: pointer;
 }
 
-.contextMenuButton:not(.contextMenuTitle):active {
+.contextMenuButton:active {
 	scale: 95%;
 }
 

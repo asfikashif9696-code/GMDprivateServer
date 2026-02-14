@@ -11,6 +11,7 @@
 $discordEnabled = false;
 $secret = "";
 $bottoken = "";
+
 /*
 	This is Discord webhooks configuration
 	
@@ -47,64 +48,6 @@ $bottoken = "";
 		$warningsWebhook — Webhook link to channel you want to send warnings (MOD)
 		
 	$dmNotifications — true to enable rates and demonlist notifications to player DMs (if he connected his Discord account with in-game account), false to disable
-	
-	$webhookLanguage — Language of webhooks
-	Current available languages:
-		EN — English (English)
-		RU — Russian (Русский)
-		TR — Turkish (Türkçe)
-		UA — Ukrainian (Українська)
-		FR — French (Français)
-		ES — Spanish (Español)
-		PT — Portuguese (Português)
-  		CZ — Czech (Čeština)
-  		PL — Polish (Polski)
-  		IT — Italian (Italiano)
-		VI — Vietnamese (Tiếng Việt)
-		ID — Indonesian (Bahasa Indonesia)
-	
-	Emojis:
-		$likeEmoji — Custom like emoji (👍)
-		$dislikeEmoji — Custom dislike emoji (👎)
-		$downloadEmoji — Custom download emoji (⤵️)
-		$tadaEmoji — Custom tada emoji (🎉)
-		$sobEmoji — Custom sob emoji (😭)
-	
-	$difficultiesURL — URL from where difficulties should be retrieved for rate/send webhooks; Don't forget about slash at the end!
-	
-	Embed config:
-		$authorURL — URL to open when author text is clicked
-		$authorIconURL — Author icon URL
-		$rateTitleURL — URL to open when rate/unrate title text is clicked
-		$linkTitleURL — URL to open when account linking title text is clicked
-		$logsRegisterTitleURL — URL to open when new registered account text is clicked
-		$logsLevelChangeTitleURL — URL to open when changed level text is clicked
-		$logsAccountChangeTitleURL — URL to open when changed account text is clicked
-		$logsListChangeTitleURL — URL to open when changed list text is clicked
-		$logsModChangeTitleURL — URL to open when changed moderator text is clicked
-		$logsGauntletChangeTitleURL — URL to open when changed Gauntlet text is clicked
-		$logsMapPackChangeTitleURL — URL to open when changed Map Pack text is clicked
-		$warningsTitleURL — URL to open when warning text is clicked
-		
-		$successColor — Color for succeeded actions (rate, unban, upload, etc)
-			Optional, if you leave it blank you will enable automatic colors for the webhook based on the difficulty of the level
-		$failColor — Color for failed actions
-		$pendingColor — Color for pending actions
-		$dailyColor — Color for daily webhooks
-		$weeklyColor — Color for weekly webhooks
-		$eventColor — Color for event webhooks
-		$logsRegisterColor — Color for new registered accounts webhooks
-		
-		$footerIconURL — Footer icon URL
-		$linkThumbnailURL — Image to show for account linking
-		$unlinkThumbnailURL — Image to show for account unlinking
-		$acceptThumbnailURL — Image to show for accepting account linking
-		$banThumbnailURL — Image to show for banning players
-		$unbanThumbnailURL — Image to show for unbanning players
-		$logsRegisterThumbnailURL — Image to show for registered accounts
-		$logsAccountChangeThumbnailURL — Image to show for changing accounts
-		$logsModChangeThumbnailURL — Image to show for changing moderators
-		$logsGauntletChangeThumbnailURL — Image to show for changing Gauntlets
 */
 $webhooksEnabled = false;
 $webhooksToEnable = ["rate", "suggest", "ban", "daily", "register", "levels", "account", "lists", "mods", "gauntlets", "mappacks", "warnings"];
@@ -122,16 +65,53 @@ $logsMapPackChangeWebhook = "";
 $warningsWebhook = "";
 $dmNotifications = false;
 
+/*
+	Webhooks text settings
+	
+	$webhookLanguage — Language of webhooks
+	Сurrent available languages:
+		EN — English (English)
+		RU — Russian (Русский)
+	
+	$likeEmoji — Custom like emoji (👍)
+	$dislikeEmoji — Custom dislike emoji (👎)
+	$downloadEmoji — Custom download emoji (⤵️)
+*/
 $webhookLanguage = 'EN';
 $likeEmoji = ":+1:";
 $dislikeEmoji = ":-1:";
 $downloadEmoji = ":arrow_heading_down:";
-$tadaEmoji = ":tada:";
-$sobEmoji = ":sob:";
 
+/*
+	Where to retrieve difficulties and Gauntlets images
+		Don't forget about slash at the end!
+	
+	$difficultiesURL — URL from where difficulties should be retrieved for rate/send webhooks
+	$gauntletsURL — URL from where Gauntlets should be retrieved for rate/send webhooks
+	
+	You can download images to host them yourself:
+		https://images.gcs.skin/difficulties.zip
+		https://images.gcs.skin/gauntlets.zip
+*/
 $difficultiesURL = "https://images.gcs.skin/difficulties/";
 $gauntletsURL = "https://images.gcs.skin/gauntlets/";
 
+/*
+	Text click URLs
+	
+	$authorURL — URL to open when author text is clicked
+	$authorIconURL — Author icon URL
+	$rateTitleURL — URL to open when rate/unrate title text is clicked
+	$linkTitleURL — URL to open when account linking title text is clicked
+	$logsRegisterTitleURL — URL to open when new registered account text is clicked
+	$logsLevelChangeTitleURL — URL to open when changed level text is clicked
+	$logsAccountChangeTitleURL — URL to open when changed account text is clicked
+	$logsListChangeTitleURL — URL to open when changed list text is clicked
+	$logsModChangeTitleURL — URL to open when changed moderator text is clicked
+	$logsGauntletChangeTitleURL — URL to open when changed Gauntlet text is clicked
+	$logsMapPackChangeTitleURL — URL to open when changed Map Pack text is clicked
+	$warningsTitleURL — URL to open when warning text is clicked
+*/
 $authorURL = "";
 $authorIconURL = "";
 $rateTitleURL = "";
@@ -145,6 +125,18 @@ $logsGauntletChangeTitleURL = "";
 $logsMapPackChangeTitleURL = "";
 $warningsTitleURL = "";
 
+/*
+	Colors for embeds
+	
+	$successColor — Color for succeeded actions (rate, unban, upload, etc)
+		Optional, if you leave it blank you will enable automatic colors for the webhook based on the difficulty of the level
+	$failColor — Color for failed actions
+	$pendingColor — Color for pending actions
+	$dailyColor — Color for daily webhooks
+	$weeklyColor — Color for weekly webhooks
+	$eventColor — Color for event webhooks
+	$logsRegisterColor — Color for new registered accounts webhooks
+*/
 $successColor = "BBFFBB";
 $failColor = "FFBBBB";
 $pendingColor = "FFCCBB";
@@ -153,6 +145,20 @@ $weeklyColor = "CACACA";
 $eventColor = "EEB3E5";
 $logsRegisterColor = "BBFFBB";
 
+/*
+	URLs for thumbnail and footer images 
+	
+	$footerIconURL — Footer icon URL
+	$linkThumbnailURL — Image to show for account linking
+	$unlinkThumbnailURL — Image to show for account unlinking
+	$acceptThumbnailURL — Image to show for accepting account linking
+	$banThumbnailURL — Image to show for banning players
+	$unbanThumbnailURL — Image to show for unbanning players
+	$logsRegisterThumbnailURL — Image to show for registered accounts
+	$logsAccountChangeThumbnailURL — Image to show for changing accounts
+	$logsModChangeThumbnailURL — Image to show for changing moderators
+	$logsGauntletChangeThumbnailURL — Image to show for changing Gauntlets
+*/
 $footerIconURL = "";
 $linkThumbnailURL = "";
 $unlinkThumbnailURL = "";
@@ -166,9 +172,9 @@ $logsGauntletChangeThumbnailURL = "";
 
 /* 
 	This is the text which will be sent with notifications but outside of embed.
-	You can mention roles: <@&role_id>
- 	And people: <@user_id>
-  	And channels: <#channel_id>
+	You can mention roles: <@&DISCORD_ROLE_ID>
+ 	And people: <@DISCORD_USER_ID>
+  	And channels: <#DISCORD_CHANNEL_ID>
 	
 	$rateNotificationText — Text to show when rating a level
 	$unrateNotificationText — Text to show when unrating a level
@@ -186,7 +192,6 @@ $logsGauntletChangeThumbnailURL = "";
 	$logsMapPackChangedNotificationText — Text to show when someone changes some Map Pack
 	$warningsNotificationText — Text to show when warning is sent
 */
-
 $rateNotificationText = "";
 $unrateNotificationText = "";
 $suggestNotificationText = "";

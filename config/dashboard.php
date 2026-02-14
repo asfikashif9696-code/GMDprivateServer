@@ -6,7 +6,7 @@ $installed = true;
 	
 	$maintenanceMode — Doesn't let people without bypass permission access GDPS
 	
-	$gdps — GDPS name, shows in title and various dashboard and Discord webhooks
+	$gdps — GDPS name, shows in title and various dashboard pages and Discord webhooks
 	
 	$accentColor — main color of your GDPS, will affect dashboard's accent color
 	
@@ -139,13 +139,12 @@ $disallowReuploadingNotUserLevels = true;
 	$useCobalt — Should server use Cobalt to reupload songs by links
 		True — use Cobalt
 		False — don't use Cobalt
-
-	$cobaltAPI — link to Cobalt's APIs
-		
-	Turnstile-protected APIs are currently not supported, sorry
+	$cobaltAPI — URL to Cobalt API
+	$cobaltAPIKey — Cobalt API key, if one is required
 */
 $useCobalt = true;
-$cobaltAPI = 'https://cobalt.gcs.skin';
+$cobaltAPI = "https://cobalt.gcs.skin";
+$cobaltAPIKey = "";
 
 /*
 	Geometry Dash icons renderer Server

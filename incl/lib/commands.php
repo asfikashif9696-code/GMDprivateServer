@@ -279,7 +279,14 @@ class Commands {
 					'!unlockUpdating' => 0, '!unlu' => 0
 				];
 				$lockUpdating = $lockUpdatingArray[$command];
-				if($level['updateLocked'] == $lockUpdating) return Library::textColor($level['levelName'], Color::SkyBlue)." ".Library::textColor("is already", Color::Green)." ".(!$lockUpdating ? 'un' : '')."locked!";
+				
+				if(!$ratedLevelsUpdates) {
+					if(
+						($level["starStars"] && $level['updateLocked'] != $lockUpdating) ||
+						(!$level["starStars"] && $level['updateLocked'] == $lockUpdating)
+					) return Library::textColor($level['levelName'], Color::SkyBlue)." ".Library::textColor("is already", Color::Green)." ".(!$lockUpdating ? 'un' : '')."locked!";
+				}
+				elseif($level['updateLocked'] == $lockUpdating) return Library::textColor($level['levelName'], Color::SkyBlue)." ".Library::textColor("is already", Color::Green)." ".(!$lockUpdating ? 'un' : '')."locked!";
 				
 				Library::lockUpdatingLevel($levelID, $person, $lockUpdating);
 				

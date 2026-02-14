@@ -221,46 +221,48 @@
 			</div>
 		</div>
 		
-		<div class="difficultiesDiv buttons">
-			<div class="difficultyButton" dashboard-filter-button>
-				<button type="button" title="%TEXT_levelLengthTinyDesc%">Tiny</button>
-				<input type="hidden" name="len[]" value="0" disabled></input>
+		<div class="horisontal spaceBetween">
+			<div class="difficultiesDiv start buttons">
+				<div class="difficultyButton" dashboard-filter-button>
+					<button type="button" title="%TEXT_levelLengthTinyDesc%">Tiny</button>
+					<input type="hidden" name="len[]" value="0" disabled></input>
+				</div>
+				
+				<div class="difficultyButton" dashboard-filter-button>
+					<button type="button" title="%TEXT_levelLengthShortDesc%">Short</button>
+					<input type="hidden" name="len[]" value="1" disabled></input>
+				</div>
+				
+				<div class="difficultyButton" dashboard-filter-button>
+					<button type="button" title="%TEXT_levelLengthMediumDesc%">Medium</button>
+					<input type="hidden" name="len[]" value="2" disabled></input>
+				</div>
+				
+				<div class="difficultyButton" dashboard-filter-button>
+					<button type="button" title="%TEXT_levelLengthLongDesc%">Long</button>
+					<input type="hidden" name="len[]" value="3" disabled></input>
+				</div>
+				
+				<div class="difficultyButton" dashboard-filter-button>
+					<button type="button" title="%TEXT_levelLengthXLDesc%">XL</button>
+					<input type="hidden" name="len[]" value="4" disabled></input>
+				</div>
+				
+				<div class="difficultyButton" dashboard-filter-button>
+					<button type="button" title="%TEXT_levelLengthPlatformerDesc%">Platformers</button>
+					<input type="hidden" name="len[]" value="5" disabled></input>
+				</div>
 			</div>
 			
-			<div class="difficultyButton" dashboard-filter-button>
-				<button type="button" title="%TEXT_levelLengthShortDesc%">Short</button>
-				<input type="hidden" name="len[]" value="1" disabled></input>
+			<div class="applyButtons">
+				<button type="button" class="button squareButton big" title="%TEXT_resetFilters%" onclick="getPage(window.location.pathname, 'list')">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+				
+				<button type="button" class="button squareButton big" title="%TEXT_applyFilters%" onclick="applyFilters('levelFilters')">
+					<i class="fa-solid fa-check"></i>
+				</button>
 			</div>
-			
-			<div class="difficultyButton" dashboard-filter-button>
-				<button type="button" title="%TEXT_levelLengthMediumDesc%">Medium</button>
-				<input type="hidden" name="len[]" value="2" disabled></input>
-			</div>
-			
-			<div class="difficultyButton" dashboard-filter-button>
-				<button type="button" title="%TEXT_levelLengthLongDesc%">Long</button>
-				<input type="hidden" name="len[]" value="3" disabled></input>
-			</div>
-			
-			<div class="difficultyButton" dashboard-filter-button>
-				<button type="button" title="%TEXT_levelLengthXLDesc%">XL</button>
-				<input type="hidden" name="len[]" value="4" disabled></input>
-			</div>
-			
-			<div class="difficultyButton" dashboard-filter-button>
-				<button type="button" title="%TEXT_levelLengthPlatformerDesc%">Platformers</button>
-				<input type="hidden" name="len[]" value="5" disabled></input>
-			</div>
-		</div>
-		
-		<div class="applyButtons">
-			<button type="button" class="button squareButton big" title="%TEXT_resetFilters%" onclick="getPage(window.location.pathname, 'list')">
-				<i class="fa-solid fa-xmark"></i>
-			</button>
-			
-			<button type="button" class="button squareButton big" title="%TEXT_applyFilters%" onclick="applyFilters('levelFilters')">
-				<i class="fa-solid fa-check"></i>
-			</button>
 		</div>
 	</div>
 </form>

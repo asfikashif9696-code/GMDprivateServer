@@ -106,7 +106,7 @@ $language['errorListCommentingIsDisabled'] = 'Commenting on this list is current
 
 $language['errorCantDeletePost'] = 'You can\'t delete this post.';
 $language['errorBadPost'] = 'Your post contains a bad word.';
-$language['errorPostingIsDisabled'] = 'Creating posts is disabled.';
+$language['errorPostingIsDisabled'] = 'Creating posts is currently disabled.';
 
 $language['errorSongNotFound'] = 'Song wasn\'t found!';
 $language['errorSFXNotFound'] = 'SFX wasn\'t found!';
@@ -114,7 +114,7 @@ $language['errorSFXNotFound'] = 'SFX wasn\'t found!';
 $language['errorListNotFound'] = 'List wasn\'t found!';
 
 $language['errorCouldntReadFile'] = 'An error has occured when processing this file!';
-$language['errorIsNotAnAudio'] = 'This is not an audio!';
+$language['errorIsNotAnAudio'] = 'This is not an audio or audio is in wrong format!';
 $language['errorMaxFileSize'] = 'Maximum file size is %1$s MB!';
 $language['errorFileIsEmpty'] = 'This file is empty!';
 $language['errorInvalidURL'] = 'Invalid song URL!';
@@ -178,6 +178,12 @@ $language['errorClanNotFound'] = 'Clan wasn\'t found!';
 $language['errorClanNameTaken'] = 'This clan name is already taken!';
 $language['errorClanTagTaken'] = 'This clan tag is already taken!';
 $language['errorCantDeleteClan'] = 'You can\'t delete this clan.';
+$language['errorTransferToAccountOnly'] = 'You may only transfer this clan to a registered player.';
+$language['errorCantTransferClan'] = 'You can\'t transfer this clan.';
+$language['errorUserNotInClan'] = 'This player is not in this clan.';
+
+$language['errorCantViewProfile'] = 'You can\'t view this profile.';
+$language['errorCantComment'] = 'You can\'t leave a comment here.';
 
 /* Success strings */
 $language['successCopiedText'] = 'Copied text!';
@@ -225,8 +231,8 @@ $language['successDeletedList'] = 'You successfully deleted this list!';
 $language['successDeletedGauntlet'] = 'You successfully deleted this Gauntlet!';
 $language['successDeletedMapPack'] = 'You successfully deleted this Map Pack!';
 $language['successDeletedRole'] = 'You successfully deleted this role!';
-
 $language['successDeletedClan'] = 'You successfully deleted this clan!';
+$language['successTransferedClan'] = 'You successfully transfered this clan!';
 
 /* Page strings */
 $language['changeUsernameOld'] = 'Old username';
@@ -676,6 +682,7 @@ $language['clanColor'] = 'Clan color';
 $language['clanClosedDesc'] = 'If this clan is closed, players may only join it via a join request';
 $language['transferClan'] = 'Transfer clan';
 $language['transferClanDesc'] = 'Transfer this clan to someone else, making them its owner';
+$language['transferClanQuestionDesc'] = 'Are you sure you want to transfer this clan to someone else?';
 $language['deleteClan'] = 'Delete clan';
 $language['deleteClanDesc'] = 'Delete this clan permanently. This is irreversible, and you will lose your clan\'s name and tag';
 $language['deleteClanQuestionDesc'] = 'Are you sure you want to delete this clan?';
@@ -688,4 +695,44 @@ $language['deleteMapPackDesc'] = 'Delete this Map Pack permanently. This is irre
 $language['deleteRole'] = 'Delete role';
 $language['deleteRoleDesc'] = 'Delete this role permanently. This is irreversible';
 $language['deleteRoleQuestionDesc'] = 'Are you sure you want to delete this role?';
+$language['newClanOwner'] = 'New clan owner';
+
+$language['unknownPlayer'] = 'Unknown player';
+
+$language['reportLevel'] = 'Report level';
+$language['reportDesc'] = 'What do you want to report?';
+$language['extraInformationTitle'] = 'Extra information';
+$language['extraInformationDesc'] = 'You can optionally add some extra information to your report';
+$language['inappropriateContentTitle'] = 'Inappropriate content';
+$language['inappropriateContentDesc'] = 'I consider this as inappropriate content, such as NSFW, law violation, etc...';
+$language['hackerTitle'] = 'Hacker/cheater';
+$language['hackerDesc'] = 'This user is using hacks, cheats or exploits';
+$language['spamTitle'] = 'Spam';
+$language['spamDesc'] = 'This is spam or was uploaded by spamming';
+$language['harmfulMisinformationTitle'] = 'Harmful misinformation';
+$language['harmfulMisinformationDesc'] = 'This content was made to spread misinformation on purpose';
+$language['privacyViolationTitle'] = 'Privacy violation';
+$language['privacyViolationDesc'] = 'This content is exposing private information such as someone\'s real identity card, a real name, a real home address, etc…';
+$language['abuseTitle'] = 'Abuse/harrasment';
+$language['abuseDesc'] = 'This content is offensive, harrasses or abuses someone';
+$language['dontLikeTitle'] = 'I don\'t like this';
+$language['dontLikeDesc'] = 'I can\'t tell what this content violates, but it should be deleted';
+$language['submitReport'] = 'Submit report';
+
+$language['copyClanID'] = 'Copy clan ID';
+$language['copyCommentID'] = 'Copy comment ID';
+$language['copyGauntletID'] = 'Copy Gauntlet ID';
+$language['copyLevelID'] = 'Copy level ID';
+$language['copyListID'] = 'Copy list ID';
+$language['copyMapPackID'] = 'Copy Map Pack ID';
+$language['copyPostID'] = 'Copy post ID';
+$language['copyScoreID'] = 'Copy score ID';
+$language['copySFXID'] = 'Copy SFX ID';
+$language['copySongID'] = 'Copy song ID';
+$language['copyAccountID'] = 'Copy account ID';
+$language['copyUserID'] = 'Copy user ID';
+$language['instagramAccount'] = 'Instagram account';
+$language['tiktokChannel'] = 'TikTok channel';
+$language['discordAccount'] = 'Discord account';
+$language['customField'] = 'Custom field';
 ?>

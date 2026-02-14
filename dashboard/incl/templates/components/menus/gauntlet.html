@@ -4,11 +4,6 @@
 		<text>%TEXT_viewGauntlet%</text>
 	</button>
 	
-	<button class="contextMenuButton" title="%TEXT_copyLink%" type="button" onclick="copyElementContent('browse/gauntlets/%MENU_ID%', true)">
-		<i class="fa-solid fa-chain"></i>
-		<text>%TEXT_copyLink%</text>
-	</button>
-	
 	<hr dashboard-show="%MENU_CAN_MANAGE%">
 	
 	<button class="contextMenuButton" title="%TEXT_manageGauntlet%" type="button" href="browse/gauntlets/%MENU_ID%/manage" dashboard-loader-type="settings" dashboard-show="%MENU_CAN_MANAGE%">
@@ -19,5 +14,17 @@
 	<button class="contextMenuButton" title="%TEXT_deleteGauntlet%" type="button" href="browse/gauntlets/%MENU_ID%/delete" dashboard-loader-type="box" dashboard-show="%MENU_CAN_MANAGE%" style="--button-color: #ff9999;">
 		<i class="fa-solid fa-trash"></i>
 		<text>%TEXT_deleteGauntlet%</text>
+	</button>
+	
+	<hr>
+	
+	<button class="contextMenuButton" title="%TEXT_copyLink%" type="button" onclick="copyElementContent('browse/gauntlets/%MENU_ID%', true)">
+		<i class="fa-solid fa-chain"></i>
+		<text>%TEXT_copyLink%</text>
+	</button>
+	
+	<button class="contextMenuButton" title="%TEXT_copyGauntletID%" type="button" onclick="copyElementContent('%MENU_ID%')">
+		<i class="fa-solid fa-globe"></i>
+		<text>%TEXT_copyGauntletID%</text>
 	</button>
 </div>

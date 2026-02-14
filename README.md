@@ -1,5 +1,5 @@
 ## GMDprivateServer
-### A server emulator for Geometry Dash. Supports GD from 1.0 to 2.207
+### A server emulator for Geometry Dash. Supports GD from 1.0 to 2.208
 
 ## Prerequisites
 - Web server (Apache/Nginx recommended) or Docker (for containerized deployment)

@@ -19,8 +19,10 @@ if(!$parameters[1]) $parameters[1] = '';
 $profileUserName = $parameters[0] ? Escape::latin($parameters[0]) : $userName;
 
 $account = Library::getAccountByUserName($profileUserName);
-if(!$account) exit(http_response_code(404));
+if(!$account) exit(Dashboard::renderErrorPage(Dashboard::string("profile"), Dashboard::string("errorAccountNotFound"), '../'));
 $user = Library::getUserByAccountID($account['accountID']);
+
+if(Library::isPersonBlocked($accountID, $user['extID'])) exit(Dashboard::renderErrorPage(Dashboard::string("profile"), Dashboard::string("errorCantViewProfile"), '../'));
 
 $isPersonThemselves = $accountID == $user['extID']; 
 
@@ -28,7 +30,7 @@ $accountClan = Library::getAccountClan($account['accountID']);
 $iconKit = Dashboard::getUserIconKit($user['userID']);
 $userMetadata = Dashboard::getUserMetadata($user);
 $profileStats = Library::getProfileStatsCount($person, $user['userID']);
-$userRank = Library::getUserRank($user['stars'], $user['moons'], $user['userName']);
+$userRank = Library::getUserRank("stars", $user['stars'], $user['stars'], $user['userName']);
 
 $canSeeCommentHistory = Library::canSeeCommentsHistory($person, $user['userID']);
 
@@ -228,6 +230,10 @@ switch($parameters[1]) {
 			'YOUTUBE_CHANNEL' => htmlspecialchars($account['youtubeurl']),
 			'TWITTER_ACCOUNT' => htmlspecialchars($account['twitter']),
 			'TWITCH_CHANNEL' => htmlspecialchars($account['twitch']),
+			'INSTAGRAM_ACCOUNT' => htmlspecialchars($account['instagram']),
+			'TIKTOK_CHANNEL' => htmlspecialchars($account['tiktok']),
+			'DISCORD_ACCOUNT' => htmlspecialchars($account['discord']),
+			'CUSTOM_FIELD' => htmlspecialchars($account['custom']),
 			
 			'TIMEZONE_VALUE' => htmlspecialchars($account['timezone']),
 			'TIMEZONE_NAME' => htmlspecialchars($timezoneNames[$account['timezone']]),
@@ -337,6 +343,9 @@ $contextMenuData['MENU_CAN_BLOCK'] = ($person['accountID'] != 0 && !$isPersonThe
 $contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
 
 $contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true' || $contextMenuData['MENU_CAN_BLOCK'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+
+$contextMenuData['MENU_ACCOUNT_ID'] = $user['extID'];
+$contextMenuData['MENU_USER_ID'] = $user['userID'];
 
 $user['PROFILE_CONTEXT_MENU'] = Dashboard::renderTemplate('components/menus/user', $contextMenuData);
 
