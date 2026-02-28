@@ -7,13 +7,15 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 $userID = $person['userID'];
 
 $udid = Escape::base64($_POST['udid']) ?: '';
 
 $stars = $demons = $coins = $userCoins = $moons = $diamonds = $creatorPoints = 0;
-$leaderboardsString = "";
+$usersData = ['data' => []];
+$runSakujesJoke = date("d.m", time()) == "01.04" && $sakujes;
+
 $type = Escape::latin($_POST["type"]);
 $stat = Escape::number($_POST["stat"]) ?: 0;
 $count = $_POST["count"] ? abs(Escape::number($_POST["count"])) : 50;
@@ -23,26 +25,67 @@ $rank = $leaderboard['rank'];
 
 foreach($leaderboard['leaderboard'] AS &$user) {
 	if($user['stars'] <= 0 && $type == 'week') break;
+	$userData = [];
 	
 	$rank++;
-	
-	$user["userName"] = Library::makeClanUsername($user['extID']);
-	
-	$stars += $user['stars'];
-	$demons += $user['demons'];
-	$coins += $user['coins'];
-	$userCoins += $user['userCoins'];
-	$moons += $user['moons'];
-	$diamonds += $user['diamonds'];
-	$creatorPoints += $user['creatorPoints'];
-	
 	$oldExtID = !$user['isRegistered'] && $userID == $user['userID'] ? $udid : $user['extID'];
 	
-	if(date("d.m", time()) == "01.04" && $sakujes) $leaderboardsString .= "1:".($sakujesUsername ?: 'sakujes').":2:".$user["userID"].":13:999:17:999:6:".$rank.":9:9:10:9:11:8:14:1:15:3:16:".$user['extID'].":3:999:8:99999:4:999:7:".$user['extID'].":46:99999|";
-	else $leaderboardsString .= "1:".$user["userName"].":2:".$user["userID"].":13:".$user["coins"].":17:".$user["userCoins"].":6:".$rank.":9:".$user["icon"].":10:".$user["color1"].":11:".$user["color2"].":12:".($user['iconType'] == 1 ? $user["accShip"] : 0).":51:".$user["color3"].":14:".$user["iconType"].":15:".$user["special"].":16:".$user['extID'].":3:".$user["stars"].":8:".round($user["creatorPoints"], 0, PHP_ROUND_HALF_DOWN).":4:".$user["demons"].":7:".$oldExtID.":46:".$user["diamonds"].":52:".$user["moons"]."|";
+	$userData['userName'] = !$runSakujesJoke ? Library::makeClanUsername($user["userName"], $user["clanID"]) : ($sakujesUsername ?: 'sakujes');
+	$userData['userID'] = $user['userID'];
+	$userData['stars'] = !$runSakujesJoke ? $user['stars'] : 99999;
+	$userData['demons'] = !$runSakujesJoke ? $user['demons'] : 9999;
+	$userData['rank'] = $rank;
+	$userData['udid'] = $oldExtID;
+	$userData['creatorPoints'] = round($user["creatorPoints"], PHP_ROUND_HALF_DOWN);
+	$userData['iconID'] = $user['icon'];
+	$userData['color1'] = $user['color1'];
+	$userData['color2'] = $user['color2'];
+	$userData['shipID'] = $user['iconType'] == 1 ? $user["accShip"] : 0;
+	$userData['coins'] = !$runSakujesJoke ? $user['coins'] : 999;
+	$userData['special'] = $user['special'];
+	$userData['accountID'] = $user['extID'];
+	$userData['iconType'] = $user['iconType'];
+	$userData['userCoins'] = !$runSakujesJoke ? $user['userCoins'] : 999;
+	$userData['diamonds'] = !$runSakujesJoke ? $user['diamonds'] : 99999;
+	$userData['color3'] = $user['color3'];
+	$userData['moons'] = !$runSakujesJoke ? $user['moons'] : 9999;
+	
+	$usersData['data'][] = $userData;
+	
+	$stars += $userData['stars'];
+	$demons += $userData['demons'];
+	$coins += $userData['coins'];
+	$userCoins += $userData['userCoins'];
+	$moons += $userData['moons'];
+	$diamonds += $userData['diamonds'];
+	$creatorPoints += $userData['creatorPoints'];
 }
 
-if($moderatorsListInGlobal && $type == 'relative') $leaderboardsString = '1:---Moderators---:2:0:13:'.$coins.':17:'.$userCoins.':6:0:9:0:10:0:11:0:51:0:14:0:15:0:16:0:3:'.($stars + 1).':8:'.round($creatorPoints, 0, PHP_ROUND_HALF_DOWN).':4:'.$demons.':7:0:46:'.$diamonds.':52:'.$moons.'|'.$leaderboardsString;
+if($moderatorsListInGlobal && $type == 'relative') {
+	$userData = [];
+	
+	$userData['userName'] = "---Moderators---";
+	$userData['userID'] = 0;
+	$userData['stars'] = $stars;
+	$userData['demons'] = $demons;
+	$userData['rank'] = 0;
+	$userData['udid'] = 0;
+	$userData['creatorPoints'] = $creatorPoints;
+	$userData['iconID'] = 0;
+	$userData['color1'] = 0;
+	$userData['color2'] = 0;
+	$userData['shipID'] = 0;
+	$userData['coins'] = $coins;
+	$userData['special'] = 0;
+	$userData['accountID'] = 0;
+	$userData['userCoins'] = $userCoins;
+	$userData['iconType'] = 0;
+	$userData['diamonds'] = $diamonds;
+	$userData['color3'] = 0;
+	$userData['moons'] = $moons;
+	
+	array_unshift($usersData['data'], $userData);
+}
 
-exit(rtrim($leaderboardsString, '|'));
+exit(Library::returnGeometryDashArray($usersData, Keys::User));
 ?>

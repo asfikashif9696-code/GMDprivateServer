@@ -6,10 +6,10 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-$usersString = '';
 $type = Escape::number($_POST["type"]);
+$usersData = ['data' => []];
 
 switch($type) {
 	case 0:
@@ -21,12 +21,31 @@ switch($type) {
 		$users = Library::getBlocks($person);
 		break;
 	case 2:
-		exit(CommonError::InvalidRequest);
+		exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
+}
+if(empty($users)) exit(Library::returnGeometryDashResponse(CommonError::NothingFound));
+
+foreach($users AS &$user) {
+	$userData = [];
+	
+	$userData['userName'] = Library::makeClanUsername($user["userName"], $user["clanID"]);
+	$userData['userID'] = $user['userID'];
+	$userData['iconID'] = $user['icon'];
+	$userData['color1'] = $user['color1'];
+	$userData['color2'] = $user['color2'];
+	$userData['special'] = $user['special'];
+	$userData['accountID'] = $user['extID'];
+	$userData['iconType'] = $user['iconType'];
+	$userData['userCoins'] = $user['userCoins'];
+	$userData['color3'] = $user['color3'];
+	
+	if(!$isBlocks) {
+		$userData['isFriendRequestNew'] = $user['person2'] == $user['extID'] ? $user['isNew1'] : $user['isNew2'];
+		$userData['messagingState'] = $user['mS'];
+	}
+	
+	$usersData['data'][] = $userData;
 }
 
-if(empty($users)) exit(CommonError::NothingFound);
-
-foreach($users AS &$user) $usersString .= Library::returnFriendshipsString($person, $user, $isBlocks)."|";
-
-exit(rtrim($usersString, "|"));
+exit(Library::returnGeometryDashArray($usersData, Keys::User));
 ?>

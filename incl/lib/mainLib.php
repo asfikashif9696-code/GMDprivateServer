@@ -411,9 +411,8 @@ class Library {
 	}
 	
 	public static function getUserString($user) {
-		$user['userName'] = self::makeClanUsername($user['extID']);
-		
 		if(!$user["userName"]) $user["userName"] = 'Unknown user';
+		else $user["userName"] = self::makeClanUsername($user["userName"], $user["clanID"]);
 		
 		return $user['userID'].':'.$user["userName"].':'.$user['extID'];
 	}
@@ -945,9 +944,7 @@ class Library {
 		
 		$leaderboard = $leaderboard->fetchAll();
 		
-		if($type == "relative") {
-			$rank = self::getUserRank($leaderboardSortStat, $leaderboard[0][$leaderboardSortStat], $leaderboard[0]["stars"], $leaderboard[0]['userName'], true) - 1;
-		}
+		if($type == "relative" && !$moderatorsListInGlobal) $rank = self::getUserRank($leaderboardSortStat, $leaderboard[0][$leaderboardSortStat], $leaderboard[0]["stars"], $leaderboard[0]['userName'], true) - 1;
 		
 		return ["rank" => $rank, "leaderboard" => $leaderboard, "count" => count($leaderboard)];
 	}
@@ -1163,7 +1160,7 @@ class Library {
 		
 		if(isset($GLOBALS['core_cache']['friendships'][$accountID])) return $GLOBALS['core_cache']['friendships'][$accountID];
 		
-		$friendships = $db->prepare("SELECT * FROM friendships INNER JOIN users ON (person1 = users.extID AND person1 != :accountID) OR (person2 = users.extID AND person2 != :accountID) WHERE person1 = :accountID OR person2 = :accountID ORDER BY users.userName ASC");
+		$friendships = $db->prepare("SELECT friendships.*, users.*, accounts.mS FROM friendships INNER JOIN users ON (person1 = users.extID AND person1 != :accountID) OR (person2 = users.extID AND person2 != :accountID) INNER JOIN accounts ON users.extID = accounts.accountID WHERE person1 = :accountID OR person2 = :accountID GROUP BY extID ORDER BY users.userName ASC");
 		$friendships->execute([':accountID' => $accountID]);
 		$friendships = $friendships->fetchAll();
 		
@@ -2033,7 +2030,7 @@ class Library {
 	public static function getLevels($filters, $order, $orderSorting, $queryJoin, $pageOffset, $limit = 10) {
 		require __DIR__."/connection.php";
 		
-		$levels = $db->prepare("SELECT * FROM levels ".$queryJoin." WHERE (".implode(") AND (", $filters).") AND isDeleted = 0 ".($order ? "ORDER BY ".$order." ".$orderSorting : "")." ".($limit ? "LIMIT ".$limit." OFFSET ".$pageOffset : ''));
+		$levels = $db->prepare("SELECT * FROM levels ".$queryJoin." INNER JOIN users ON users.extID = levels.extID WHERE (".implode(") AND (", $filters).") AND isDeleted = 0 ".($order ? "ORDER BY ".$order." ".$orderSorting : "")." ".($limit ? "LIMIT ".$limit." OFFSET ".$pageOffset : ''));
 		$levels->execute();
 		$levels = $levels->fetchAll();
 		
@@ -2125,6 +2122,14 @@ class Library {
 	public static function showCommentsBanScreen($text, $time) {
 		$time = $time - time();
 		if($time < 0) $time = 0;
+		
+		if(isset($_SERVER['HTTP_ACCEPT']) && strtolower($_SERVER['HTTP_ACCEPT']) == 'application/json') {
+			return [
+				"durationSeconds" => $time,
+				"reason" => mb_ereg_replace("<[a-zA-Z0-9\/]*>", $text)
+			];
+		}
+		
 		return $_POST['gameVersion'] > 20 ? 'temp_'.$time.'_</c>'.PHP_EOL.' '.$text.'<cc> ' : '-10';
 	}
 	
@@ -3677,14 +3682,14 @@ class Library {
 		return ['gauntlets' => $gauntlets, 'count' => $gauntletsCount];
 	}
 	
-	public static function getLists($person, $filters, $order, $pageOffset) {
+	public static function getLists($filters, $order, $orderSorting, $queryJoin, $pageOffset) {
 		require __DIR__."/connection.php";
 		
-		$lists = $db->prepare("SELECT * FROM lists WHERE (".implode(") AND (", $filters).") ".($order ? "ORDER BY ".$order." DESC" : "")." LIMIT 10 OFFSET ".$pageOffset);
+		$lists = $db->prepare("SELECT * FROM lists ".$queryJoin." INNER JOIN users ON users.extID = lists.accountID WHERE (".implode(") AND (", $filters).") ".($order ? "ORDER BY ".$order." ".$orderSorting : "")." LIMIT 10 OFFSET ".$pageOffset);
 		$lists->execute();
 		$lists = $lists->fetchAll();
 		
-		$listsCount = $db->prepare("SELECT count(*) FROM lists WHERE (".implode(" ) AND ( ", $filters).")");
+		$listsCount = $db->prepare("SELECT count(*) FROM lists ".$queryJoin." WHERE (".implode(" ) AND ( ", $filters).")");
 		$listsCount->execute();
 		$listsCount = $listsCount->fetchColumn();
 		
@@ -5506,28 +5511,26 @@ class Library {
 		return ["clanID" => $clanInfo["clanID"], "clanName" => $clanInfo["clanName"], "clanTag" => $clanInfo["clanTag"], "clanDesc" => $clanInfo["clanDesc"], "clanOwner" => $clanInfo["clanOwner"], "clanMembers" => $clanInfo["clanMembers"], "clanColor" => $clanInfo["clanColor"], "clanRank" => $clanInfo["clanRank"], "isClosed" => $clanInfo["isClosed"], "creationDate" => $clanInfo["creationDate"]];
 	}
 	
-	public static function makeClanUsername($accountID) {
+	public static function makeClanUsername($userName, $clanID) {
 		require __DIR__."/../../config/dashboard.php";
 		
-		if(isset($GLOBALS['core_cache']['accountClanUsername'][$accountID])) return $GLOBALS['core_cache']['accountClanUsername'][$accountID];
+		if(isset($GLOBALS['core_cache']['accountClanUsername'][$clanID][$userName])) return $GLOBALS['core_cache']['accountClanUsername'][$clanID][$userName];
 		
 		if(!isset($clansTagPosition)) $clansTagPosition = '[%2$s] %1$s';
 		
-		$user = self::getUserByAccountID($accountID);
-		
-		if($clansEnabled && $user['clanID'] > 0 && !isset($_REQUEST['noClan'])) {
-			$clanTag = self::getClanByID($user['clanID'], 'clanTag');
+		if($clansEnabled && $clanID > 0 && !isset($_REQUEST['noClan'])) {
+			$clanTag = self::getClanByID($clanID, 'clanTag');
 			
-			$clanUsername = !empty($clanTag) ? sprintf($clansTagPosition, $user['userName'], $clanTag) : $user['userName'];
+			$clanUsername = !empty($clanTag) ? sprintf($clansTagPosition, $userName, $clanTag) : $userName;
 			
-			$GLOBALS['core_cache']['accountClanUsername'][$accountID] = $clanUsername;
+			$GLOBALS['core_cache']['accountClanUsername'][$clanID][$userName] = $clanUsername;
 			
 			return $clanUsername;
 		}
 		
-		$GLOBALS['core_cache']['accountClanUsername'][$accountID] = $user['userName'];
+		$GLOBALS['core_cache']['accountClanUsername'][$clanID][$userName] = $userName;
 		
-		return $user['userName'];
+		return $userName;
 	}
 	
 	public static function getAccountClan($accountID) {
@@ -6079,11 +6082,37 @@ class Library {
 		return dirname($https."://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
 	}
 	
+	/*
+		Return to Geometry Dash-related functions
+	*/
+	
+	public static function returnGeometryDashResponse($response, $key = 'data') {
+		$data = [];
+		
+		if(isset($_SERVER['HTTP_ACCEPT']) && strtolower($_SERVER['HTTP_ACCEPT']) == 'application/json') {
+			header("Content-Type: application/json");
+			
+			if((int)$response < 0 || is_array($response)) {
+				http_response_code(400);
+				$data['success'] = false;
+				$data[(is_array($response) ? $key : 'error')] = $response;
+			} else {
+				$data['success'] = true;
+				$data[$key] = $response;
+			}
+			
+			return json_encode($data);
+		}
+		
+		return $response;
+	}
+	
 	public static function returnGeometryDashData($data, $keysArray) {
 		require_once __DIR__."/exploitPatch.php";
 		
-		if(isset($_REQUEST['json'])) {
+		if(isset($_SERVER['HTTP_ACCEPT']) && strtolower($_SERVER['HTTP_ACCEPT']) == 'application/json') {
 			header("Content-Type: application/json");
+			
 			$data['success'] = true;
 			return json_encode($data);
 		}
@@ -6098,49 +6127,46 @@ class Library {
 		return implode($keysArray['DELIMITER'], $processedData);
 	}
 	
-	public static function returnGeometryDashResponse($response, $key = 'data') {
-		$data = [];
+	public static function returnGeometryDashArray($data, $dataKeysArray, $extraValuesKeys = []) {
+		require_once __DIR__."/exploitPatch.php";
 		
-		if(isset($_REQUEST['json'])) {
+		if(isset($_SERVER['HTTP_ACCEPT']) && strtolower($_SERVER['HTTP_ACCEPT']) == 'application/json') {
 			header("Content-Type: application/json");
 			
-			if((int)$response < 0) {
-				$data['success'] = false;
-				$data['error'] = $response;
-			} else {
-				$data['success'] = true;
-				$data[$key] = $response;
-			}
-			
+			$data['success'] = true;
 			return json_encode($data);
 		}
 		
-		return $response;
-	}
-	
-	/*
-		Return to Geometry Dash-related functions
-	*/
-	
-	public static function returnUserString($user) {
-		$user['userName'] = self::makeClanUsername($user['extID']);
+		$processedArray = $processedData = [];
 		
-		return "1:".$user["userName"].":2:".$user["userID"].":13:".$user["coins"].":17:".$user["userCoins"].":10:".$user["color1"].":11:".$user["color2"].":51:".$user["color3"].":3:".$user["stars"].":46:".$user["diamonds"].":52:".$user["moons"].":4:".$user["demons"].":8:".$user['creatorPoints'].":18:".$user['messagesState'].":19:".$user['friendRequestsState'].":50:".$user['commentsState'].":20:".$user["youtubeurl"].":21:".$user["accIcon"].":22:".$user["accShip"].":23:".$user["accBall"].":24:".$user["accBird"].":25:".$user["accDart"].":26:".$user["accRobot"].":28:".$user["accGlow"].":43:".$user["accSpider"].":48:".$user["accExplosion"].":53:".$user["accSwing"].":54:".$user["accJetpack"].":30:".$user['rank'].":16:".$user["extID"].":31:".$user['friendsState'].":44:".$user["twitter"].":45:".$user["twitch"].":59:".$user["instagram"].":60:".$user["tiktok"].":58:".$user["discord"].":61:".$user["custom"].":49:".$user['badge'].":55:".$user["dinfo"].":56:".$user["sinfo"].":57:".$user["pinfo"].$user['incomingRequestText'].":29:".$user['isRegistered'];
-	}
-	
-	public static function returnFriendshipsString($person, $user, $isBlocks) {
-		if(!$isBlocks) {
-			$user['isNew'] = $user['person2'] == $user['extID'] ? $user['isNew1'] : $user['isNew2'];
-			$user['canMessage'] = self::canSendMessage($person, $user['extID']) ? 0 : 2;
+		foreach($data['data'] AS &$dataArray) {
+			foreach($dataArray AS $key => $value) {
+				$processedData[] = $dataKeysArray[$key];
+				$processedData[] = Escape::gd($value);
+			}
+			
+			$processedArray[] = implode($dataKeysArray['DELIMITER'], $processedData);
 		}
 		
-		$user['userName'] = self::makeClanUsername($user['extID']);
+		if(!empty($extraValuesKeys)) {
+			$processedExtraValuesArray = [];
+			$processedExtraValuesString = "";
+			
+			foreach($extraValuesKeys AS &$extraValuesKey) {
+				$extraValues = $data[$extraValuesKey];
+				
+				if(is_array($extraValues)) foreach($extraValues AS &$value) $processedExtraValuesArray[] = Escape::gd($value);
+				else $processedExtraValuesArray[] = Escape::gd($extraValues);
+				
+				$processedExtraValuesString = "#".implode(":", $processedExtraValuesArray);
+			}
+		}
 		
-		return "1:".$user["userName"].":2:".$user["userID"].":9:".$user['icon'].":10:".$user["color1"].":11:".$user["color2"].":14:".$user["iconType"].":15:".$user["special"].":16:".$user["extID"].(!$isBlocks ? ":18:".$user['canMessage'] : '').":41:".$user['isNew'];
+		return implode("|", $processedArray).$processedExtraValuesString;
 	}
 	
 	public static function returnFriendRequestsString($person, $user) {
-		$user['userName'] = self::makeClanUsername($user['extID']);
+		$user['userName'] = self::makeClanUsername($user["userName"], $user["clanID"]);
 		
 		return "1:".$user["userName"].":2:".$user["userID"].":9:".$user['icon'].":10:".$user["color1"].":11:".$user["color2"].":14:".$user["iconType"].":15:".$user["special"].":16:".$user["extID"].":32:".$user["ID"].":35:".$user["comment"].":41:".$user["isNew"].":37:".$user['uploadTime'];
 	}

@@ -6,15 +6,15 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 $accountID = $person['accountID'];
 
 $listID = Escape::number($_POST['listID']);
 
 $list = Library::getListByID($listID);
-if(!$list || ($list['accountID'] != $accountID && !Library::checkPermission($person, 'gameDeleteLevel'))) exit(CommonError::InvalidRequest);
+if(!$list || ($list['accountID'] != $accountID && !Library::checkPermission($person, 'gameDeleteLevel'))) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 Library::deleteList($listID, $person);
 
-exit(CommonError::Success);
+exit(Library::returnGeometryDashResponse(CommonError::Success));
 ?>

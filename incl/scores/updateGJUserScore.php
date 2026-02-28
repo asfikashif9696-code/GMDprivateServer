@@ -9,25 +9,23 @@ require_once __DIR__."/../lib/automod.php";
 require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
-if(!isset($_POST["stars"]) || !isset($_POST["demons"]) || !isset($_POST["icon"]) || !isset($_POST["color1"]) || !isset($_POST["color2"])) exit(CommonError::InvalidRequest);
+if(!isset($_POST["stars"]) || !isset($_POST["demons"]) || !isset($_POST["icon"]) || !isset($_POST["color1"]) || !isset($_POST["color2"])) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 $accountID = $person["accountID"];
 $userID = $person["userID"];
 $userName = $person["userName"];
 $IP = $person["IP"];
 
-if(Automod::isAccountsDisabled(2) || (!$unregisteredSubmissions && !$accountID)) exit($userID);
+if(Automod::isAccountsDisabled(2) || (!$unregisteredSubmissions && (!$accountID || !is_numeric($accountID)))) exit(Library::returnGeometryDashResponse($userID, "userID"));
 
 $stars = abs(Escape::number($_POST["stars"]));
 $demons = abs(Escape::number($_POST["demons"]));
 $icon = abs(Escape::number($_POST["icon"]));
 $color1 = abs(Escape::number($_POST["color1"]));
 $color2 = abs(Escape::number($_POST["color2"]));
-
 $ship = abs(Escape::number($_POST["ship"]) ?: 0); // 1.4 - 1.5 compatibility
-
 $gameVersion = abs(Escape::number($_POST["gameVersion"]) ?: 1);
 $binaryVersion = abs(Escape::number($_POST["binaryVersion"]) ?: 1);
 $coins = abs(Escape::number($_POST["coins"]) ?: 0);
@@ -51,9 +49,11 @@ $accJetpack = abs(Escape::number($_POST["accJetpack"]) ?: 0);
 $dinfo = Escape::multiple_ids($_POST["dinfo"]) ?: '';
 $dinfow = abs(Escape::number($_POST["dinfow"]) ?: 0);
 $dinfog = abs(Escape::number($_POST["dinfog"]) ?: 0);
+$dinfoe = abs(Escape::number($_POST["dinfoe"]) ?: 0);
 $sinfo = Escape::multiple_ids($_POST["sinfo"]) ?: '';
 $sinfod = abs(Escape::number($_POST["sinfod"]) ?: 0);
 $sinfog = abs(Escape::number($_POST["sinfog"]) ?: 0);
+$sinfoe = abs(Escape::number($_POST["sinfoe"]) ?: 0);
 
 $user = Library::getUserByID($userID);
 
@@ -84,15 +84,15 @@ if(!empty($dinfo)) {
 	$demonsCount->execute();
 	$demonsCount = $demonsCount->fetch();
 	
-	$allDemons = $demonsCount["easyNormal"] + $demonsCount["mediumNormal"] + $demonsCount["hardNormal"] + $demonsCount["insaneNormal"] + $demonsCount["extremeNormal"] + $demonsCount["easyPlatformer"] + $demonsCount["mediumPlatformer"] + $demonsCount["hardPlatformer"] + $demonsCount["insanePlatformer"] + $demonsCount["extremePlatformer"] + $dinfow + $dinfog;
+	$allDemons = $demonsCount["easyNormal"] + $demonsCount["mediumNormal"] + $demonsCount["hardNormal"] + $demonsCount["insaneNormal"] + $demonsCount["extremeNormal"] + $demonsCount["easyPlatformer"] + $demonsCount["mediumPlatformer"] + $demonsCount["hardPlatformer"] + $demonsCount["insanePlatformer"] + $demonsCount["extremePlatformer"] + $dinfow + $dinfog + $dinfoe;
 	$demonsCountDiff = min($demons - $allDemons, 3);
 	
-	$dinfo = ($demonsCount["easyNormal"] + $demonsCountDiff).','.$demonsCount["mediumNormal"].','.$demonsCount["hardNormal"].','.$demonsCount["insaneNormal"].','.$demonsCount["extremeNormal"].','.$demonsCount["easyPlatformer"].','.$demonsCount["mediumPlatformer"].','.$demonsCount["hardPlatformer"].','.$demonsCount["insanePlatformer"].','.$demonsCount["extremePlatformer"].','.$dinfow.','.$dinfog;
+	$dinfo = ($demonsCount["easyNormal"] + $demonsCountDiff).','.$demonsCount["mediumNormal"].','.$demonsCount["hardNormal"].','.$demonsCount["insaneNormal"].','.$demonsCount["extremeNormal"].','.$demonsCount["easyPlatformer"].','.$demonsCount["mediumPlatformer"].','.$demonsCount["hardPlatformer"].','.$demonsCount["insanePlatformer"].','.$demonsCount["extremePlatformer"].','.$dinfow.','.$dinfog.','.$dinfoe;
 }
 if(!empty($sinfo)) {
 	$sinfo = explode(",", $sinfo);
 	
-	$starsCount = $sinfo[0].",".$sinfo[1].",".$sinfo[2].",".$sinfo[3].",".$sinfo[4].",".$sinfo[5].",".$sinfod.",".$sinfog;
+	$starsCount = $sinfo[0].",".$sinfo[1].",".$sinfo[2].",".$sinfo[3].",".$sinfo[4].",".$sinfo[5].",".$sinfod.",".$sinfog.",".$sinfoe;
 	$platformerCount = $sinfo[6].",".$sinfo[7].",".$sinfo[8].",".$sinfo[9].",".$sinfo[10].",".$sinfo[11].",0"; // Last is for Map levels, unused until 2.21
 }
 
@@ -115,7 +115,7 @@ if($automaticCron) {
 
 Automod::checkStatsSpeed($person);
 
-if($gameVersion < 20 && !is_numeric($accountID) && $starsDifference + $coinsDifference + $demonsDifference + $userCoinsDifference + $diamondsDifference + $moonsDifference != 0) exit(CommonError::SubmitRestoreInfo);
+if($gameVersion < 20 && !is_numeric($accountID) && $starsDifference + $coinsDifference + $demonsDifference + $userCoinsDifference + $diamondsDifference + $moonsDifference != 0) exit(Library::returnGeometryDashResponse(CommonError::SubmitRestoreInfo));
 
-exit($userID);
+exit(Library::returnGeometryDashResponse($userID, "userID"));
 ?>

@@ -6,12 +6,12 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $requestID = Escape::number($_POST['requestID']);
 
 $readFriendRequest = Library::readFriendRequest($person, $requestID);
-if(!$readFriendRequest) exit(CommonError::InvalidRequest);
+if(!$readFriendRequest) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-exit(CommonError::Success);
+exit(Library::returnGeometryDashResponse(CommonError::Success));
 ?>

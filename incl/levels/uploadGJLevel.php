@@ -7,7 +7,7 @@ $lib = new Library();
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $gameVersion = abs(Escape::number($_POST["gameVersion"]));
 $levelID = Escape::number($_POST["levelID"]);
@@ -48,7 +48,7 @@ $ts = !empty($_POST["ts"]) ? abs(Escape::number($_POST["ts"])) : 0;
 $password = !empty($_POST["password"]) ? abs(Escape::number($_POST["password"])) : ($gameVersion > 21 ? 1 : 0);
 
 $isAbleToUploadLevel = Library::isAbleToUploadLevel($person, $levelName, $levelDesc);
-if(!$isAbleToUploadLevel['success']) exit(CommonError::InvalidRequest);
+if(!$isAbleToUploadLevel['success']) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $levelDesc = Escape::url_base64_encode(Library::escapeDescriptionCrash($levelDesc));
 
@@ -79,7 +79,7 @@ $levelDetails = [
 ];
 
 $uploadLevel = Library::uploadLevel($person, $levelID, $levelName, $levelString, $levelDetails);
-if(!$uploadLevel['success']) exit(CommonError::InvalidRequest);
+if(!$uploadLevel['success']) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-exit($uploadLevel['levelID']);
+exit(Library::returnGeometryDashResponse((string)$uploadLevel['levelID'], "levelID"));
 ?>

@@ -19,7 +19,7 @@ $filters = $getFilters['filters'];
 
 $filters[] = "lists.accountID = '".$accountID."'";
 
-$lists = Library::getLists($person, $filters, $order, $pageOffset);
+$lists = Library::getLists($filters, $order, "DESC", "", $pageOffset);
 
 foreach($lists['lists'] AS &$list) $page .= Dashboard::renderListCard($list, $person);
 

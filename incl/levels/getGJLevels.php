@@ -7,7 +7,7 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 $accountID = $person["accountID"];
 $userID = $person["userID"];
 
@@ -93,11 +93,12 @@ switch($type) {
 		break;
 	case 7: // Magic (recommendations)
 		$levelIDs = Library::generateLevelsRecommendations($person);
+		if(empty($levelIDs)) exit(Library::returnGeometryDashResponse(CommonError::NothingFound));
 		
 		$levelsArray = explode(',', $levelIDs);
 		$levelsText = '';
 		
-		$str = implode(',', $levelsArray);
+		$str = $levelIDs;
 		
 		foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
 		
@@ -187,10 +188,10 @@ switch($type) {
 		break;
 	case 27: // Sent levels
 		$queryJoin = "JOIN (SELECT suggestLevelId AS levelID, MAX(suggest.timestamp) AS timestamp FROM suggest GROUP BY levelID) suggest ON levels.levelID = suggest.levelID";
+
 		$filters[] = "suggest.levelID > 0";
-		
 		if(!$ratedLevelsInSent) $filters[] = "starStars = 0";
-		
+
 		$order = 'suggest.timestamp';
 		break;
 }

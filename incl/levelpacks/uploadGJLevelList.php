@@ -6,7 +6,7 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $listID = Escape::number($_POST["listID"]);
 $listName = Escape::latin($_POST["listName"]) ?: "Unnamed list";
@@ -16,9 +16,9 @@ $difficulty = Security::limitValue(-1, Escape::number($_POST["difficulty"]), 10)
 $original = Escape::number($_POST["original"]) ?: 0;
 $unlisted = Security::limitValue(0, Escape::number($_POST["unlisted"]), 2);
 
-if(count(explode(',', $listLevels)) == 0) exit(CommonError::InvalidRequest);
+if(count(explode(',', $listLevels)) == 0) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-if(Security::checkFilterViolation($person, $listName, 3) || Security::checkFilterViolation($person, $listDesc, 3)) exit(CommonError::InvalidRequest);
+if(Security::checkFilterViolation($person, $listName, 3) || Security::checkFilterViolation($person, $listDesc, 3)) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $listDesc = Escape::url_base64_encode(Library::escapeDescriptionCrash($listDesc));
 
@@ -32,7 +32,7 @@ $listDetails = [
 ];
 
 $listID = Library::uploadList($person, $listID, $listDetails);
-if(!$listID) exit(CommonError::InvalidRequest);
+if(!$listID) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-exit((string)$listID);
+exit(Library::returnGeometryDashResponse((string)$listID, "listID"));
 ?>

@@ -6,25 +6,41 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-$friendRequestsString = '';
 $page = abs(Escape::number($_POST['page']) ?: 0);
 $getSent = abs(Escape::number($_POST['getSent']) ?: 0);
 $pageOffset = $page * 10;
+$usersData = ['data' => [], 'pages' => []];
 
 $friendRequests = Library::getFriendRequests($person, $getSent, $pageOffset);
 
-if(empty($friendRequests['requests'])) exit(CommonError::NothingFound);
+if(empty($friendRequests['requests'])) exit(Library::returnGeometryDashResponse(CommonError::NothingFound));
 
-foreach($friendRequests['requests'] AS &$request) {
-	$uploadTime = Library::makeTime($request["uploadDate"]);
+foreach($friendRequests['requests'] AS &$user) {
+	$userData = [];
 	
-	$request["userName"] = Library::makeClanUsername($request['extID']);
-	$request["comment"] = Escape::url_base64_encode(Escape::translit(Escape::url_base64_decode($request["comment"])));
+	$userData['userName'] = Library::makeClanUsername($user["userName"], $user["clanID"]);
+	$userData['userID'] = $user['userID'];
+	$userData['iconID'] = $user['icon'];
+	$userData['color1'] = $user['color1'];
+	$userData['color2'] = $user['color2'];
+	$userData['special'] = $user['special'];
+	$userData['accountID'] = $user['extID'];
+	$userData['iconType'] = $user['iconType'];
+	$userData['userCoins'] = $user['userCoins'];
+	$userData['color3'] = $user['color3'];
+	$userData['friendRequestID'] = $user['ID'];
+	$userData["friendRequestComment"] = Escape::url_base64_encode(Escape::translit(Escape::url_base64_decode($user["comment"])));
+	$userData["friendRequestTimestamp"] = Library::makeTime($user["uploadDate"]);
+	$userData['isFriendRequestNew'] = $user['person2'] == $user['extID'] ? $user['isNew1'] : $user['isNew2'];
 	
-	$friendRequestsString .= Library::returnFriendRequestsString($person, $request)."|";
+	$usersData['data'][] = $userData;
 }
 
-exit(rtrim($friendRequestsString, "|")."#".$friendRequests['count'].":".$pageOffset.":10");
+$usersData['pages']['total'] = $users['count'];
+$usersData['pages']['offset'] = $pageOffset;
+$usersData['pages']['count'] = 10;
+
+exit(Library::returnGeometryDashArray($usersData, Keys::User, ['pages']));
 ?>

@@ -30,7 +30,7 @@ $userAppearance = Library::getPersonCommentAppearance($targetPerson);
 $checkBan = Library::getPersonBan($targetPerson, Ban::Leaderboards);
 $rank = !$checkBan ? Library::getUserRank("stars", $user['stars'], $user['stars'], $user['userName']) : 0;
 
-$userData['userName'] = Library::makeClanUsername($user['extID']);
+$userData['userName'] = Library::makeClanUsername($user["userName"], $user["clanID"]);
 $userData['userID'] = $user['userID'];
 $userData['stars'] = $user['stars'];
 $userData['demons'] = $user['demons'];

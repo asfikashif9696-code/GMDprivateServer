@@ -281,7 +281,7 @@ $page = '';
 $getFilters = Library::getListSearchFilters($_GET, true, false);
 $filters = $getFilters['filters'];
 
-$lists = Library::getLists($person, $filters, $order, $pageOffset);
+$lists = Library::getLists($filters, $order, "DESC", "", $pageOffset);
 
 foreach($lists['lists'] AS &$list) $page .= Dashboard::renderListCard($list, $person, false);
 

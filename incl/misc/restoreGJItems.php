@@ -7,9 +7,9 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-if(!file_exists(__DIR__."/../../data/info/".$person['accountID'])) exit(CommonError::InvalidRequest);
+if(!file_exists(__DIR__."/../../data/info/".$person['accountID'])) exit(Library::returnGeometryDashResponse(CommonError::NothingFound));
 
-exit(XORCipher::cipher(Escape::url_base64_decode(file_get_contents(__DIR__."/../../data/info/".$person['accountID'])), 24157));
+exit(Library::returnGeometryDashResponse(XORCipher::cipher(Escape::url_base64_decode(file_get_contents(__DIR__."/../../data/info/".$person['accountID'])), 24157)));
 ?>

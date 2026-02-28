@@ -15,7 +15,7 @@ $message = Library::readMessage($person, $messageID, $isSender);
 if(!$message) exit(CommonError::InvalidRequest);
 
 $uploadDate = Library::makeTime($message["timestamp"]);
-$message["userName"] = Library::makeClanUsername($message['extID']);
+$message["userName"] = Library::makeClanUsername($message["userName"], $message["clanID"]);
 
 exit("6:".$message["userName"].":3:".$message["userID"].":2:".$message["extID"].":1:".$message["messageID"].":4:".$message["subject"].":8:".$message["isNew"].":9:".$isSender.":5:".$message["body"].":7:".$uploadDate);
 ?>

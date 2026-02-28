@@ -6,7 +6,7 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 $accountID = $person['accountID'];
 
 $messagesState = Security::limitValue(0, Escape::number($_POST["mS"]), 2);
@@ -22,5 +22,5 @@ $socialsCustom = Escape::text($_POST["custom"], 40);
 
 Library::updateAccountSettings($person, $accountID, $messagesState, $friendRequestsState, $commentsState, $socialsYouTube, $socialsTwitter, $socialsTwitch, $socialsInstagram, $socialsTikTok, $socialsDiscord, $socialsCustom);
 
-exit(CommonError::Success);
+exit(Library::returnGeometryDashResponse(CommonError::Success));
 ?>

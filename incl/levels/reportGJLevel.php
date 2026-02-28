@@ -9,7 +9,7 @@ $IP = IP::getIP();
 $levelID = Escape::number($_POST['levelID']);
 
 $reportLevel = Library::reportLevel($levelID, $IP);
-if(!$reportLevel) exit(CommonError::InvalidRequest);
+if(!$reportLevel) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-exit(CommonError::Success);
+exit(Library::returnGeometryDashResponse(CommonError::Success));
 ?>

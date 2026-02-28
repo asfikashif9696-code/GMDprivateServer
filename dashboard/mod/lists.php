@@ -28,7 +28,7 @@ if(!$unlistedLevelsForAdmins || !Library::isAccountAdministrator($accountID)) {
 	$filters[] = "lists.unlisted != 1 OR (lists.unlisted = 1 AND (lists.accountID IN (".$friendsString.")))";
 }
 
-$lists = Library::getLists($person, $filters, $order, $pageOffset);
+$lists = Library::getLists($filters, $order, "DESC", "", $pageOffset);
 
 foreach($lists['lists'] AS &$list) $page .= Dashboard::renderListCard($list, $person);
 

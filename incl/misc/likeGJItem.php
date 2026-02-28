@@ -7,16 +7,16 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $itemID = Escape::number($_POST['itemID']) ?: abs(Escape::number($_POST['levelID']) ?: 0);
 $type = Escape::number($_POST['type']) ?: 1;
 $isLike = Escape::number($_POST['like']);
 
-if(!$itemID) exit(CommonError::InvalidRequest);
+if(!$itemID) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $rateItem = Library::rateItem($person, $itemID, $type, $isLike);
-if(!$rateItem) exit(CommonError::InvalidRequest);
+if(!$rateItem) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-exit(CommonError::Success);
+exit(Library::returnGeometryDashResponse(CommonError::Success));
 ?>

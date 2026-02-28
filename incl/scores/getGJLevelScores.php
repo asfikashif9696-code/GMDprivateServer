@@ -7,9 +7,9 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-$scoreString = '';
+$usersData = ['data' => []];
 
 $levelID = abs(Escape::number($_POST['levelID']) ?: 0);
 $type = abs(Escape::number($_POST['type']) ?: 0);
@@ -25,13 +25,27 @@ $dailyID = !empty($_POST["s10"]) ? abs(Escape::number($_POST["s10"])) : 0;
 Library::submitLevelScore($levelID, $person, $percent, $attempts, $clicks, $time, $progresses, $coins, $dailyID);
 
 $levelScores = Library::getLevelScores($levelID, $person, $type, $dailyID);
-if(!$levelScores['count']) exit(CommonError::InvalidRequest);
+if(!$levelScores['count']) exit(Library::returnGeometryDashResponse(CommonError::NothingFound));
 
 foreach($levelScores['scores'] AS $key => $user) {
-	$time = Library::makeTime($user["uploadDate"]);
-	$user["userName"] = Library::makeClanUsername($user["extID"]);
-	$scoreString .= "1:".$user["userName"].":2:".$user["userID"].":9:".$user["icon"].":10:".$user["color1"].":11:".$user["color2"].":51:".$user["color3"].":14:".$user["iconType"].":15:".$user["special"].":16:".$user["extID"].":3:".$user["percent"].":6:".($key + 1).":13:".$user["scoreCoins"].":42:".$time."|";
+	$userData = [];
+	
+	$userData['userName'] = Library::makeClanUsername($user["userName"], $user["clanID"]);
+	$userData['userID'] = $user['userID'];
+	$userData['stars'] = $user['percent'];
+	$userData['rank'] = $key + 1;
+	$userData['iconID'] = $user['icon'];
+	$userData['color1'] = $user['color1'];
+	$userData['color2'] = $user['color2'];
+	$userData['special'] = $user['special'];
+	$userData['accountID'] = $user['extID'];
+	$userData['coins'] = $user['scoreCoins'];
+	$userData['iconType'] = $user['iconType'];
+	$userData['color3'] = $user['color3'];
+	$userData['scoreTimestamp'] = Library::makeTime($user["uploadDate"]);
+	
+	$usersData['data'][] = $userData;
 }
 
-exit(rtrim($scoreString, "|"));
+exit(Library::returnGeometryDashArray($usersData, Keys::User));
 ?>

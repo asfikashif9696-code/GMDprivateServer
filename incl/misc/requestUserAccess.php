@@ -6,11 +6,11 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $appearance = Library::getPersonCommentAppearance($person);
 
 $badge = min(2, $appearance['modBadgeLevel']);
 
-exit((string)$badge);
+exit(Library::returnGeometryDashResponse((string)$badge, "badgeLevel"));
 ?>

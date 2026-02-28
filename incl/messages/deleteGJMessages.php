@@ -6,12 +6,12 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
 $messages = isset($_POST['messages']) ? Escape::multiple_ids($_POST['messages']) : abs(Escape::number($_POST['messageID']));
 
 $deleteMessages = Library::deleteMessages($person, $messages);
-if(!$deleteMessages) exit(CommonError::InvalidRequest);
+if(!$deleteMessages) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-exit(CommonError::Success);
+exit(Library::returnGeometryDashResponse(CommonError::Success));
 ?>

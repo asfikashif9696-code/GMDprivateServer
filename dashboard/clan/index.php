@@ -37,44 +37,6 @@ $additionalPage = '';
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 
 switch($parameters[1]) {
-	case 'posts':
-		$mode = isset($_GET['mode']) ? Escape::number($_GET["mode"]) : 0;
-		$sortMode = $mode ? "clancomments.likes - clancomments.dislikes" : "clancomments.timestamp";
-		
-		$comments = Library::getCommentsOfClan($person, $clanID, $sortMode, $pageOffset);
-		
-		foreach($comments['comments'] AS &$comment) $additionalPage .= Dashboard::renderPostCard($comment, $person, $comments['ratings']);
-		
-		$pageNumber = ceil($pageOffset / 10) + 1 ?: 1;
-		$pageCount = floor(($comments['count'] - 1) / 10) + 1;
-				
-		if($pageCount == 0) $pageCount = 1;
-		
-		$emojisDiv = Dashboard::renderEmojisDiv();
-		
-		$additionalData = [
-			'ADDITIONAL_PAGE' => $additionalPage,
-			'CLAN_NO_POSTS' => !$comments['count'] ? 'true' : 'false',
-			'CLAN_PAGE_TEXT' => sprintf(Dashboard::string('pageText'), $pageNumber, $pageCount),
-			
-			'CLAN_ID' => $clanID,
-			'CLAN_CAN_POST' => $canPostComments ? 'true' : 'false',
-			'CLAN_MAX_COMMENT_LENGTH' => $enableCommentLengthLimiter ? $maxAccountCommentLength : '-1',
-			
-			'CLAN_EMOJIS_DIV' => $emojisDiv,
-			
-			'IS_FIRST_PAGE' => $pageNumber == 1 ? 'true' : 'false',
-			'IS_LAST_PAGE' => $pageNumber == $pageCount ? 'true' : 'false',
-			
-			'FIRST_PAGE_BUTTON' => "getPage('@page=REMOVE_QUERY', 'settings')",
-			'PREVIOUS_PAGE_BUTTON' => "getPage('@".(($pageNumber - 1) > 1 ? "page=".($pageNumber - 1) : 'page=REMOVE_QUERY')."', 'settings')",
-			'NEXT_PAGE_BUTTON' => "getPage('@page=".($pageNumber + 1)."', 'settings')",
-			'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
-		];
-		
-		$clan['CLAN_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/clanposts', $additionalData);
-		$pageBase = "../../";
-		break;
 	case 'settings':
 		if(!$isClanOwner && !Library::checkPermission($person, "dashboardManageClans")) exit(Dashboard::renderErrorPage(Dashboard::string("clans"), Dashboard::string("errorNoPermission"), '../../'));
 	
@@ -152,7 +114,7 @@ switch($parameters[1]) {
 		
 		exit(Dashboard::renderPage("general/infoDialogue", Dashboard::string("deleteClan"), $pageBase, $dataArray));
 		break;
-	case '': // Clan members
+	case 'members':
 		$accountsText = '';
 		
 		foreach($clanMembers AS $accountKey => $accountID) $accountsText .= 'WHEN accounts.accountID = '.$accountID.' THEN '.($accountID == $clan['clanOwner'] ? 1 : $accountKey + 2).PHP_EOL;
@@ -196,6 +158,44 @@ switch($parameters[1]) {
 		];
 		
 		$clan['CLAN_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/accounts', $additionalData);
+		$pageBase = "../../";
+		break;
+	case '': // Clan posts
+		$mode = isset($_GET['mode']) ? Escape::number($_GET["mode"]) : 0;
+		$sortMode = $mode ? "clancomments.likes - clancomments.dislikes" : "clancomments.timestamp";
+		
+		$comments = Library::getCommentsOfClan($person, $clanID, $sortMode, $pageOffset);
+		
+		foreach($comments['comments'] AS &$comment) $additionalPage .= Dashboard::renderPostCard($comment, $person, $comments['ratings']);
+		
+		$pageNumber = ceil($pageOffset / 10) + 1 ?: 1;
+		$pageCount = floor(($comments['count'] - 1) / 10) + 1;
+				
+		if($pageCount == 0) $pageCount = 1;
+		
+		$emojisDiv = Dashboard::renderEmojisDiv();
+		
+		$additionalData = [
+			'ADDITIONAL_PAGE' => $additionalPage,
+			'CLAN_NO_POSTS' => !$comments['count'] ? 'true' : 'false',
+			'CLAN_PAGE_TEXT' => sprintf(Dashboard::string('pageText'), $pageNumber, $pageCount),
+			
+			'CLAN_ID' => $clanID,
+			'CLAN_CAN_POST' => $canPostComments ? 'true' : 'false',
+			'CLAN_MAX_COMMENT_LENGTH' => $enableCommentLengthLimiter ? $maxAccountCommentLength : '-1',
+			
+			'CLAN_EMOJIS_DIV' => $emojisDiv,
+			
+			'IS_FIRST_PAGE' => $pageNumber == 1 ? 'true' : 'false',
+			'IS_LAST_PAGE' => $pageNumber == $pageCount ? 'true' : 'false',
+			
+			'FIRST_PAGE_BUTTON' => "getPage('@page=REMOVE_QUERY', 'settings')",
+			'PREVIOUS_PAGE_BUTTON' => "getPage('@".(($pageNumber - 1) > 1 ? "page=".($pageNumber - 1) : 'page=REMOVE_QUERY')."', 'settings')",
+			'NEXT_PAGE_BUTTON' => "getPage('@page=".($pageNumber + 1)."', 'settings')",
+			'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
+		];
+		
+		$clan['CLAN_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/clanposts', $additionalData);
 		$pageBase = "../";
 		break;
 	default:

@@ -448,7 +448,7 @@ footer h4 span {
 	flex-direction: column;
 	align-items: center;
 	
-	gap: 15px;
+	gap: 5px;
 	
 	width: 100%;
 	min-height: 100%;
@@ -561,7 +561,7 @@ form {
 	color: #c0c0c0;
 	
 	border: 1px solid #86868634;
-	border-radius: 10px;
+	border-radius: 5px;
 	
 	font-size: 20px;
 	
@@ -858,7 +858,7 @@ nav::-webkit-scrollbar,
 	width: 100%;
 	
 	padding: 15px;
-	border-radius: 15px;
+	border-radius: 5px;
 	
 	box-sizing: border-box;
 	
@@ -1299,6 +1299,8 @@ i[onclick],
 	
 	width: max-content;
 	min-width: 300px;
+	
+	gap: 5px;
 }
 
 .levelPage .levelStats:not(.card) .levelStat {
@@ -1307,7 +1309,7 @@ i[onclick],
 	font-size: 27px;
 	
 	padding: 15px;
-	border-radius: 15px;
+	border-radius: 5px;
 	
 	background-color: #86868614;
 	border: 1px solid #86868624;
@@ -1319,6 +1321,16 @@ i[onclick],
 	white-space: nowrap;
 	
 	transition: 0.2s;
+}
+
+.levelPage .levelStats:not(.card) .levelStat:first-child {
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+}
+
+.levelPage .levelStats:not(.card) .levelStat:last-child {
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
 }
 
 .levelPage .levelStats:not(.card) .levelStat.dashed {
@@ -1406,10 +1418,41 @@ i[onclick],
 	display: flex;
 	flex-direction: column;
 	
-	gap: 10px;
+	gap: 5px;
 	
 	width: 100%;
 	min-height: 100%;
+}
+
+.commentsDiv .contentDiv {
+	border-radius: 5px;
+}
+
+.commentsDiv:has([dashboard-page-buttons]) .contentDiv:nth-child(2), 
+.commentsDiv:not(:has([dashboard-page-buttons])) .contentDiv:first-child {
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+}
+
+.commentsDiv .contentDiv:last-child {
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+.commentsDiv .inlineForm .inputStyle {
+	border-top-left-radius: 15px;
+}
+
+.commentsDiv .inlineForm .button {
+	border-top-right-radius: 15px;
+}
+
+.commentsDiv .inlineForm:last-child .inputStyle {
+	border-bottom-left-radius: 15px;
+}
+
+.commentsDiv .inlineForm:last-child .button {
+	border-bottom-right-radius: 15px;
 }
 
 .nothingOnPageDiv .nothing-icon {
@@ -1593,13 +1636,14 @@ h1[dashboard-score="3"] {
 	display: inline-flex;
 	
 	width: 100%;
-	gap: 10px;
+	gap: 5px;
 	
 	margin: 0px;
 }
 
 .inlineForm .button {
 	width: max-content !important;
+	border-radius: 5px;
 }
 
 .inlineForm .button:hover {
@@ -1760,6 +1804,22 @@ nav [title]::after,
 
 .wideBox.grid .contentDiv {
 	width: calc(50% - 5px);
+}
+
+.wideBox:has([dashboard-page-buttons]) > .contentDiv:nth-of-type(2), 
+.wideBox:not(:has([dashboard-page-buttons])) > .contentDiv:nth-of-type(1) {
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+}
+
+.wideBox:has(.saveSettingsButtons) > .contentDiv:nth-last-of-type(2), 
+.wideBox:not(:has(.saveSettingsButtons)) > .contentDiv:nth-last-of-type(1) {
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+.wideBox.levelPage > .contentDiv {
+	border-radius: 15px;
 }
 
 .settingDiv {
@@ -2693,8 +2753,9 @@ hr {
 	
 	gap: 25px;
 	
-	background-color: #86868614;
+	background-color: #00000055;
 	border: 1px solid #86868634;
+	border-radius: 15px;
 	
 	max-width: 340px;
 	max-height: 250px;

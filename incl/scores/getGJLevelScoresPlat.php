@@ -7,9 +7,9 @@ require_once __DIR__."/../lib/enums.php";
 $sec = new Security();
 
 $person = $sec->loginPlayer();
-if(!$person["success"]) exit(CommonError::InvalidRequest);
+if(!$person["success"]) exit(Library::returnGeometryDashResponse(CommonError::InvalidRequest));
 
-$scoreString = '';
+$usersData = ['data' => []];
 $scores = [];
 
 $levelID = abs(Escape::number($_POST['levelID']) ?: 0);
@@ -27,13 +27,27 @@ $mode = $_POST['mode'] == 1 ? 'points' : 'time';
 Library::submitPlatformerLevelScore($levelID, $person, $scores, $attempts, $clicks, $progresses, $coins, $dailyID, $mode);
 
 $levelScores = Library::getPlatformerLevelScores($levelID, $person, $type, $dailyID, $mode);
-if(!$levelScores['count']) exit(CommonError::InvalidRequest);
+if(!$levelScores['count']) exit(Library::returnGeometryDashResponse(CommonError::NothingFound));
 
 foreach($levelScores['scores'] AS $key => $user) {
-	$time = Library::makeTime($user["timestamp"]);
-	$user["userName"] = Library::makeClanUsername($user["extID"]);
-	$scoreString .= "1:".$user["userName"].":2:".$user["userID"].":9:".$user["icon"].":10:".$user["color1"].":11:".$user["color2"].":51:".$user["color3"].":14:".$user["iconType"].":15:".$user["special"].":16:".$user["extID"].":3:".$user[$mode].":6:".($key + 1).":13:".$user["scoreCoins"].":42:".$time."|";
+	$userData = [];
+	
+	$userData['userName'] = Library::makeClanUsername($user["userName"], $user["clanID"]);
+	$userData['userID'] = $user['userID'];
+	$userData['stars'] = $user[$mode];
+	$userData['rank'] = $key + 1;
+	$userData['iconID'] = $user['icon'];
+	$userData['color1'] = $user['color1'];
+	$userData['color2'] = $user['color2'];
+	$userData['special'] = $user['special'];
+	$userData['accountID'] = $user['extID'];
+	$userData['coins'] = $user['scoreCoins'];
+	$userData['iconType'] = $user['iconType'];
+	$userData['color3'] = $user['color3'];
+	$userData['scoreTimestamp'] = Library::makeTime($user["timestamp"]);
+	
+	$usersData['data'][] = $userData;
 }
 
-exit(rtrim($scoreString, "|"));
+exit(Library::returnGeometryDashArray($usersData, Keys::User));
 ?>

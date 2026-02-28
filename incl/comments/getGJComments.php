@@ -75,7 +75,7 @@ foreach($comments['comments'] AS &$comment) {
 	$likes = $comment['likes'] - $comment['dislikes'];
 	
 	$user = Library::getUserByID($comment['userID']);
-	$user["userName"] = Library::makeClanUsername($user["extID"]);
+	$user["userName"] = Library::makeClanUsername($user["userName"], $user["clanID"]);
 	
 	if($binaryVersion > 31) {
 		$playerPerson = [

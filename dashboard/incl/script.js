@@ -406,6 +406,7 @@ async function updatePage() {
 	modalButtonElements.forEach(async (element) => {
 		const modalID = element.getAttribute("dashboard-modal-button");
 		const modalElement = document.querySelector(`[dashboard-modal="${modalID}"]`);
+		if(modalElement == null) return;
 		const modalSearchElement = modalElement.querySelector("[dashboard-modal-search]");
 		
 		const modalName = element.getAttribute("dashboard-modal-name");

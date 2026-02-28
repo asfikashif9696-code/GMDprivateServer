@@ -18,7 +18,7 @@ if(!$messages['messages']) exit(CommonError::NothingFound);
 
 foreach($messages['messages'] AS &$message) {
 	$message['subject'] = Escape::url_base64_encode(Escape::translit(Escape::url_base64_decode($message["subject"])));
-	$message["userName"] = Library::makeClanUsername($message["extID"]);
+	$message["userName"] = Library::makeClanUsername($message["userName"], $message["clanID"]);
 	
 	$messagesString .= "6:".$message["userName"].":3:".$message["userID"].":2:".$message["extID"].":1:".$message["messageID"].":4:".$message["subject"].":8:".$message["isNew"].":9:".$getSent.":7:".$uploadDate."|";
 }

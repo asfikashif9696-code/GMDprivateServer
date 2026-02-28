@@ -11,7 +11,7 @@ if(!$person["success"]) exit(CommonError::InvalidRequest);
 $accountID = $person['accountID'];
 
 $time = time();
-$str = $echoString = $userString = '';
+$str = $echoString = $userString = $queryJoin = '';
 $order = "uploadDate";
 $isIDSearch = false;
 
@@ -89,18 +89,18 @@ switch($type) {
 	case 27: // Sent
 		$filters[] = "suggest.suggestLevelId < 0";
 		$order = "suggest.timestamp";
-		$morejoins = "LEFT JOIN suggest ON lists.listID * -1 LIKE suggest.suggestLevelId";
+		$queryJoin = "INNER JOIN suggest ON lists.listID * -1 LIKE suggest.suggestLevelId";
 		break;
 }
 
-$lists = Library::getLists($person, $filters, $order, $pageOffset);
+$lists = Library::getLists($filters, $order, "DESC", $queryJoin, $pageOffset);
 
 foreach($lists['lists'] as &$list) {
 	$list['listName'] = Escape::gd(Escape::translit($list['listName']));
 	$list['listDesc'] = Escape::translit($list['listDesc']);
 	
 	$list['likes'] = $list['likes'] - $list['dislikes'];
-	$list['userName'] = Library::makeClanUsername($list['accountID']);
+	$list['userName'] = Library::makeClanUsername($list["userName"], $list["clanID"]);
 	
 	$echoString .= "1:".$list['listID'].":2:".$list['listName'].":3:".$list['listDesc'].":5:".$list['listVersion'].":49:".$list['accountID'].":50:".$list['userName'].":10:".$list['downloads'].":7:".$list['starDifficulty'].":14:".$list['likes'].":19:".$list['starFeatured'].":51:".$list['listlevels'].":55:".$list['starStars'].":56:".$list['countForReward'].":28:".$list['uploadDate'].":29:".$list['updateDate']."|";
 	$userString .= Library::getUserString($list)."|";
