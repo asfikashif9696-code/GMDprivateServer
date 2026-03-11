@@ -26,6 +26,8 @@ if($_GET['id']) {
 	$song = Library::getSongByID($songID);
 	if(!$song || !$song['reuploadID']) exit(Dashboard::renderErrorPage(Dashboard::string("songsTitle"), Dashboard::string("errorSongNotFound"), '../../'));
 	
+	$GLOBALS['core']['renderReportModal'] = true;
+	
 	switch($parameters[1]) {
 		case 'manage':
 			$pageBase = '../../../';

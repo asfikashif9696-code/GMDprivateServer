@@ -91,6 +91,34 @@ class ClanError {
 	const NoPermissions = "-4";
 }
 
+class SongError {
+	const UnknownError = "-6";
+
+	const Banned = "-1";
+	const Disabled = "-8";
+	const RateLimit = "-9";
+	
+	const InvalidURL = "-2";
+	const InvalidFile = "-4";
+	const NotAnAudio = "-7";
+
+	const AlreadyUploaded = "-3";
+
+	const TooBig = "-5";
+	
+	const BadSongArtist = "-10";
+	const BadSongTitle = "-11";
+	
+	const NothingFound = "-12";
+	const NoPermissions = "-13";
+}
+
+class ReportError {
+	const AlreadyReported = "-1";
+	const NothingFound = "-2";
+	const TooFast = "-3";
+}
+
 /*
 	IDs of various stuff in-game
 */
@@ -317,28 +345,6 @@ class Ban {
 	const UploadingAudio = 5;
 }
 
-class SongError {
-	const UnknownError = "-6";
-
-	const Banned = "-1";
-	const Disabled = "-8";
-	const RateLimit = "-9";
-	
-	const InvalidURL = "-2";
-	const InvalidFile = "-4";
-	const NotAnAudio = "-7";
-
-	const AlreadyUploaded = "-3";
-
-	const TooBig = "-5";
-	
-	const BadSongArtist = "-10";
-	const BadSongTitle = "-11";
-	
-	const NothingFound = "-12";
-	const NoPermissions = "-13";
-}
-
 class RateLimit {
 	const GlobalLevelsUpload = 0;
 	const PerUserLevelsUpload = 1;
@@ -351,7 +357,7 @@ class RateLimit {
 	const AudioUpload = 8;
 }
 
-class Report {
+class ReportType {
 	const InappropriateContent = 0;
 	const Hacker = 1;
 	const Spam = 2;
@@ -359,6 +365,18 @@ class Report {
 	const PrivacyViolation = 4;
 	const Abuse = 5;
 	const DontLike = 6;
+}
+
+class ReportItem {
+	const Level = 0;
+	const Account = 1;
+	const Comment = 2;
+	const AccountComment = 3;
+	const AccountCommentReply = 4;
+	const List = 5;
+	const Song = 6;
+	const SFX = 7;
+	const Clan = 8;
 }
 
 class AutomodAction { // Last action ID is 17

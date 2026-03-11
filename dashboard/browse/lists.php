@@ -59,6 +59,8 @@ if($_GET['id']) {
 	$listLevels = Escape::multiple_ids($list['listlevels']);
 	$listLevelsArray = explode(',', $listLevels);
 	
+	$GLOBALS['core']['renderReportModal'] = true;
+	
 	$pageBase = '../../';
 	$list['LIST_ADDITIONAL_PAGE'] = '';
 	$additionalPage = '';

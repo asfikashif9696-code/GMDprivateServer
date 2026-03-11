@@ -1,6 +1,6 @@
 if(typeof localStorage.player_volume == "undefined") localStorage.player_volume = 0.15;
 
-var dashboardLoader, dashboardBody, dashboardBase, dashboardBackground;
+var dashboardLoader, dashboardBody, dashboardBase, dashboardBackground, dashboardFooter;
 var intervals = [];
 var searchLists = [];
 var pageLoaders = {};
@@ -11,6 +11,7 @@ window.addEventListener('load', () => {
 	dashboardBody = document.getElementById("dashboard-body");
 	dashboardBase = document.querySelector("base");
 	dashboardBackground = document.querySelector("span.background");
+	dashboardFooter = document.querySelector("footer");
 	
 	dashboardBody.classList.add("hide");
 	
@@ -502,12 +503,28 @@ async function updatePage() {
 		const selectName = element.getAttribute("dashboard-select");
 		const selectInput = element.querySelector("[dashboard-select-input]");
 		const selectValueInput = element.querySelector("[dashboard-select-value]");
+		const selectOptionsElement = element.querySelector("[dashboard-select-options]");
 		const selectOptions = element.querySelectorAll("[dashboard-select-option]");
 		
 		element.addEventListener("focusin", () => element.classList.add("show"));
 		document.addEventListener("click", (e) => {
 			if(!element.contains(e.target) && element != e.target) element.classList.remove("show");
 		});
+		
+		if(selectOptionsElement != null) {
+			const changeDropdownPosition = async () => {
+				const selectOptionsElementRects = selectOptionsElement.getBoundingClientRect();
+				
+				const selectOptionsElementPosition = selectOptionsElementRects.bottom + (selectOptionsElement.classList.contains("top") ? selectOptionsElement.clientHeight + 90 : 0)
+				
+				if(selectOptionsElementPosition > dashboardBody.clientHeight - dashboardFooter.clientHeight) selectOptionsElement.classList.add("top");
+				else selectOptionsElement.classList.remove("top");
+			}
+			
+			changeDropdownPosition();
+			
+			window.addEventListener("wheel", changeDropdownPosition);
+		}
 		
 		selectOptions.forEach(async (selectOption) => {
 			const selectOptionValue = selectOption.getAttribute("value");

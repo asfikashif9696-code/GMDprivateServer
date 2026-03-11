@@ -289,4 +289,22 @@ $forceCommandFlag = true;
 	False — Return nothing
 */
 $showUnknownLevel = true;
+
+/*
+	GDPS Switcher MOTD configuration
+	
+	You can setup Message Of The Day (popup information) for GDPS Switcher users when they setup your GDPS in the mod
+	https://github.com/AlphiiGD/gdps-switcher/wiki/Server-Integration
+	
+	$enableGDPSSwitcherMOTD — Should MOTD be enabled or not
+		True — Enable GDPS Switcher MOTD
+		False — Disable GDPS Switcher MOTD
+	$gdpsSwitcherMOTD — Message to show to players (recommended characters count is 70)
+		%1$s — GDPS name from config/dashboard.php
+		%2$s — GDPS color in HEX from config/dashboard.php
+	$gdpsSwitcherIcon — URL to icon of GDPS
+*/
+$enableGDPSSwitcherMOTD = true;
+$gdpsSwitcherMOTD = 'Welcome to <c-%2$s>%1$s!<c>';
+$gdpsSwitcherIcon = 'https://raw.githubusercontent.com/Kingminer7/gdps-switcher/refs/heads/main/resources/gdlogo.png';
 ?>

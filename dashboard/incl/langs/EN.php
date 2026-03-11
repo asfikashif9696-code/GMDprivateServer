@@ -53,7 +53,7 @@ $language['uploadSFXTitle'] = 'Add a SFX';
 $language['reuploadLevelTitle'] = 'Reupload a level';
 $language['runCron'] = 'Run Cron';
 
-$language['moderatorTools'] = 'Moderator tools';
+$language['moderatorTools'] = 'Moderation';
 $language['banUserTitle'] = 'Ban user';
 $language['addMapPackTitle'] = 'Add Map Pack';
 $language['addGauntletTitle'] = 'Add Gauntlet';
@@ -185,6 +185,11 @@ $language['errorUserNotInClan'] = 'This player is not in this clan.';
 $language['errorCantViewProfile'] = 'You can\'t view this profile.';
 $language['errorCantComment'] = 'You can\'t leave a comment here.';
 
+$language['errorReportTypeNotSpecified'] = 'Please specify a report type.';
+$language['errorAlreadyReported'] = 'You already reported this content.';
+$language['errorContentNotFound'] = 'This content wasn\'t found!';
+$language['errorReportTooFast'] = 'You\'re reporting content too fast!';
+
 /* Success strings */
 $language['successCopiedText'] = 'Copied text!';
 
@@ -233,6 +238,8 @@ $language['successDeletedMapPack'] = 'You successfully deleted this Map Pack!';
 $language['successDeletedRole'] = 'You successfully deleted this role!';
 $language['successDeletedClan'] = 'You successfully deleted this clan!';
 $language['successTransferedClan'] = 'You successfully transfered this clan!';
+
+$language['successSubmittedReport'] = 'You successfully submitted a report!';
 
 /* Page strings */
 $language['changeUsernameOld'] = 'Old username';
@@ -735,4 +742,15 @@ $language['instagramAccount'] = 'Instagram account';
 $language['tiktokChannel'] = 'TikTok channel';
 $language['discordAccount'] = 'Discord account';
 $language['customField'] = 'Custom field';
+
+$language['changeUsernameDesc'] = 'Сhange your account\'s username. You will have to login to your account again';
+$language['changePasswordDesc'] = 'Сhange your account\'s password. You will have to login to your account again';
+
+$language['reportClan'] = 'Report clan';
+$language['reportComment'] = 'Report comment';
+$language['reportList'] = 'Report list';
+$language['reportPost'] = 'Report post';
+$language['reportUser'] = 'Report user';
+$language['reportSong'] = 'Report song';
+$language['reportSFX'] = 'Report SFX';
 ?>

@@ -247,5 +247,7 @@ $contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS']
 
 $clan['CLAN_CONTEXT_MENU'] = Dashboard::renderTemplate('components/menus/clan', $contextMenuData);
 
+$GLOBALS['core']['renderReportModal'] = true;
+
 exit(Dashboard::renderPage("browse/clan", $clan['CLAN_TITLE'], $pageBase, $clan));
 ?>

@@ -1,4 +1,4 @@
-<form class="modalPage" dashboard-modal="reportModal">
+<form class="modalPage" name="reportModal" dashboard-modal="reportModal">
 	<input type="hidden" dashboard-modal-input />
 	
 	<div class="box">
@@ -93,10 +93,10 @@
 				</h2>
 				
 		
-				<div class="horisontal spaceBetween">
+				<div class="horisontal spaceBetween interactiveBorderInlineElement">
 					<input class="inputStyle" type="text" name="extraInfo" autocomplete="gdps-dashboard-extraInfo" placeholder="I'm reporting this, because..." dashboard-not-required maxlength="255" />
 					
-					<button type="button" class="button squareButton" onclick="applyFilters('levelFilters')">
+					<button type="button" class="button squareButton" onclick="postPage('manage/reportItem', 'reportModal')">
 						<i class="fa-solid fa-check"></i> %TEXT_submitReport%
 					</button>
 				</div>

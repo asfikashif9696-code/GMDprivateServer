@@ -1540,6 +1540,8 @@ class Library {
 		
 		Security::assignAuthToken($accountID);
 		if($automaticCron) Cron::fixUsernames($person, $enableTimeoutForAutomaticCron);
+		Security::clearUDIDsFromRegisteredAccount($userID);
+		
 		self::logAction($person, Action::UsernameChange, $userName, $targetUserName);
 		
 		return true;
@@ -1550,6 +1552,7 @@ class Library {
 		require_once __DIR__."/security.php";
 		
 		$accountID = $person['accountID'];
+		$userID = $person['userID'];
 		
 		if(empty($targetPassword) || strlen($targetPassword) < 6) return false;
 		
@@ -1558,6 +1561,7 @@ class Library {
 		$changePassword->execute([':password' => Security::hashPassword($targetPassword), ':gjp2' => Security::hashPassword($gjp2), ':accountID' => $accountID]);
 		
 		Security::assignAuthToken($accountID);
+		Security::clearUDIDsFromRegisteredAccount($userID);
 		
 		self::logAction($person, Action::PasswordChange);
 		
@@ -2824,21 +2828,6 @@ class Library {
 		$voteForLevelDifficulty->execute([':rating' => $rating, ':levelID' => $levelID, ':starDemonDiff' => $realDifficulty['demon'], ':starAuto' => $realDifficulty['auto']]);
 		
 		self::logAction($person, ($rating > 5 ? Action::LevelVoteDemon : Action::LevelVoteNormal), $levelID, $rating);
-		
-		return true;
-	}
-	
-	public static function reportLevel($levelID, $IP) {
-		require __DIR__."/connection.php";
-		
-		$checkIfReported = $db->prepare("SELECT count(*) FROM reports WHERE levelID = :levelID AND IP REGEXP CONCAT('(', :IP, '.*)')");
-		$checkIfReported->execute([':levelID' => $levelID, ':IP' => self::convertIPForSearching($IP, true)]);
-		$checkIfReported = $checkIfReported->fetchColumn();
-		if($checkIfReported) return false;
-		
-		$reportLevel = $db->prepare("INSERT INTO reports (levelID, IP)
-			VALUES (:levelID, :IP)");
-		$reportLevel->execute([':levelID' => $levelID, ':IP' => $IP]);
 		
 		return true;
 	}
@@ -6080,6 +6069,77 @@ class Library {
 		else $https = 'http';
 		
 		return dirname($https."://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
+	}
+	
+	public static function reportItem($person, $reportType, $reportItem, $itemID, $extraInfo) {
+		require __DIR__."/connection.php";
+		require_once __DIR__."/exploitPatch.php";
+		
+		$accountID = $person['accountID'];
+		$IP = $person['IP'];
+		
+		$itemColumn = $itemName = '';
+		
+		$checkRateLimit = $db->prepare("SELECT count(*) FROM reports WHERE (accountID = :accountID OR IP REGEXP CONCAT('(', :IP, '.*)')) AND timestamp >= :timestamp");
+		$checkRateLimit->execute([':accountID' => $accountID, ':IP' => self::convertIPForSearching($IP, true), ':timestamp' => time() - 10]);
+		$checkRateLimit = $checkRateLimit->fetchColumn();
+		if($checkRateLimit) return ['success' => false, 'error' => ReportError::TooFast];
+		
+		$checkIfReported = $db->prepare("SELECT count(*) FROM reports WHERE reportItem = :reportItem AND itemID = :itemID AND (accountID = :accountID OR IP REGEXP CONCAT('(', :IP, '.*)'))");
+		$checkIfReported->execute([':reportItem' => $reportItem, ':itemID' => $itemID, ':accountID' => $accountID, ':IP' => self::convertIPForSearching($IP, true)]);
+		$checkIfReported = $checkIfReported->fetchColumn();
+		if($checkIfReported) return ['success' => false, 'error' => ReportError::AlreadyReported];
+		
+		switch($reportItem) {
+			case ReportItem::Level:
+				$itemColumn = 'levels';
+				$itemName = 'levelID';
+				break;
+			case ReportItem::Account:
+				$itemColumn = 'accounts';
+				$itemName = 'accountID';
+				break;
+			case ReportItem::Comment:
+				$itemColumn = 'comments';
+				$itemName = 'commentID';
+				break;
+			case ReportItem::AccountComment:
+				$itemColumn = 'acccomments';
+				$itemName = 'commentID';
+				break;
+			case ReportItem::AccountCommentReply:
+				$itemColumn = 'replies';
+				$itemName = 'replyID';
+				break;
+			case ReportItem::List:
+				$itemColumn = 'lists';
+				$itemName = 'listID';
+				break;
+			case ReportItem::Song:
+				$itemColumn = 'songs';
+				$itemName = 'songID';
+				break;
+			case ReportItem::SFX:
+				$itemColumn = 'sfxs';
+				$itemName = 'sfxID';
+				break;
+			case ReportItem::Clan:
+				$itemColumn = 'clans';
+				$itemName = 'clanID';
+				break;
+			default:
+				return ['success' => false, 'error' => ReportError::NothingFound];
+		}
+		
+		$checkItem = $db->prepare("SELECT count(*) FROM ".$itemColumn." WHERE ".$itemName." = :itemID");
+		$checkItem->execute([':itemID' => $itemID]);
+		$checkItem = $checkItem->fetchColumn();
+		if(!$checkItem) return ['success' => false, 'error' => ReportError::NothingFound];
+		
+		$reportContent = $db->prepare("INSERT INTO reports (reportType, reportItem, itemID, extraInfo, accountID, IP, timestamp) VALUES (:reportType, :reportItem, :itemID, :extraInfo, :accountID, :IP, :timestamp)");
+		$reportContent->execute([':reportType' => $reportType, ':reportItem' => $reportItem, ':itemID' => $itemID, ':extraInfo' => Escape::url_base64_encode($extraInfo), ':accountID' => $accountID, ':IP' => $IP, ':timestamp' => time()]);
+		
+		return ['success' => true];
 	}
 	
 	/*

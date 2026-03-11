@@ -19,6 +19,8 @@ if($_GET['id']) {
 	$sfx = Library::getSFXByID($sfxID);
 	if(!$sfx || !$sfx['reuploadID']) exit(Dashboard::renderErrorPage(Dashboard::string("sfxsTitle"), Dashboard::string("errorSFXNotFound"), '../../'));
 	
+	$GLOBALS['core']['renderReportModal'] = true;
+	
 	switch($parameters[1]) {
 		case 'manage':
 			$pageBase = '../../../';

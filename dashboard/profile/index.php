@@ -349,5 +349,7 @@ $contextMenuData['MENU_USER_ID'] = $user['userID'];
 
 $user['PROFILE_CONTEXT_MENU'] = Dashboard::renderTemplate('components/menus/user', $contextMenuData);
 
+$GLOBALS['core']['renderReportModal'] = true;
+
 exit(Dashboard::renderPage("browse/profile", $user['PROFILE_TITLE'], $pageBase, $user));
 ?>

@@ -511,7 +511,9 @@ class Dashboard {
 			'SHOW_GDPS_LINKS' => !empty($gdpsLinks) ? 'true' : 'false',
 			'CREDITS_LINKS' => $creditsLinks,
 			'SHOW_CREDITS_LINKS' => !empty($creditsLinks) ? 'true' : 'false',
-			'FOOTER_TEXT' => sprintf(self::string("footer"), $gdps, date('Y', time()))
+			'FOOTER_TEXT' => sprintf(self::string("footer"), $gdps, date('Y', time())),
+			
+			'REPORT_ITEM_MODAL' => isset($GLOBALS['core']['renderReportModal']) && $GLOBALS['core']['renderReportModal'] ? self::renderTemplate("components/report") : ''
 		];
 		
 		$personPermissions = Library::getPersonPermissions($person);
@@ -593,7 +595,7 @@ class Dashboard {
 		return "<div id='toast' state='".$state."' location='".$location."' loader='".$loaderType."'><i class='fa-solid fa-".$icon."'></i>".$text."</div>";
 	}
 	
-	public static function renderTemplate($template, $dataArray) {
+	public static function renderTemplate($template, $dataArray = []) {
 		if(!isset($GLOBALS['core_cache']['dashboard']['template'][$template])) {
 			$templatePage = file_get_contents(__DIR__."/templates/".$template.".html");
 			$GLOBALS['core_cache']['dashboard']['template'][$template] = $templatePage;
@@ -645,6 +647,8 @@ class Dashboard {
 			$usernameData['USERNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
 		}
 		
+		$GLOBALS['core']['renderReportModal'] = true;
+		
 		return self::renderTemplate('components/username', $usernameData);
 	}
 	
@@ -671,6 +675,8 @@ class Dashboard {
 		
 		$levelnameData['LEVELNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/level', $contextMenuData);
 		
+		$GLOBALS['core']['renderReportModal'] = true;
+		
 		return self::renderTemplate('components/levelname', $levelnameData);
 	}
 	
@@ -678,7 +684,8 @@ class Dashboard {
 		global $dbPath;
 		require_once __DIR__."/../".$dbPath."incl/lib/mainLib.php";
 		
-		$isPersonThemselves = $person['accountID'] == $accountID; 
+		$isPersonThemselves = $person['accountID'] == $accountID;
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$listnameData = $contextMenuData = [];
 		
@@ -693,9 +700,11 @@ class Dashboard {
 		$contextMenuData['MENU_CAN_MANAGE'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageLevels")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_DELETE'] = ($isPersonThemselves || Library::checkPermission($person, "gameDeleteLevel")) ? 'true' : 'false';
 		
-		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_MANAGE'] == 'true' || $contextMenuData['MENU_CAN_DELETE'] == 'true') ? 'true' : 'false';
+		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($isLoggedIn || $contextMenuData['MENU_CAN_MANAGE'] == 'true' || $contextMenuData['MENU_CAN_DELETE'] == 'true') ? 'true' : 'false';
 		
 		$listnameData['LISTNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/list', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/listname', $listnameData);
 	}
@@ -710,6 +719,7 @@ class Dashboard {
 		if(!$clan) return false;
 		
 		$isClanOwner = $clan['clanOwner'] == $accountID; 
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$clannameData = $contextMenuData = [];
 		
@@ -720,11 +730,14 @@ class Dashboard {
 			
 		$clannameData['CLANNAME_ATTRIBUTES'] = $contextMenuData['MENU_NAME_ATTRIBUTES'] = 'style="color: #'.$clan['clanColor'].'; text-shadow: 0px 0px 20px #'.$clan['clanColor'].'61;"';
 		
-		$contextMenuData['MENU_CAN_MANAGE'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageClans")) ? 'true' : 'false';
+		$contextMenuData['MENU_ID'] = $clan['clanID'];
 		
-		$contextMenuData['MENU_SHOW_MANAGE_HR'] = $contextMenuData['MENU_CAN_MANAGE'] == 'true' ? 'true' : 'false';
+		$contextMenuData['MENU_CAN_MANAGE'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageClans")) ? 'true' : 'false';
+		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($isLoggedIn || $contextMenuData['MENU_CAN_MANAGE'] == 'true') ? 'true' : 'false';
 		
 		$clannameData['CLANNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/clan', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/clanname', $clannameData);
 	}
@@ -795,6 +808,8 @@ class Dashboard {
 		
 		$level['LEVEL_CONTEXT_MENU'] = self::renderTemplate('components/menus/level', $contextMenuData);
 		
+		$GLOBALS['core']['renderReportModal'] = true;
+		
 		return self::renderTemplate('components/level', $level);
 	}
 	
@@ -806,6 +821,7 @@ class Dashboard {
 		$contextMenuData = [];
 		$isPersonThemselves = $person['userID'] == $comment['userID'];
 		$isCreatorThemselves = (isset($comment['userID']) && $comment['userID'] == $comment['creatorUserID']) || (isset($comment['accountID']) && $comment['accountID'] == $comment['creatorAccountID']);
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$user = Library::getUserByID($comment['userID']);
 		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
@@ -844,9 +860,11 @@ class Dashboard {
 		$contextMenuData['MENU_CAN_DELETE'] = ($isPersonThemselves || Library::checkPermission($person, "gameDeleteComments")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
 		
-		$contextMenuData['MENU_SHOW_CONTEXT'] = ($contextMenuData['MENU_CAN_DELETE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+		$contextMenuData['MENU_SHOW_CONTEXT'] = ($isLoggedIn || $contextMenuData['MENU_CAN_DELETE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
 		
 		$comment['COMMENT_CONTEXT_MENU'] = self::renderTemplate('components/menus/comment', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 			
 		return self::renderTemplate('components/comment', $comment);
 	}
@@ -858,6 +876,7 @@ class Dashboard {
 		
 		$contextMenuData = [];
 		$isPersonThemselves = $person['userID'] == $accountPost['userID'];
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$user = Library::getUserByID($accountPost['userID']);
 		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
@@ -879,9 +898,11 @@ class Dashboard {
 		$contextMenuData['MENU_CAN_DELETE'] = ($isPersonThemselves || Library::checkPermission($person, "gameDeleteComments")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
 		
-		$contextMenuData['MENU_SHOW_CONTEXT'] = ($contextMenuData['MENU_CAN_DELETE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+		$contextMenuData['MENU_SHOW_CONTEXT'] = ($isLoggedIn || $contextMenuData['MENU_CAN_DELETE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
 		
 		$accountPost['POST_CONTEXT_MENU'] = self::renderTemplate('components/menus/post', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 			
 		return self::renderTemplate('components/post', $accountPost);
 	}
@@ -938,6 +959,7 @@ class Dashboard {
 		
 		$contextMenuData = [];
 		$isPersonThemselves = $person['accountID'] == $song['reuploadID'];
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$user = Library::getUserByAccountID($song['reuploadID']);
 		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
@@ -968,7 +990,11 @@ class Dashboard {
 		$contextMenuData['MENU_CAN_CHANGE'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageSongs")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
 		
+		$contextMenuData['MENU_SHOW_CONTEXT'] = ($isLoggedIn || $contextMenuData['MENU_CAN_CHANGE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+		
 		$song['SONG_CONTEXT_MENU'] = self::renderTemplate('components/menus/song', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/song', $song);
 	}
@@ -979,6 +1005,7 @@ class Dashboard {
 		
 		$contextMenuData = [];
 		$isPersonThemselves = $person['accountID'] == $sfx['reuploadID'];
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$user = Library::getUserByAccountID($sfx['reuploadID']);
 		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
@@ -1001,7 +1028,11 @@ class Dashboard {
 		$contextMenuData['MENU_CAN_CHANGE'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageSongs")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
 		
+		$contextMenuData['MENU_SHOW_CONTEXT'] = ($isLoggedIn || $contextMenuData['MENU_CAN_CHANGE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+		
 		$sfx['SFX_CONTEXT_MENU'] = self::renderTemplate('components/menus/sfx', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/sfx', $sfx);
 	}
@@ -1013,6 +1044,7 @@ class Dashboard {
 		
 		$contextMenuData = [];
 		$isPersonThemselves = $person['accountID'] == $list['accountID'];
+		$isLoggedIn = $person['accountID'] != 0;
 		
 		$user = Library::getUserByAccountID($list['accountID']);
 		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
@@ -1054,9 +1086,11 @@ class Dashboard {
 		$contextMenuData['MENU_CAN_MANAGE'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageLevels")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_DELETE'] = ($isPersonThemselves || Library::checkPermission($person, "gameDeleteLevel")) ? 'true' : 'false';
 		
-		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_MANAGE'] == 'true' || $contextMenuData['MENU_CAN_DELETE'] == 'true') ? 'true' : 'false';
+		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($isLoggedIn || $contextMenuData['MENU_CAN_MANAGE'] == 'true' || $contextMenuData['MENU_CAN_DELETE'] == 'true') ? 'true' : 'false';
 		
 		$list['LIST_CONTEXT_MENU'] = self::renderTemplate('components/menus/list', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/list', $list);
 	}
@@ -1185,6 +1219,8 @@ class Dashboard {
 		
 		$user['USER_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
 		
+		$GLOBALS['core']['renderReportModal'] = true;
+		
 		return self::renderTemplate('components/user', $user);
 	}
 	
@@ -1193,6 +1229,7 @@ class Dashboard {
 		require_once __DIR__."/../".$dbPath."incl/lib/mainLib.php";
 		
 		$isClanOwner = $person['accountID'] == $clan['clanOwner'];
+		$isLoggedIn = $person['accountID'] != 0;
 	
 		$ownerUser = Library::getUserByAccountID($clan['clanOwner']);
 		$ownerUserName = $ownerUser ? $ownerUser['userName'] : self::string("unknownPlayer");
@@ -1224,9 +1261,11 @@ class Dashboard {
 		$clan['CLAN_CAN_OPEN_SETTINGS'] = $contextMenuData['MENU_CAN_OPEN_SETTINGS'] = $canOpenSettings ? 'true' : 'false';
 		
 		$contextMenuData['MENU_ID'] = $clan['clanID'];
-		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true') ? 'true' : 'false';
+		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($isLoggedIn || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true') ? 'true' : 'false';
 		
 		$clan['CLAN_CONTEXT_MENU'] = self::renderTemplate('components/menus/clan', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/clan', $clan);
 	}

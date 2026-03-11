@@ -113,7 +113,7 @@ $customLibrary[] = [4, 'Song File Hub', 'https://api.songfilehub.com', 1];
 	
 	$convertSFXAPI[] = "link to converter";
 */
-$convertSFXAPI[] = "https://m336-audio.gcs.icu"; // Will update APIs below on new core release
+$convertSFXAPI[] = "https://m336-audio.gcs.skin"; // Will update APIs below on new core release
 //$convertSFXAPI[] = "https://niko.gcs.icu";
 //$convertSFXAPI[] = "https://lamb.gcs.icu";
 //$convertSFXAPI[] = "https://omori.gcs.icu";

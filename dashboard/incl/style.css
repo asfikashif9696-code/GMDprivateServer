@@ -561,7 +561,7 @@ form {
 	color: #c0c0c0;
 	
 	border: 1px solid #86868634;
-	border-radius: 5px;
+	border-radius: 10px;
 	
 	font-size: 20px;
 	
@@ -570,6 +570,10 @@ form {
 	outline: none;
 	
 	transition: 0.2s;
+}
+
+.inlineForm .inputStyle {
+	border-radius: 5px;
 }
 
 .inputColor {
@@ -2052,7 +2056,7 @@ nav [title]::after,
 	opacity: 0;
 	visibility: hidden;
 	
-	padding: 100px;
+	padding: 50px 100px;
 	box-sizing: border-box;
 	
 	position: fixed;
@@ -2236,6 +2240,11 @@ select:open::picker-icon {
 	overflow-y: scroll;
 	
 	transition: 0.2s;
+}
+
+.options.top {
+	top: initial;
+	bottom: calc(100% + 10px);
 }
 
 .options * {
@@ -3091,4 +3100,34 @@ a {
 
 .maintenanceDiv .nothingOnPageDiv {
 	width: max-content;
+}
+
+.interactiveBorderElement,
+.interactiveBorderInlineElement {
+	gap: 5px;
+}
+
+.interactiveBorderElement > *,
+.interactiveBorderInlineElement > * {
+	border-radius: 5px;
+}
+
+.interactiveBorderElement > *:first-child {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+.interactiveBorderElement > *:last-child {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.interactiveBorderInlineElement > *:first-child {
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+.interactiveBorderInlineElement > *:last-child {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
 }

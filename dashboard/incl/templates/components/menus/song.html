@@ -4,9 +4,14 @@
 		<text>%TEXT_editSong%</text>
 	</button>
 	
-	<button class="contextMenuButton" title="%TEXT_deleteSong%" type="button" href="browse/songs/%MENU_ID%/delete" dashboard-loader-type="box" dashboard-show="%MENU_CAN_CHANGE%" style="--button-color: #ff9999;">
+	<button class="contextMenuButton" title="%TEXT_deleteSong%" type="button" href="browse/songs/%MENU_ID%/delete" dashboard-loader-type="box" dashboard-show="%MENU_CAN_CHANGE%">
 		<i class="fa-solid fa-trash"></i>
 		<text>%TEXT_deleteSong%</text>
+	</button>
+	
+	<button class="contextMenuButton" title="%TEXT_reportSong%" type="button" dashboard-modal-button="reportModal" dashboard-modal-name="songID" dashboard-modal-value="%MENU_ID%" dashboard-show="%IS_LOGGED_IN%">
+		<i class="fa-solid fa-flag"></i>
+		<text>%TEXT_reportSong%</text>
 	</button>
 
 	<hr dashboard-show="%MENU_CAN_BAN%">
@@ -16,7 +21,7 @@
 		<text>%TEXT_banPerson%</text>
 	</button>
 
-	<hr>
+	<hr dashboard-show="%MENU_SHOW_CONTEXT%">
 	
 	<button class="contextMenuButton" title="%TEXT_downloadSong%" type="button" onclick="downloadSong('%MENU_SONG_AUTHOR%', '%MENU_SONG_NAME%', '%MENU_SONG_URL%')">
 		<i class="fa-solid fa-arrow-down"></i>

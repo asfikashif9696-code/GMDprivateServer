@@ -56,6 +56,10 @@ class Security {
 						return ["success" => false, "error" => LoginError::WrongCredentials, "accountID" => (string)$accountID, "IP" => $IP];
 					}
 					break;
+				default:
+					if($maintenanceMode) exit(CommonError::InvalidRequest);
+					
+					return ["success" => false, "error" => LoginError::WrongCredentials, "accountID" => (string)$accountID, "IP" => $IP];
 			}
 		}
 		
@@ -440,6 +444,15 @@ class Security {
 		
 		$updateUnregistered = $db->prepare("UPDATE udids SET udids = :udids WHERE userID = :userID");
 		$updateUnregistered->execute([':udids' => $udids, ':userID' => $userID]);
+		
+		return true;
+	}
+	
+	public static function clearUDIDsFromRegisteredAccount($userID) {
+		require __DIR__."/connection.php";
+		
+		$clearUDIDs = $db->prepare("UPDATE udids SET udids = '' WHERE userID = :userID");
+		$clearUDIDs->execute([':userID' => $userID]);
 		
 		return true;
 	}

@@ -104,6 +104,8 @@ if($_GET['id']) {
 	
 	$level['LEVEL_CAN_MANAGE'] = Library::checkPermission($person, "dashboardManageLevels") ? 'true' : 'false';
 	
+	$GLOBALS['core']['renderReportModal'] = true;
+	
 	$pageBase = '../../';
 	$level['LEVEL_IS_NOTHING_OPENED'] = 'true';
 	$level['LEVEL_ADDITIONAL_PAGE'] = '';
@@ -433,9 +435,6 @@ $dataArray = [
 	'NEXT_PAGE_BUTTON' => "getPage('@page=".($pageNumber + 1)."', 'list')",
 	'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'list')"
 ];
-
-$reportDataArray = [];
-$dataArray["ADDITIONAL_PAGE"] .= Dashboard::renderTemplate("components/report", $reportDataArray);
 
 $fullPage = Dashboard::renderTemplate("browse/levels", $dataArray);
 

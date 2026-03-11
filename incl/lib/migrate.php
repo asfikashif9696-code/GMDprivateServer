@@ -823,7 +823,15 @@ if(!$installed) {
 	
 	// Migrate table "reports"
 	$columnsToChange = [
-		['hostname', 'IP', 'varchar(255)', '']
+		['hostname', 'IP', 'varchar(255)', ''],
+		['levelID', 'itemID', 'int(11)', '0']
+	];
+	$columnsToAdd = [
+		['reportType', 'int(11)', '0', 'ID'],
+		['reportItem', 'int(11)', '0', 'reportType'],
+		['extraInfo', 'varchar(400)', '', 'itemID'],
+		['accountID', 'varchar(255)', '', 'extraInfo'],
+		['timestamp', 'int(11)', '0', 'IP']
 	];
 	
 	$reportsColumns = getTableColumns('reports');
@@ -836,6 +844,18 @@ if(!$installed) {
 		unset($reportsColumns[$column[0]]);
 		
 		$db->query("ALTER TABLE `reports` CHANGE `".$column[0]."` `".$column[1]."` ".$column[2]." NOT NULL DEFAULT '".$column[3]."'");
+	}
+	
+	foreach($columnsToAdd AS &$column) {
+		if(isset($reportsColumns[$column[0]])) {
+			if($reportsColumns[$column[0]] == $column[1]) continue;
+			
+			$db->query("ALTER TABLE `reports` CHANGE `".$column[0]."` `".$column[0]."` ".$column[1]." NOT NULL DEFAULT '".$column[2]."'");
+			
+			continue;
+		}
+		
+		$db->query("ALTER TABLE `reports` ADD `".$column[0]."` ".$column[1]." NOT NULL DEFAULT '".$column[2]."' AFTER `".$column[3]."`");
 	}
 	
 	// Migrate table "roleassign"
