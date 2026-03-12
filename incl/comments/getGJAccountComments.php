@@ -19,15 +19,28 @@ $commentsPage = $page * 10;
 $isBlocked = Library::isPersonBlocked($accountID, $targetAccountID);
 if($isBlocked) exit(CommonError::InvalidRequest);
 
+$targetUser = Library::getUserByID($targetUserID);
+$targetPerson = [
+	'accountID' => $targetUser['extID'],
+	'userID' => $targetUser['userID'],
+	'IP' => $targetUser['IP']
+];
+$targetUserAppearance = Library::getPersonCommentAppearance($targetPerson);
+
 $accountComments = Library::getAccountComments($person, $targetUserID, $commentsPage);
 $echoString = '';
 foreach($accountComments['comments'] AS &$accountComment) {
-	$timestamp = Library::makeTime($accountComment['timestamp']);
+	$extraTextArray = [];
+	
+	if(!empty($targetUserAppearance['commentsExtraText'])) $extraTextArray[] = Escape::gd($targetUserAppearance['commentsExtraText']);
+	if(!empty($accountComment['repliesCount'])) $extraTextArray[] = $accountComment['repliesCount'] > 1 ? $accountComment['repliesCount'].' replies' : $accountComment['repliesCount'].' reply';
+	
+	$timestamp = Library::makeTime($accountComment['timestamp'], $extraTextArray);
 	
 	$likes = $accountComment['likes'] - $accountComment['dislikes'];
 	$accountComment['comment'] = Escape::url_base64_encode((Escape::translit(trim(Escape::url_base64_decode($accountComment['comment']))) ?: '(Empty post)'));
 	
-	$echoString .= "2~".$accountComment["comment"]."~3~".$accountComment["userID"]."~4~".$likes."~5~0~7~".$accountComment["isSpam"]."~9~".$timestamp."~6~".$accountComment["commentID"]."|";
+	$echoString .= "2~".$accountComment["comment"]."~3~".$accountComment["userID"]."~4~".$likes."~7~".$accountComment["isSpam"]."~9~".$timestamp."~6~".$accountComment["commentID"]."|";
 }
 $echoString = rtrim($echoString, "|");
 exit($echoString."#".$accountComments['count'].":".$commentsPage.":10");

@@ -24,6 +24,24 @@
 	
 	--href-color: #93d7ff;
 	--href-shadow-color: color-mix(in srgb, var(--href-color) 38%, transparent);
+	--href-shadow: 0px 0px 20px var(--href-shadow-color);
+	
+	--content-color-14: #86868614;
+	--content-color-24: #86868624;
+	--content-color-34: #86868634;
+	--content-color-44: #86868644;
+	--content-color-54: #86868654;
+	--content-color-black: #00000055;
+	--content-color-gray: #12121275;
+	
+	--content-shadow: 0px 0px 20px 0px #86868620;
+	
+	--backdrop-filter-0: blur(0px);
+	--backdrop-filter-5: blur(5px);
+	--backdrop-filter-10: blur(10px);
+	
+	--transition-0-1: 0.1s;
+	--transition-0-2: 0.2s;
 }
 
 * {
@@ -102,7 +120,7 @@ nav {
 	
 	position: fixed;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	overflow-y: scroll;
 	gap: 10px;
@@ -138,11 +156,11 @@ nav button {
 
 	gap: 10px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 nav button.current {
-	background-color: #86868614;
+	background-color: var(--content-color-14);
 }
 
 nav button:has(img) {
@@ -152,7 +170,7 @@ nav button:has(img) {
 }
 
 nav button:hover {
-	background-color: #86868624;
+	background-color: var(--content-color-24);
 }
 
 nav button:not(.current):active {
@@ -191,7 +209,7 @@ nav button text {
 	overflow: hidden;
 	white-space: nowrap;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	width: 100%;
 
@@ -201,7 +219,7 @@ nav button text {
 }
 
 nav button .navbar-hide {
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 
 	pointer-events: none;
 }
@@ -241,7 +259,7 @@ body.hide nav button .navbar-hide {
 	justify-content: center;
 	padding: 50px 45px 50px 50px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	position: relative;
 	
@@ -302,8 +320,8 @@ body:has(.dashboard-loader:not(.hide)) footer {
 	height: 22px;
 	width: 250px;
 	
-	background: linear-gradient(90deg, #86868614 0%, #86868624 50%, #86868614 100%);
-	border: 1px solid #86868624;
+	background: linear-gradient(90deg, var(--content-color-14) 0%, var(--content-color-24) 50%, var(--content-color-14) 100%);
+	border: 1px solid var(--content-color-24);
 	background-size: 50%;
 	
 	padding: 10px 15px;
@@ -319,21 +337,21 @@ body:has(.dashboard-loader:not(.hide)) footer {
 	min-width: 35%;
 	min-height: 40%;
 	
-	background: linear-gradient(90deg, #86868614 0%, #86868624 50%, #86868614 100%);
+	background: linear-gradient(90deg, var(--content-color-14) 0%, var(--content-color-24) 50%, var(--content-color-14) 100%);
 	background-size: 50%;
 }
 
 .dashboard-page.skeleton .contentDiv {
 	min-height: 235px;
 	
-	background: linear-gradient(90deg, #86868614 0%, #86868624 50%, #86868614 100%);
+	background: linear-gradient(90deg, var(--content-color-14) 0%, var(--content-color-24) 50%, var(--content-color-14) 100%);
 	background-size: 50%;
 }
 
 .dashboard-page.skeleton .commentsDiv .contentDiv {
 	min-height: 140px;
 	
-	background: linear-gradient(90deg, #86868614 0%, #86868624 50%, #86868614 100%);
+	background: linear-gradient(90deg, var(--content-color-14) 0%, var(--content-color-24) 50%, var(--content-color-14) 100%);
 	background-size: 50%;
 }
 
@@ -341,7 +359,7 @@ body:has(.dashboard-loader:not(.hide)) footer {
 	min-height: 65px;
 	
 	background-color: transparent !important;
-	background: linear-gradient(90deg, #86868614 0%, #86868624 50%, #86868614 100%);
+	background: linear-gradient(90deg, var(--content-color-14) 0%, var(--content-color-24) 50%, var(--content-color-14) 100%);
 	background-size: 50%;
 }
 
@@ -384,7 +402,7 @@ footer {
 	
 	margin-left: 340px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 body.hide footer {
@@ -439,8 +457,8 @@ footer h4 span {
 }
 
 .box {
-	background-color: #86868614;
-	border: 1px solid #86868624;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 }
 
 .wideBox {
@@ -467,8 +485,8 @@ footer h4 span {
 	align-items: center;
 	justify-content: center;
 	
-	background-color: #86868624;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 	
 	padding: 10px 15px;
 	border-radius: 10px;
@@ -480,12 +498,19 @@ footer h4 span {
 	
 	width: 100%;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .button.short {
 	width: max-content;
 	height: max-content;
+}
+
+.button.small {
+	width: max-content;
+	height: max-content;
+	
+	padding: 7px 9px;
 }
 
 .levelStats.short {
@@ -494,8 +519,8 @@ footer h4 span {
 }
 
 .button:hover {
-	background-color: #86868634;
-	box-shadow: 0px 0px 20px 0px #86868620;
+	background-color: var(--content-color-34);
+	box-shadow: var(--content-shadow);
 }
 
 .button.error {
@@ -534,7 +559,7 @@ footer h4 span {
 	
 	background: #131313;
 	
-	transition: 0.1s;
+	transition: var(--transition-0-1);
 }
 
 .dashboard-loader i {
@@ -557,10 +582,10 @@ form {
 .inputStyle {
 	padding: 10px;
 	
-	background-color: #86868624;
+	background-color: var(--content-color-24);
 	color: #c0c0c0;
 	
-	border: 1px solid #86868634;
+	border: 1px solid var(--content-color-34);
 	border-radius: 10px;
 	
 	font-size: 20px;
@@ -569,7 +594,7 @@ form {
 	
 	outline: none;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .inlineForm .inputStyle {
@@ -585,9 +610,9 @@ form {
 	outline: none;
 	background: none;
 	border: 1px solid var(--href-shadow-color);
-	box-shadow: 0px 0px 20px var(--href-shadow-color);
+	box-shadow: var(--href-shadow);
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	padding: 0px;
 	
@@ -604,8 +629,8 @@ form {
 }
 
 .bordered {
-	background: #86868614 !important;
-	border: 1px solid #86868624 !important;
+	background: var(--content-color-14) !important;
+	border: 1px solid var(--content-color-24) !important;
 }
 
 .inputDiv {
@@ -648,12 +673,12 @@ form.empty-fields .select:has(input:not([dashboard-not-required]):placeholder-sh
 	border-radius: 500px !important;
 	
 	box-shadow: none !important;
-	background: #86868624 !important;
-	border: 1px solid #86868634;
+	background: var(--content-color-24) !important;
+	border: 1px solid var(--content-color-34);
 	
-	transition: 0.2s !important;
+	transition: var(--transition-0-2) !important;
 	
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	
 	display: flex !important;
 	align-items: baseline;
@@ -684,7 +709,7 @@ form.empty-fields .select:has(input:not([dashboard-not-required]):placeholder-sh
 	width: calc(100% - 20px);
 	max-height: 0px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	overflow: hidden;
 }
@@ -750,7 +775,7 @@ nav::-webkit-scrollbar,
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #86868614;
+	background-color: var(--content-color-14);
 	border-radius: 100px;
 }
 
@@ -856,8 +881,8 @@ nav::-webkit-scrollbar,
 	display: flex;
 	flex-direction: column;
 	
-	background-color: #86868614;
-	border: 1px solid #86868624;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 	
 	width: 100%;
 	
@@ -868,14 +893,19 @@ nav::-webkit-scrollbar,
 	
 	gap: 10px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
-.contentDiv:hover,
+.contentDiv.transparent {
+	background-color: transparent;
+	border: none;
+}
+
+.contentDiv:not(.transparent):hover,
 .levelPage .levelStats:not(.card) .levelStat:hover {
-	background-color: #86868624;
-	border: 1px solid #86868634;
-	box-shadow: 0px 0px 20px 0px #86868620;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
+	box-shadow: var(--content-shadow);
 }
 
 .levelTitle {
@@ -889,7 +919,7 @@ nav::-webkit-scrollbar,
 	font-size: 28px;
 	font-weight: 400;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .levelTitle[href] h2:active {
@@ -924,7 +954,8 @@ span.username {
 	font-weight: 700;
 }
 
-.levelTitle h2 img {
+.levelTitle h2 img,
+.contextMenuButton img {
 	max-width: 32px;
 	max-height: 32px;
 }
@@ -1024,7 +1055,7 @@ h1.username[href],
 	text-shadow: 0px 0px 20px var(--href-shadow-color);
 	font-weight: 700;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 [dashboard-copy]:hover {
@@ -1055,8 +1086,8 @@ h1.username[href],
 	padding: 10px;
 	border-radius: 10px;
 	
-	background-color: #86868624;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 }
 
 .contents {
@@ -1086,11 +1117,11 @@ h1.username[href],
 	
 	padding: 10px;
 
-	border: 1px solid #86868634;
-	background-color: #00000055;
+	border: 1px solid var(--content-color-34);
+	background-color: var(--content-color-black);
 	border-radius: 15px;
 	
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	
 	z-index: 3;
 }
@@ -1098,9 +1129,9 @@ h1.username[href],
 .pageButtons {
 	display: flex;
 	border-radius: 11px;
-	border: 1px solid #86868634;
+	border: 1px solid var(--content-color-34);
 	
-	background-color: #86868614;
+	background-color: var(--content-color-14);
 }
 
 .pageButton {
@@ -1116,15 +1147,15 @@ h1.username[href],
 	
 	background-color: transparent;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .pageButton i {
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .pageButton:not(:disabled):hover {
-	background-color: #86868624;
+	background-color: var(--content-color-24);
 }
 
 .pageButton:first-child {
@@ -1195,8 +1226,8 @@ h1.username[href],
 	border-radius: 15px;
 	max-width: 50%;
 	
-	background-color: #00000055;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-black);
+	border: 1px solid var(--content-color-34);
 	
 	text-align: right;
 	
@@ -1206,9 +1237,9 @@ h1.username[href],
 	right: 50px;
 	top: 50px;
 	
-	backdrop-filter: blur(10px);
+	backdrop-filter: var(--backdrop-filter-10);
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	opacity: 0;
 	pointer-events: none;
@@ -1225,8 +1256,8 @@ h1.username[href],
 	align-items: center;
 	justify-content: center;
 	
-	background-color: #86868624;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 	
 	padding: 20px;
 	border-radius: 10px;
@@ -1236,11 +1267,11 @@ h1.username[href],
 	
 	height: 100%;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .audioPlayerButton:hover {
-	background-color: #86868634;
+	background-color: var(--content-color-34);
 }
 
 .audioPlayerButton:active {
@@ -1275,8 +1306,8 @@ h1.username[href],
 	
 	background-size: 0% 100%;
 	background-repeat: no-repeat;
-	background-color: #86868634;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-34);
+	border: 1px solid var(--content-color-34);
 	
 	width: 100%;
 	
@@ -1315,8 +1346,8 @@ i[onclick],
 	padding: 15px;
 	border-radius: 5px;
 	
-	background-color: #86868614;
-	border: 1px solid #86868624;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 	
 	width: 100%;
 	
@@ -1324,7 +1355,7 @@ i[onclick],
 	
 	white-space: nowrap;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .levelPage .levelStats:not(.card) .levelStat:first-child {
@@ -1343,7 +1374,7 @@ i[onclick],
 }
 
 .levelPage .levelStats:not(.card) .levelStat.dashed:hover {
-	background-color: #86868614;
+	background-color: var(--content-color-14);
 }
 
 .levelPage .levelStat.several {
@@ -1391,7 +1422,7 @@ i[onclick],
 	
 	aspect-ratio: 1/1;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 
 }
 
@@ -1405,8 +1436,8 @@ i[onclick],
 	align-items: center;
 	justify-content: center;
 	
-	background-color: #86868614;
-	border: 1px solid #86868624;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 	
 	border-radius: 15px;
 	
@@ -1416,6 +1447,11 @@ i[onclick],
 	box-sizing: border-box;
 	
 	gap: 20px;
+}
+
+.nothingOnPageDiv.transparent {
+	background-color: transparent;
+	border: none;
 }
 
 .commentsDiv {
@@ -1502,8 +1538,8 @@ i[onclick],
 .modeButtons {
 	display: flex;
 	
-	background-color: #86868614;
-	border: 1px solid #86868624;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 	border-radius: 10px;
 }
 
@@ -1519,7 +1555,7 @@ i[onclick],
 	padding: 10px 15px;
 	border-radius: 0px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 
 }
 
@@ -1530,7 +1566,7 @@ i[onclick],
 .modeButtons button i {
 	font-size: 25px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .modeButtons button:active i {
@@ -1538,7 +1574,7 @@ i[onclick],
 }
 
 .modeButtons button:not(:disabled):hover {
-	background-color: #86868624 !important;
+	background-color: var(--content-color-24) !important;
 }
 
 .modeButtons button:first-child {
@@ -1651,7 +1687,7 @@ h1[dashboard-score="3"] {
 }
 
 .inlineForm .button:hover {
-	background-color: #86868624 !important;
+	background-color: var(--content-color-24) !important;
 }
 
 .inlineForm .button:active {
@@ -1683,18 +1719,18 @@ h1[title],
 	font-weight: 400;
 	text-align: center;
 	
-	background-color: #86868624;
-	border: 1px solid #86868634;
-	box-shadow: 0px 0px 20px 0px #86868620;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
+	box-shadow: var(--content-shadow);
 	
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	
 	border-radius: 15px;
 	
 	opacity: 0;
 	
 	padding: 10px 15px;
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	pointer-events: none;
 	
@@ -1745,14 +1781,14 @@ nav [title]::after,
 	padding: 10px 25px;
 	margin: 0px;
 	
-	background-color: #86868624;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 	
 	border-radius: 500px;
 	
 	height: max-content;
 	
-	transition: 0.1s;
+	transition: var(--transition-0-1);
 }
 
 .toggle::after {
@@ -1762,15 +1798,15 @@ nav [title]::after,
 	
 	padding: 15px;
 	
-	background-color: #86868644;
-	border: 1px solid #86868654;
+	background-color: var(--content-color-44);
+	border: 1px solid var(--content-color-54);
 	
 	border-radius: 500px;
 	
 	aspect-ratio: 1 / 1;
 	transform: translateX(-50%);
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .toggle:active::after,
@@ -1781,7 +1817,7 @@ nav [title]::after,
 
 .toggle:checked {
 	background-color: var(--href-shadow-color);
-	box-shadow: 0px 0px 20px 0px var(--href-shadow-color);
+	box-shadow: var(--href-shadow);
 }
 
 .toggle:checked::after {
@@ -1911,8 +1947,8 @@ nav [title]::after,
 	margin: 0px;
 	padding: 20px;
 	
-	background-color: #86868624;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 	
 	border-radius: 500px;
 	
@@ -1923,7 +1959,7 @@ nav [title]::after,
 
 .radio:checked {
 	background-color: var(--href-shadow-color);
-	box-shadow: 0px 0px 20px 0px var(--href-shadow-color);
+	box-shadow: var(--href-shadow);
 }
 
 .radio:checked::after {
@@ -1936,12 +1972,12 @@ nav [title]::after,
 	aspect-ratio: 1 / 1;
 	
 	background-color: var(--href-color);
-	border: 1px solid #86868654;
+	border: 1px solid var(--content-color-54);
 	
 	position: absolute;
 	border-radius: 500px;
 	
-	transition: 0.1s;
+	transition: var(--transition-0-1);
 	
 	opacity: 1;
 	
@@ -1960,7 +1996,7 @@ nav [title]::after,
 	
 	gap: 15px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .usernameDiv h1 {
@@ -2069,7 +2105,7 @@ nav [title]::after,
 	
 	overflow: scroll;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	z-index: 6;
 	
@@ -2091,10 +2127,10 @@ span.background {
 	
 	background: #000000a0;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	z-index: 6;
-	backdrop-filter: blur(0px);
+	backdrop-filter: var(--backdrop-filter-0);
 	
 	pointer-events: none;
 }
@@ -2102,6 +2138,9 @@ span.background {
 .modalPage .box {
 	min-width: 70%;
 	pointer-events: all;
+	
+	background: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 }
 
 .option {
@@ -2120,11 +2159,11 @@ span.background {
 	outline: none;
 	white-space: break-spaces;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .option:hover {
-	background: #86868624 !important;
+	background: var(--content-color-24) !important;
 }
 
 .option.hide,
@@ -2146,7 +2185,7 @@ select::picker-icon {
 	color: #c0c0c0;
 	
 	rotate: 270deg;
-	transition: 0.2s rotate;
+	transition: var(--transition-0-2) rotate;
 }
 
 select:open::picker-icon {
@@ -2160,12 +2199,12 @@ select:open::picker-icon {
 	
 	border-radius: 10px;
 	
-	background: #86868614;
-	border: 1px solid #86868624;
+	background: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 	
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 ::picker(select):popover-open {
@@ -2182,8 +2221,8 @@ select:open::picker-icon {
 	
 	padding: 10px;
 	
-	background: #86868624;
-	border: 1px solid #86868634;
+	background: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 	border-radius: 10px;
 	
 	font-size: 20px;
@@ -2197,7 +2236,7 @@ select:open::picker-icon {
 	
 	margin-top: 0px;
 
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .select input {
@@ -2231,7 +2270,7 @@ select:open::picker-icon {
 
 	background: #86868600;
 	border: 1px solid #86868600;
-	backdrop-filter: blur(0px);
+	backdrop-filter: var(--backdrop-filter-0);
 	
 	z-index: 5;
 	
@@ -2239,7 +2278,7 @@ select:open::picker-icon {
 	max-height: 250px;
 	overflow-y: scroll;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .options.top {
@@ -2249,7 +2288,7 @@ select:open::picker-icon {
 
 .options * {
 	opacity: 0;
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .options > :first-child,
@@ -2276,7 +2315,7 @@ i[dashboard-caret] {
 	
 	position: relative;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 i[dashboard-caret]::before {
@@ -2290,16 +2329,16 @@ i[dashboard-caret]::before {
 .select:has(.option:not(.hide)).show .options {
 	pointer-events: initial;
 	
-	background: #12121275;
-	border: 1px solid #86868634;
-	backdrop-filter: blur(5px);
+	background: var(--content-color-gray);
+	border: 1px solid var(--content-color-34);
+	backdrop-filter: var(--backdrop-filter-5);
 	
 	@starting-style {
 		pointer-events: none;
 	
 		background: #12121200;
 		border: 1px solid #86868600;
-		backdrop-filter: blur(0px);
+		backdrop-filter: var(--backdrop-filter-0);
 	}
 }
 
@@ -2335,19 +2374,14 @@ i[dashboard-caret]::before {
 
 body:has(.modalPage.show) span.background {
 	opacity: 1;
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	pointer-events: initial;
 	
 	@starting-style {
 		opacity: 0;
-		backdrop-filter: blur(0px);
+		backdrop-filter: var(--backdrop-filter-0);
 		pointer-events: none;
 	}
-}
-
-.modalPage .box {
-	background: #86868624;
-	border: 1px solid #86868634;
 }
 
 .difficultiesDiv {
@@ -2355,7 +2389,7 @@ body:has(.modalPage.show) span.background {
 	flex-wrap: wrap;
 	justify-content: center;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	width: 100%;
 }
@@ -2371,7 +2405,7 @@ body:has(.modalPage.show) span.background {
 	
 	width: max-content;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	position: relative;
 }
@@ -2391,7 +2425,7 @@ body:has(.modalPage.show) span.background {
 	opacity: 0.6;
 	filter: saturate(0.5);
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	pointer-events: none;
 }
@@ -2419,13 +2453,13 @@ body:has(.modalPage.show) span.background {
 	
 	padding: 10px;
 	
-	background: #86868624;
-	border: 1px solid #86868634;
+	background: var(--content-color-24);
+	border: 1px solid var(--content-color-34);
 	border-radius: 10px;
 	
 	font-size: 23px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .difficultiesDiv.buttons {
@@ -2437,7 +2471,7 @@ body:has(.modalPage.show) span.background {
 }
 
 .difficultiesDiv.buttons button:hover {
-	background: #86868634;
+	background: var(--content-color-34);
 }
 
 .difficultiesDiv.buttons button:active {
@@ -2509,8 +2543,8 @@ body:has(.modalPage.show) span.background {
 	padding: 15px;
 	gap: 10px;
 	
-	background-color: #00000055;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-black);
+	border: 1px solid var(--content-color-34);
 	
 	position: fixed;
 	bottom: 50px;
@@ -2518,9 +2552,9 @@ body:has(.modalPage.show) span.background {
 	white-space: nowrap;
 	
 	transform: translateY(200%);
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 }
 
 .saveSettingsButtons.show {
@@ -2538,8 +2572,8 @@ body:has(.modalPage.show) span.background {
 	
 	position: fixed;
 	
-	background-color: #00000055;
-	border: 1px solid #86868644;
+	background-color: var(--content-color-black);
+	border: 1px solid var(--content-color-44);
 	
 	padding: 10px;
 	border-radius: 15px;
@@ -2547,11 +2581,11 @@ body:has(.modalPage.show) span.background {
 	gap: 5px;
 	
 	width: max-content;
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	
 	z-index: 4;
 	
-	transition: opacity 0.2s;
+	transition: opacity var(--transition-0-2);
 }
 
 .contextMenuButton {
@@ -2574,7 +2608,7 @@ body:has(.modalPage.show) span.background {
 	
 	line-height: 1;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .contextMenuButton.contextMenuTitle {
@@ -2590,8 +2624,8 @@ body:has(.modalPage.show) span.background {
 }
 
 .contextMenuButton:hover {
-	background-color: #86868634;
-	border: 1px solid #86868644;
+	background-color: var(--content-color-34);
+	border: 1px solid var(--content-color-44);
 	
 	cursor: pointer;
 }
@@ -2661,8 +2695,8 @@ body:has(.modalPage.show) span.background {
 	align-items: center;
 	
 	width: max-content;
-	background-color: #86868624;
-	border: 1px solid #86868644;
+	background-color: var(--content-color-24);
+	border: 1px solid var(--content-color-44);
 	
 	padding: 10px;
 	border-radius: 10px;
@@ -2730,7 +2764,7 @@ hr {
 	
 	color: #FFFFFF99;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .emojisButton:hover,
@@ -2762,18 +2796,18 @@ hr {
 	
 	gap: 25px;
 	
-	background-color: #00000055;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-black);
+	border: 1px solid var(--content-color-34);
 	border-radius: 15px;
 	
 	max-width: 340px;
 	max-height: 250px;
 	
-	backdrop-filter: blur(5px);
+	backdrop-filter: var(--backdrop-filter-5);
 	
 	padding: 15px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	overflow: scroll;
 }
@@ -2832,7 +2866,7 @@ hr {
 	
 	width: max-content;
 
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .username:has(span[href]):active {
@@ -2891,7 +2925,7 @@ hr {
 	
 	pointer-events: none;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .levelDescription .username:active::after {
@@ -2929,17 +2963,17 @@ progress {
 	width: 100%;
 	height: 25px;
 	
-	background-color: #86868614;
-	border: 1px solid #86868634;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-34);
 	border-radius: 500px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 progress::-webkit-progress-bar {
 	background: transparent;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	border-radius: 500px;
 } 
@@ -2948,9 +2982,9 @@ progress::-webkit-progress-value {
 	border-radius: 500px;
 	
 	background-color: var(--href-color);
-	box-shadow: 0px 0px 20px var(--href-shadow-color);
+	box-shadow: var(--href-shadow);
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	
 	padding: 5px;
 }
@@ -2976,8 +3010,8 @@ progress::-webkit-progress-value {
 	flex-direction: column;
 	justify-content: flex-start;
 	
-	background-color: #86868614;
-	border: 1px solid #86868624;
+	background-color: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
 	
 	width: 100%;
 	max-height: 250px;
@@ -3032,14 +3066,14 @@ a {
 	padding: 0px;
 	
 	background-color: var(--href-shadow-color);
-	box-shadow: 0px 0px 20px var(--href-shadow-color);
+	box-shadow: var(--href-shadow);
 	
 	border-radius: 500px;
 	padding: 10px;
 	
 	height: max-content;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 }
 
 .toggleExtra::after {
@@ -3049,17 +3083,17 @@ a {
 	width: 40px;
 	
 	background-color: var(--href-color);
-	box-shadow: 0px 0px 20px var(--href-shadow-color);
-	border: 1px solid #86868634;
+	box-shadow: var(--href-shadow);
+	border: 1px solid var(--content-color-34);
 	
 	border-radius: 500px;
 	
 	aspect-ratio: 1 / 1;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
 	transform: translateX(calc((100% - 2.5px) * var(--toggle-value)));
 	
-	z-index: -1;
+	z-index: 1;
 }
 
 .toggleExtraOption {
@@ -3075,7 +3109,11 @@ a {
 	width: 40px;
 	height: 40px;
 	
-	transition: 0.2s;
+	transition: var(--transition-0-2);
+}
+
+.toggleExtraOption i {
+	z-index: 2;
 }
 
 .toggleExtraOption.checked {
@@ -3108,26 +3146,105 @@ a {
 }
 
 .interactiveBorderElement > *,
-.interactiveBorderInlineElement > * {
+.interactiveBorderInlineElement > *, 
+.interactiveBorderElement > .inlineForm:last-child input,
+.interactiveBorderElement > .inlineForm:last-child button {
 	border-radius: 5px;
 }
 
 .interactiveBorderElement > *:first-child {
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
 }
 
 .interactiveBorderElement > *:last-child {
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
 }
 
 .interactiveBorderInlineElement > *:first-child {
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
+	border-top-left-radius: 15px;
+	border-bottom-left-radius: 15px;
 }
 
 .interactiveBorderInlineElement > *:last-child {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
+	border-top-right-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+.replyLine {
+	width: 16px;
+	height: 16px;
+	
+	border-bottom: 1px solid #353535;
+	border-left: 1px solid #353535;
+	border-bottom-left-radius: 15px;
+}
+
+.replyLineBig {
+	width: 0px;
+	height: calc(100% - 80px);
+	
+	border-left: 1px solid #353535;
+	transform: translate(15.5px, -5px);
+}
+
+.noGap {
+	gap: 0px;
+}
+
+/*
+	Lowered motion stuff
+*/
+
+body.loweredMotion {
+	--href-shadow: none;
+	
+	--content-color-14: #1C1C1C;
+	--content-color-24: #232323;
+	--content-color-34: #2B2B2B;
+	--content-color-44: #323232;
+	--content-color-54: #3A3A3A;
+	--content-color-black: #0D0D0D;
+	--content-color-gray: #171717;
+	
+	--content-shadow: none;
+	
+	--backdrop-filter-0: none;
+	--backdrop-filter-5: none;
+	--backdrop-filter-10: none;
+	
+	--transition-0-1: none;
+	--transition-0-2: none;
+}
+
+body.loweredMotion .circles {
+	display: none;
+}
+
+body.loweredMotion .toastify {
+	border: 1px solid var(--content-color-34) !important;
+	background: var(--content-color-24) !important;
+	box-shadow: none !important;
+}
+
+body.loweredMotion .toastify.success {
+	border: 1px solid #468044 !important;
+	background: #234619 !important;
+	box-shadow: none !important;
+}
+
+body.loweredMotion .toastify.error {
+	border: 1px solid #804444;
+	background: #461919 !important;
+	box-shadow: none !important;
+}
+
+.modalPage .box {
+	background: var(--content-color-14);
+	border: 1px solid var(--content-color-24);
+}
+
+.skeletonAnimation {
+	animation: none;
 }

@@ -32,7 +32,12 @@
 		</h3>
 		
 		<div class="stats small">
-			<div class="commentStat" title="ID">
+			<button class="button small" title="%TEXT_replies%" href="profile/%POST_NAME%/posts/%commentID%" dashboard-show="%POST_SHOW_REPLIES%">
+				<i class="fa-solid fa-comment"></i> 
+				<text>%repliesCount%</text>
+			</button>
+			
+			<div class="commentStat" title="ID" dashboard-hide="%POST_SHOW_REPLIES%">
 				<i class="fa-solid fa-comment"></i> 
 				<text dashboard-copy>%commentID%</text>
 			</div>

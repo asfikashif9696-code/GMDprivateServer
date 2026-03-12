@@ -189,6 +189,9 @@ $language['errorReportTypeNotSpecified'] = 'Please specify a report type.';
 $language['errorAlreadyReported'] = 'You already reported this content.';
 $language['errorContentNotFound'] = 'This content wasn\'t found!';
 $language['errorReportTooFast'] = 'You\'re reporting content too fast!';
+$language['errorPostNotFound'] = 'Post wasn\'t found!';
+$language['errorCantReply'] = 'You can\'t reply on this post.';
+$language['errorCantDeleteReply'] = 'You can\'t delete this reply.';
 
 /* Success strings */
 $language['successCopiedText'] = 'Copied text!';
@@ -240,6 +243,8 @@ $language['successDeletedClan'] = 'You successfully deleted this clan!';
 $language['successTransferedClan'] = 'You successfully transfered this clan!';
 
 $language['successSubmittedReport'] = 'You successfully submitted a report!';
+$language['successUploadedReply'] = 'You successfully uploaded a reply!';
+$language['successDeletedReply'] = 'You successfully deleted this reply!';
 
 /* Page strings */
 $language['changeUsernameOld'] = 'Old username';
@@ -753,4 +758,22 @@ $language['reportPost'] = 'Report post';
 $language['reportUser'] = 'Report user';
 $language['reportSong'] = 'Report song';
 $language['reportSFX'] = 'Report SFX';
+
+$language['replies'] = 'Replies';
+$language['noReplies'] = 'No replies!';
+$language['emptyReply'] = 'Empty reply';
+$language['userComments'] = '%1$s\'s comments';
+$language['userPost'] = '%1$s\'s post';
+$language['userScores'] = '%1$s\'s scores';
+$language['userSongs'] = '%1$s\'s songs';
+$language['userSFXs'] = '%1$s\'s SFXs';
+$language['userBans'] = '%1$s\'s bans';
+$language['userSettings'] = '%1$s\'s settings';
+$language['deleteReply'] = 'Delete reply';
+$language['reportReply'] = 'Report reply';
+$language['copyReplyID'] = 'Copy reply ID';
+$language['replyToUserText'] = 'Reply to %1$s';
+$language['viewRepliedPost'] = 'View replied post';
+$language['loweredMotion'] = 'Lowered motion';
+$language['loweredMotionDesc'] = 'Lowers down effects and animations, gaining more performance to low-end devices';
 ?>

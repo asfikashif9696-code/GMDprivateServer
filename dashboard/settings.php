@@ -12,6 +12,8 @@ $accountClan = Library::getAccountClan($accountID);
 $dataArray = [
 	'SETTING_LANGUAGE_EN_DEFAULT' => $_COOKIE['lang'] == 'EN' ? 'true' : 'false',
 	'SETTING_LANGUAGE_RU_DEFAULT' => $_COOKIE['lang'] == 'RU' ? 'true' : 'false',
+	'LOWERED_MOTION_VALUE' => $_COOKIE['enableLoweredMotion'] ? 1 : 0,
+	'LOWERED_MOTION_REMOVE_CHECK' => !$_COOKIE['enableLoweredMotion'] ? 'checked' : '',
 	
 	'ACCOUNT_COLOR' => "color: rgb(".str_replace(",", " ", $personAppearance['commentColor']).")",
 	'CLAN_NAME' => $accountClan ? $accountClan['clanName'] : Dashboard::string('notInClan'),

@@ -69,13 +69,18 @@ foreach($comments['comments'] AS &$comment) {
 	elseif($comment['creatorRating'] && $showCreatorRating) $extraTextArray[] = $creatorRatingArray[$comment['creatorRating']];
 	
 	$comment['comment'] = Escape::translit(Escape::url_base64_decode($comment["comment"]));
-	$showLevelID = $displayLevelID ? $comment["levelID"] : Library::getFirstMentionedLevel($comment['comment']);
+	$showLevelID = $displayLevelID ? $comment["itemID"] : Library::getFirstMentionedLevel($comment['comment']);
 	$commentText = $gameVersion < 20 ? (trim(Escape::gd($comment["comment"])) ?: '(Empty comment)') : Escape::url_base64_encode(trim($comment["comment"]) ?: '(Empty comment)');
 	
 	$likes = $comment['likes'] - $comment['dislikes'];
 	
 	$user = Library::getUserByID($comment['userID']);
 	$user["userName"] = Library::makeClanUsername($user["userName"], $user["clanID"]);
+	
+	if(isset($comment['isReply']) && $comment['isReply']) {
+		$showLevelID = 0;
+		$extraTextArray[] = 'Reply to '.$comment['itemName'];
+	}
 	
 	if($binaryVersion > 31) {
 		$playerPerson = [
@@ -95,7 +100,9 @@ foreach($comments['comments'] AS &$comment) {
 		if(!$user["userName"]) $user["userName"] = 'Unknown user';
 		$usersString .=  $user["userID"].":".$user["userName"].":".$user["extID"]."|";
 	}
+	
 	$timestamp = Library::makeTime($comment['timestamp'], $extraTextArray);
+	
 	$commentsString .= ($showLevelID ? "1~".$showLevelID."~" : "")."2~".$commentText."~3~".$comment["userID"]."~4~".$likes."~5~0~7~".$comment["isSpam"]."~9~".$timestamp."~6~".$comment["commentID"]."~10~".$comment["percent"].$personString;
 	$commentsString .= "|";
 }

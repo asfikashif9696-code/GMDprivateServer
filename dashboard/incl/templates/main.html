@@ -40,6 +40,7 @@
 			window.converterAPIs = %CONVERTER_APIS%;
 			
 			localStorage.language = "%LANGUAGE%";
+			localStorage.enableLoweredMotion = "%LOWERED_MOTION%";
 		</script>
 		<style id="dashboardStyle">
 			:root {
@@ -292,7 +293,7 @@
 							<text>%CLAN_NAME%</text>
 						</button>
 						
-						<button title="%TEXT_settings%" type="button" href="settings" dashboard-loader-type="list">
+						<button title="%TEXT_settings%" type="button" href="profile/%USERNAME%/settings" dashboard-loader-type="settings">
 							<i class="fa-solid fa-gear"></i>
 							<text>%TEXT_settings%</text>
 						</button>

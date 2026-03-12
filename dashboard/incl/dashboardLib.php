@@ -51,7 +51,7 @@ class Dashboard {
 				'IP' => $IP
 			];
 			
-			setcookie('auth', '', 2147483647, '/');
+			setcookie('auth', '', 2147483647, '/', true, true);
 
 			Library::logAction($logPerson, Action::FailedLogin);
 			
@@ -74,7 +74,7 @@ class Dashboard {
 				'IP' => $IP
 			];
 			
-			setcookie('auth', '', 2147483647, '/');
+			setcookie('auth', '', 2147483647, '/', true, true);
 
 			Library::logAction($logPerson, Action::FailedLogin);
 			
@@ -466,6 +466,8 @@ class Dashboard {
 			}
 		}
 		
+		if(!isset($_COOKIE['enableLoweredMotion'])) setcookie("enableLoweredMotion", '0', 2147483647, "/");
+		
 		$mainPageData = [
 			'PAGE' => $templatePage,
 			
@@ -492,6 +494,7 @@ class Dashboard {
 			'CONVERTER_APIS' => json_encode($convertSFXAPI),
 			
 			'LANGUAGE' => Escape::latin_no_spaces($_COOKIE['lang'], 2) ?: "EN",
+			'LOWERED_MOTION' => Escape::number($_COOKIE['enableLoweredMotion']),
 			
 			'UPLOAD_SONG_PAGE_ENABLED' => strpos($songEnabled, '1') !== false || strpos($songEnabled, '2') !== false ? 'true' : 'false',
 			'UPLOAD_SFX_PAGE_ENABLED' => $sfxEnabled ? 'true' : 'false',
@@ -644,6 +647,8 @@ class Dashboard {
 			$contextMenuData['MENU_ACCOUNT_ID'] = $user['extID'];
 			$contextMenuData['MENU_USER_ID'] = $user['userID'];
 			
+			$contextMenuData['MENU_SHOW_REPLY_BUTTON'] = 'false';
+			
 			$usernameData['USERNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
 		}
 		
@@ -742,6 +747,60 @@ class Dashboard {
 		return self::renderTemplate('components/clanname', $clannameData);
 	}
 	
+	public static function getReplyString($person, $accountID, $postID, $userName) {
+		global $dbPath;
+		require_once __DIR__."/../".$dbPath."incl/lib/mainLib.php";
+		
+		$isPersonThemselves = $person['accountID'] == $accountID;
+		$isLoggedIn = $person['accountID'] != 0;
+		if(!$userName) $userName = self::string("unknownPlayer");
+		
+		$replyNameData = $contextMenuData = [];
+		
+		$contextMenuData['MENU_SHOW_NAME'] = 'true';
+		
+		$replyNameData['REPLYNAME_ID'] = $contextMenuData['MENU_ID'] = (int)$postID;
+		$replyNameData['REPLYNAME_NAME'] = $contextMenuData['MENU_NAME'] = htmlspecialchars($userName);
+		$replyNameData['REPLYNAME_TITLE'] = sprintf(self::string('replyToUserText'), $replyNameData['REPLYNAME_NAME']);
+			
+		$replyNameData['REPLYNAME_ATTRIBUTES'] = $contextMenuData['MENU_NAME_ATTRIBUTES'] = !$postID ? 'dashboard-remove="href title"' : '';
+		
+		$user = Library::getUserByAccountID($accountID);
+		
+		$userMetadata = self::getUserMetadata($user);
+		$mainIcon = $userMetadata['mainIcon'];
+		$userAppearance = $userMetadata['userAppearance'];
+		$badgeNumber = $userAppearance['modBadgeLevel'];
+		$attributes = $userMetadata['userAttributes'];
+		
+		$contextMenuData['MENU_NAME'] = htmlspecialchars($userName);
+		$contextMenuData['MENU_PFP'] = $mainIcon;
+			
+		$contextMenuData['MENU_NAME_ATTRIBUTES'] = $attributes;
+			
+		$contextMenuData['MENU_HAS_BADGE'] = (int)$badgeNumber ? 'true' : 'false';
+		$contextMenuData['MENU_BADGE_NUMBER'] = (int)$badgeNumber;
+		$contextMenuData['MENU_ROLE'] = htmlspecialchars($userAppearance['roleName']);
+			
+		$contextMenuData['MENU_CAN_SEE_BANS'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
+		$contextMenuData['MENU_CAN_OPEN_SETTINGS'] = ($isPersonThemselves || Library::checkPermission($person, "dashboardManageAccounts")) ? 'true' : 'false';
+		$contextMenuData['MENU_CAN_BLOCK'] = ($person['accountID'] != 0 && !$isPersonThemselves) ? 'true' : 'false';
+		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
+		
+		$contextMenuData['MENU_SHOW_MANAGE_HR'] = ($contextMenuData['MENU_CAN_SEE_BANS'] == 'true' || $contextMenuData['MENU_CAN_OPEN_SETTINGS'] == 'true' || $contextMenuData['MENU_CAN_BLOCK'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+		
+		$contextMenuData['MENU_ACCOUNT_ID'] = $user['extID'];
+		$contextMenuData['MENU_USER_ID'] = $user['userID'];
+		
+		$contextMenuData['MENU_SHOW_REPLY_BUTTON'] = 'true';
+		
+		$replyNameData['REPLYNAME_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
+		
+		return self::renderTemplate('components/replyname', $replyNameData);
+	}
+	
 	public static function renderLevelCard($level, $person, $showPrivacy = true) {
 		global $dbPath;
 		require_once __DIR__."/../".$dbPath."incl/lib/mainLib.php";
@@ -831,7 +890,17 @@ class Dashboard {
 		if(!$comment['itemID']) $comment['itemID'] = $comment['levelID'];
 		
 		if($showLevel) {
-			$comment['COMMENT_LEVEL_TEXT'] = $comment['itemID'] >= 0 ? self::getLevelString($person, $comment['creatorAccountID'], $comment['itemID'], $comment['itemName']) : self::getListString($person, $comment['creatorAccountID'], $comment['itemID'] * -1, $comment['itemName']);
+			switch(true) {
+				case isset($comment['isReply']) && $comment['isReply']:
+					$comment['COMMENT_LEVEL_TEXT'] = self::getReplyString($person, $comment['creatorAccountID'], $comment['itemID'], $comment['itemName']);
+					break;
+				case $comment['itemID'] >= 0:
+					$comment['COMMENT_LEVEL_TEXT'] = self::getLevelString($person, $comment['creatorAccountID'], $comment['itemID'], $comment['itemName']);
+					break;
+				default:
+					$comment['COMMENT_LEVEL_TEXT'] = self::getListString($person, $comment['creatorAccountID'], $comment['itemID'] * -1, $comment['itemName']);
+					break;
+			}
 			$comment['COMMENT_SHOW_LEVEL'] = 'true';
 		} else $comment['COMMENT_SHOW_LEVEL'] = 'false';
 		
@@ -885,15 +954,18 @@ class Dashboard {
 		
 		$accountPost['POST_USER'] = self::getUsernameString($person, $user, $userName, $userMetadata['mainIcon'], $userMetadata['userAppearance'], $userMetadata['userAttributes']);
 		$accountPost['POST_CONTENT'] = self::parseMentions($person, htmlspecialchars(Escape::url_base64_decode($accountPost['comment']))) ?: "<i>".self::string('emptyPost')."</i>";
+		$accountPost['POST_NAME'] = $contextMenuData['MENU_NAME'] = htmlspecialchars($userName);
 		
+		$commentRating = isset($accountPost['commentRating']) ? $accountPost['commentRating'] : $commentsRatings[$accountPost['commentID']];
 		$accountPost['POST_PERSON_LIKED'] = $accountPost['POST_PERSON_DISLIKED'] = 'false';
-		if($commentsRatings[$accountPost['commentID']]) {
-			if($commentsRatings[$accountPost['commentID']] == 1) $accountPost['POST_PERSON_LIKED'] = 'true';
+		if($commentRating) {
+			if($commentRating == 1) $accountPost['POST_PERSON_LIKED'] = 'true';
 			else $accountPost['POST_PERSON_DISLIKED'] = 'true';
 		}
 		
+		$accountPost['POST_SHOW_REPLIES'] = $user && isset($accountPost['repliesCount']) ? 'true' : 'false';
+		
 		$contextMenuData['MENU_ID'] = $accountPost['commentID'];
-		$contextMenuData['MENU_NAME'] = htmlspecialchars($userName);
 		
 		$contextMenuData['MENU_CAN_DELETE'] = ($isPersonThemselves || Library::checkPermission($person, "gameDeleteComments")) ? 'true' : 'false';
 		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
@@ -1217,6 +1289,8 @@ class Dashboard {
 		$contextMenuData['MENU_ACCOUNT_ID'] = $user['extID'];
 		$contextMenuData['MENU_USER_ID'] = $user['userID'];
 		
+		$contextMenuData['MENU_SHOW_REPLY_BUTTON'] = 'false';
+		
 		$user['USER_CONTEXT_MENU'] = self::renderTemplate('components/menus/user', $contextMenuData);
 		
 		$GLOBALS['core']['renderReportModal'] = true;
@@ -1268,6 +1342,38 @@ class Dashboard {
 		$GLOBALS['core']['renderReportModal'] = true;
 		
 		return self::renderTemplate('components/clan', $clan);
+	}
+	
+	public static function renderReplyCard($reply, $person) {
+		global $dbPath;
+		require_once __DIR__."/../".$dbPath."incl/lib/mainLib.php";
+		require_once __DIR__."/../".$dbPath."incl/lib/exploitPatch.php";
+		
+		$contextMenuData = [];
+		$isPersonThemselves = $person['userID'] == $reply['userID'];
+		$isLoggedIn = $person['accountID'] != 0;
+		
+		$user = Library::getUserByID($reply['userID']);
+		$userName = $user ? $user['userName'] : self::string("unknownPlayer");
+		
+		$userMetadata = self::getUserMetadata($user);
+		
+		$reply['REPLY_USER'] = self::getUsernameString($person, $user, $userName, $userMetadata['mainIcon'], $userMetadata['userAppearance'], $userMetadata['userAttributes']);
+		$reply['REPLY_CONTENT'] = self::parseMentions($person, htmlspecialchars(Escape::url_base64_decode($reply['body']))) ?: "<i>".self::string('emptyReply')."</i>";
+		$reply['REPLY_NAME'] = $contextMenuData['MENU_NAME'] = htmlspecialchars($userName);
+		
+		$contextMenuData['MENU_ID'] = $reply['replyID'];
+		
+		$contextMenuData['MENU_CAN_DELETE'] = ($isPersonThemselves || Library::checkPermission($person, "gameDeleteComments")) ? 'true' : 'false';
+		$contextMenuData['MENU_CAN_BAN'] = (!$isPersonThemselves && Library::checkPermission($person, "dashboardModeratorTools")) ? 'true' : 'false';
+		
+		$contextMenuData['MENU_SHOW_CONTEXT'] = ($isLoggedIn || $contextMenuData['MENU_CAN_DELETE'] == 'true' || $contextMenuData['MENU_CAN_BAN'] == 'true') ? 'true' : 'false';
+		
+		$reply['REPLY_CONTEXT_MENU'] = self::renderTemplate('components/menus/reply', $contextMenuData);
+		
+		$GLOBALS['core']['renderReportModal'] = true;
+			
+		return self::renderTemplate('components/reply', $reply);
 	}
 }
 ?>

@@ -1,0 +1,55 @@
+<div class="horisontal" dashboard-page-buttons>
+	<div class="pageDiv">
+		<p>%POST_PAGE_TEXT%</p>
+		<div class="pageButtons">
+			<button dashboard-disable="%IS_FIRST_PAGE%" class="pageButton" type="button" onclick="%FIRST_PAGE_BUTTON%">
+				<i class="fa-solid fa-backward"></i>
+			</button>
+			
+			<button dashboard-disable="%IS_FIRST_PAGE%" class="pageButton" type="button" onclick="%PREVIOUS_PAGE_BUTTON%">
+				<i class="fa-solid fa-chevron-left"></i>
+			</button>
+			
+			<button dashboard-disable="%IS_LAST_PAGE%" class="pageButton" type="button" onclick="%NEXT_PAGE_BUTTON%">
+				<i class="fa-solid fa-chevron-right"></i>
+			</button>
+			
+			<button dashboard-disable="%IS_LAST_PAGE%" class="pageButton" type="button" onclick="%LAST_PAGE_BUTTON%">
+				<i class="fa-solid fa-forward"></i>
+			</button>
+		</div>
+	</div>
+</div>
+
+<div class="vertical interactiveBorderElement">
+	%POST_ORIGINAL_POST_CARD%
+
+	<form onsubmit="return false;" class="inlineForm" name="uploadReplyForm" autocomplete="off" dashboard-show="%PROFILE_CAN_REPLY%">
+		<div class="emojisInput" dashboard-emojis-div>
+			<input dashboard-emoji-input class="inputStyle bordered" type="text" name="comment" placeholder="%TEXT_writeSomething%" maxlength="%PROFILE_MAX_COMMENT_LENGTH%" />
+			<input type="hidden" name="postID" value="%POST_ID%" />
+			
+			<button class="eyeButton emojisButton" onclick="toggleEmojisDiv()">
+				<i class="fa-solid fa-face-smile-beam"></i>
+			</button>
+			
+			<div class="box emojisDiv">
+				%POST_EMOJIS_DIV%
+			</div>
+		</div>
+		
+		<button dashboard-submit class="button bordered" type="button"onclick="postPage('manage/uploadReply', 'uploadReplyForm', 'settings')"><i class="fa-solid fa-paper-plane"></i></button>
+	</form>
+</div>
+
+<div class="nothingOnPageDiv transparent" dashboard-show="%PROFILE_NO_REPLIES%">
+	<i class="fa-solid fa-comment-slash nothing-icon"></i>
+	<h1>%TEXT_noReplies%</h1>
+</div>
+
+<div class="horisontal noGap">
+	<span class="replyLineBig"></span>
+	<div class="vertical">
+		%ADDITIONAL_PAGE%
+	</div>
+</div>

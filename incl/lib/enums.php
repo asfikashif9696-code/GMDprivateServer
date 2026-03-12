@@ -129,7 +129,7 @@ class RatingItem {
 	const List = 4;
 }
 
-class Action { // Last action ID is 75
+class Action { // Last action ID is 79
 	const AccountRegister = 1;
 	const UserCreate = 51;
 	
@@ -165,6 +165,9 @@ class Action { // Last action ID is 75
 	
 	const ClanCommentUpload = 60;
 	const ClanCommentDeletion = 61;
+	
+	const AccountCommentReplyUpload = 78;
+	const AccountCommentReplyDeletion = 79;
 	
 	const ListUpload = 17;
 	const ListChange = 18;
@@ -210,6 +213,7 @@ class Action { // Last action ID is 75
 	const FilterRateLimit = 56;
 	const AccountBackupRateLimit = 58;
 	const AudioUploadRateLimit = 68;
+	const ItemReportRateLimit = 77;
 	
 	const SongUpload = 62;
 	const SongChange = 64;
@@ -228,12 +232,14 @@ class Action { // Last action ID is 75
 	const ClanDeletion = 74;
 	const ClanTransfer = 75;
 	
+	const ItemReport = 76;
+	
 	// Unused
 	const LevelReport = 20;
 	const LevelDescriptionChange = 21;
 }
 
-class ModeratorAction { // Last action ID is 64
+class ModeratorAction { // Last action ID is 65
 	const LevelRate = 1;
 	const LevelDailySet = 5;
 	const LevelDeletion = 6;
@@ -297,6 +303,7 @@ class ModeratorAction { // Last action ID is 64
 	const AccountCommentDeletion = 55;
 	const CommentDeletion = 56;
 	const ClanCommentDeletion = 57;
+	const AccountCommentReplyDeletion = 65;
 	
 	const ClanCreation = 61;
 	const ClanChange = 62;
@@ -355,6 +362,7 @@ class RateLimit {
 	const ACEExploit = 6;
 	const AccountBackup = 7;
 	const AudioUpload = 8;
+	const ItemReport = 9;
 }
 
 class ReportType {

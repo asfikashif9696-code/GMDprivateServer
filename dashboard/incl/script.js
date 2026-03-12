@@ -142,7 +142,11 @@ function changePage(response, href, loaderType = false) {
 		if(!href.length) href = baseURL.pathname;
 		if(loaderType) history.pushState(null, null, href);
 		
-		const newPageScript = newPageBody.querySelector("#pageScript");
+		const newPageScript = newPageBody.getElementById("pageScript");
+		
+		const reportModal = newPageBody.getElementById("reportModal");
+		const oldReportModal = document.getElementById("reportModal");
+		if(oldReportModal != null) oldReportModal.remove();
 		
 		oldPage.replaceWith(newPage);
 		dashboardBody.scroll(0, 0);
@@ -157,6 +161,7 @@ function changePage(response, href, loaderType = false) {
 			eval(newPageScript.textContent);
 			newPageScript.remove();
 		}
+		if(reportModal != null) document.querySelector("body").appendChild(reportModal);
 		
 		dashboardBody = document.getElementById("dashboard-body");
 		dashboardBase = document.querySelector("base");
@@ -261,6 +266,9 @@ async function showToast(toastIcon, toastText, toastStyle) {
 }
 
 async function updatePage() {
+	if(localStorage.enableLoweredMotion == "1") document.querySelector("body").classList.add("loweredMotion");
+	else document.querySelector("body").classList.remove("loweredMotion");
+	
 	for(const element of document.querySelectorAll("[dashboard-hide=true]")) element.remove();
 	for(const element of document.querySelectorAll("[dashboard-show=false]")) element.remove();
 	

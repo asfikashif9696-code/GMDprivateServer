@@ -88,8 +88,8 @@ $vpns['vpn'] = 'https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/v
 	-- SECURITY --
 	
 
-	$rateLimitBanMultiplier — if someone reached rate limit and exceeded RATE LIMIT DELAY * Multiplier, ban their IP address
-	$rateLimitBanTime — for how many seconds IP should be banned
+	$rateLimitBanMultiplier — if someone reached rate limit and exceeded RATE LIMIT DELAY * Multiplier, ban them
+	$rateLimitBanTime — for how many seconds person should be banned
 	
 	$maxLoginTries — maximum amount of login tries per hour
 	$maxAccountsFromIP — maximum amount of accounts can be created from one IP
@@ -149,6 +149,8 @@ $vpns['vpn'] = 'https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/v
 		0 — turned off
 	$uploadAudioDelay — if last song/SFX was uploaded X seconds ago, new one can't be uploaded
 		0 — turned off
+	$reportItemDelay — if last content report was submitted X seconds ago, new one can't be submitted
+		0 — turned off
 	
 	$maxBackupFileSize — maximum size of backup, that can be uploaded to GDPS
 	
@@ -161,7 +163,7 @@ $vpns['vpn'] = 'https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/v
 	
 	
 	Filter will disallow content, if it has banned word in it
-	Whitelist will disallow content, if it has banned word, but doesn't have whitelisted word in it
+	Whitelist will allow content, if the word is both in filter and whitelist
 	
 	$filterUsernames — method of filtering usernames:
 		0 — disabled
@@ -235,6 +237,7 @@ $accountsRegisterDelay = 5;
 $usersCreateDelay = 10;
 $backupAccountDelay = 10;
 $uploadAudioDelay = 30;
+$reportItemDelay = 10;
 
 $maxBackupFileSize = 33554432;
 

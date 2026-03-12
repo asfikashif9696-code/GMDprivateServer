@@ -326,7 +326,7 @@ class Library {
 		$commentsRatings = $commentsIDs = [];
 		$commentsIDsString = "";
 
-		$accountComments = $db->prepare("SELECT * FROM acccomments WHERE userID = :userID ".($mode ? 'ORDER BY '.$mode.' DESC' : '')." LIMIT 10 OFFSET ".$commentsPage);
+		$accountComments = $db->prepare("SELECT *, (SELECT count(*) AS count FROM replies WHERE replies.commentID = acccomments.commentID) AS repliesCount FROM acccomments WHERE userID = :userID ".($mode ? 'ORDER BY '.$mode.' DESC' : '')." LIMIT 10 OFFSET ".$commentsPage);
 		$accountComments->execute([':userID' => $userID]);
 		$accountComments = $accountComments->fetchAll();
 		
@@ -351,6 +351,30 @@ class Library {
 		$accountCommentsCount = $accountCommentsCount->fetchColumn();
 		
 		return ["comments" => $accountComments, "ratings" => $commentsRatings, "count" => $accountCommentsCount];
+	}
+	
+	public static function getAccountComment($person, $postID) {
+		require __DIR__."/connection.php";
+		
+		$accountID = $person["accountID"];
+		$IP = self::convertIPForSearching($person["IP"], true);
+		
+		$commentsRatings = $commentsIDs = [];
+		$commentsIDsString = "";
+
+		$accountComment = $db->prepare("SELECT *, (SELECT count(*) AS count FROM replies WHERE replies.commentID = acccomments.commentID) AS repliesCount FROM acccomments WHERE commentID = :postID");
+		$accountComment->execute([':postID' => $postID]);
+		$accountComment = $accountComment->fetch();
+		
+		if($accountID != 0 && $person["userID"] != 0) {
+			$commentsRating = $db->prepare("SELECT IF(isLike = 1, 1, -1) AS rating FROM actions_likes WHERE itemID = :postID AND (accountID = :accountID OR IP REGEXP CONCAT('(', :IP, '.*)')) AND type = 3 GROUP BY itemID ORDER BY timestamp DESC");
+			$commentsRating->execute([':postID' => $postID, ':accountID' => $accountID, ':IP' => $IP]);
+			$commentsRating = $commentsRating->fetchColumn();
+			
+			$accountComment['commentRating'] = $commentsRating;
+		}
+		
+		return $accountComment;
 	}
 	
 	public static function uploadAccountComment($person, $comment) {
@@ -437,13 +461,16 @@ class Library {
 		$commentsRatings = $commentsIDs = [];
 		$commentsIDsString = "";
 		
-		$comments = $db->prepare("SELECT * FROM comments
-			JOIN (
-				(SELECT levelID AS itemID, levelName COLLATE utf8mb3_unicode_ci AS itemName, extID AS creatorAccountID FROM levels WHERE levels.unlisted = 0 AND levels.unlisted2 = 0 AND levels.isDeleted = 0)
-				UNION
-				(SELECT listID * -1 AS itemID, listName COLLATE utf8mb3_unicode_ci AS itemName, accountID AS creatorAccountID FROM lists WHERE lists.unlisted = 0)
-			) items ON comments.levelID = items.itemID
-			WHERE comments.userID = :userID ORDER BY ".$sortMode." DESC LIMIT ".$count." OFFSET ".$pageOffset);
+		$comments = $db->prepare("SELECT * FROM (
+				(
+					SELECT commentID, itemID, itemName, userID, creatorAccountID, comment, isReply, likes, dislikes, percent, isSpam, creatorRating, timestamp FROM comments JOIN (
+						(SELECT levelID AS itemID, levelName COLLATE utf8mb3_unicode_ci AS itemName, extID AS creatorAccountID, 0 AS isReply FROM levels WHERE levels.unlisted = 0 AND levels.unlisted2 = 0 AND levels.isDeleted = 0)
+						UNION (SELECT listID * -1 AS itemID, listName COLLATE utf8mb3_unicode_ci AS itemName, accountID AS creatorAccountID, 0 AS isReply FROM lists WHERE lists.unlisted = 0)
+					) items ON comments.levelID = items.itemID
+				)
+				UNION (SELECT replyID AS commentID, replies.commentID AS itemID, commentUser.userName AS itemName, users.userID, accountID AS creatorAuthorID, body AS comment, 1 AS isReply, 0 AS likes, 0 AS dislikes, 0 AS percent, 0 AS isSpam, 0 AS creatorRating, replies.timestamp FROM replies INNER JOIN users ON users.extID = replies.accountID INNER JOIN acccomments ON acccomments.commentID = replies.commentID INNER JOIN users AS commentUser ON acccomments.userID = commentUser.userID)
+			) comments
+			WHERE userID = :userID ORDER BY ".$sortMode." DESC LIMIT ".$count." OFFSET ".$pageOffset);
 		$comments->execute([':userID' => $userID]);
 		$comments = $comments->fetchAll();
 		
@@ -463,13 +490,16 @@ class Library {
 			}
 		}
 		
-		$commentsCount = $db->prepare("SELECT count(*) FROM comments
-			JOIN (
-				(SELECT levelID AS itemID, levelName COLLATE utf8mb3_unicode_ci AS itemName, extID AS creatorAccountID FROM levels WHERE levels.unlisted = 0 AND levels.unlisted2 = 0 AND levels.isDeleted = 0)
-				UNION
-				(SELECT listID AS itemID, listName COLLATE utf8mb3_unicode_ci AS itemName, accountID AS creatorAccountID FROM lists WHERE lists.unlisted = 0)
-			) items ON comments.levelID = items.itemID
-			WHERE comments.userID = :userID");
+		$commentsCount = $db->prepare("SELECT count(*) FROM (
+				(
+					SELECT commentID, itemID, itemName, userID, creatorAccountID, comment, isReply, likes, dislikes, percent, isSpam, creatorRating, timestamp FROM comments JOIN (
+						(SELECT levelID AS itemID, levelName COLLATE utf8mb3_unicode_ci AS itemName, extID AS creatorAccountID, 0 AS isReply FROM levels WHERE levels.unlisted = 0 AND levels.unlisted2 = 0 AND levels.isDeleted = 0)
+						UNION (SELECT listID * -1 AS itemID, listName COLLATE utf8mb3_unicode_ci AS itemName, accountID AS creatorAccountID, 0 AS isReply FROM lists WHERE lists.unlisted = 0)
+					) items ON comments.levelID = items.itemID
+				)
+				UNION (SELECT replyID AS commentID, replies.commentID AS itemID, users.userName AS itemName, users.userID, accountID AS creatorAuthorID, body AS comment, 1 AS isReply, 0 AS likes, 0 AS dislikes, 0 AS percent, 0 AS isSpam, 0 AS creatorRating, replies.timestamp FROM replies INNER JOIN users ON users.extID = replies.accountID INNER JOIN acccomments ON acccomments.commentID = replies.commentID)
+			) comments
+			WHERE userID = :userID");
 		$commentsCount->execute([':userID' => $userID]);
 		$commentsCount = $commentsCount->fetchColumn();
 		
@@ -1665,14 +1695,18 @@ class Library {
 		
 		$canSeeCommentHistory = self::canSeeCommentsHistory($person, $userID);
 		if($canSeeCommentHistory) {		
-			$levelsCommentsCount = $db->prepare("SELECT count(*) FROM users INNER JOIN comments ON comments.userID = users.userID INNER JOIN levels ON levels.levelID = comments.levelID WHERE users.userID = :userID AND levels.unlisted = 0");
+			$levelsCommentsCount = $db->prepare("SELECT count(*) FROM users INNER JOIN comments ON comments.userID = users.userID INNER JOIN levels ON levels.levelID = comments.levelID WHERE users.userID = :userID AND levels.unlisted = 0 AND levels.isDeleted = 0");
 			$levelsCommentsCount->execute([':userID' => $userID]);
 			$levelsCommentsCount = $levelsCommentsCount->fetchColumn();
 			
 			$listsCommentsCount = $db->prepare("SELECT count(*) FROM users INNER JOIN comments ON comments.userID = users.userID INNER JOIN lists ON lists.listID = comments.levelID * -1 WHERE users.userID = :userID AND lists.unlisted = 0");
 			$listsCommentsCount->execute([':userID' => $userID]);
 			$listsCommentsCount = $listsCommentsCount->fetchColumn();
-		} else $levelsCommentsCount = $listsCommentsCount = 0;
+			
+			$postRepliesCount = $db->prepare("SELECT count(*) FROM users INNER JOIN replies ON replies.accountID = users.extID INNER JOIN acccomments ON replies.commentID = acccomments.commentID INNER JOIN users AS commentUser ON acccomments.userID = commentUser.userID WHERE users.userID = :userID");
+			$postRepliesCount->execute([':userID' => $userID]);
+			$postRepliesCount = $postRepliesCount->fetchColumn();
+		} else $levelsCommentsCount = $listsCommentsCount = $postRepliesCount = 0;
 		
 		$levelScoresCount = $db->prepare("SELECT count(*) FROM levelscores INNER JOIN users ON users.extID = levelscores.accountID WHERE users.userID = :userID");
 		$levelScoresCount->execute([':userID' => $userID]);
@@ -1694,7 +1728,7 @@ class Library {
 		$bansCount->execute([':accountID' => $accountID, ':userID' => $userID, ':IP' => $IP]);
 		$bansCount = $bansCount->fetchColumn();
 		
-		$GLOBALS['core_cache']['profileStatsCount'][$userID] = ['posts' => $postsCount, 'comments' => $levelsCommentsCount + $listsCommentsCount, 'scores' => $levelScoresCount + $platformerScoresCount, 'songs' => $songsCount, 'sfxs' => $SFXsCount, 'bans' => $bansCount];
+		$GLOBALS['core_cache']['profileStatsCount'][$userID] = ['posts' => $postsCount, 'comments' => $levelsCommentsCount + $listsCommentsCount + $postRepliesCount, 'scores' => $levelScoresCount + $platformerScoresCount, 'songs' => $songsCount, 'sfxs' => $SFXsCount, 'bans' => $bansCount];
 		
 		return $GLOBALS['core_cache']['profileStatsCount'][$userID];
 	}
@@ -1886,6 +1920,98 @@ class Library {
 		}
 		
 		return ['friendshipState' => $friendshipState, 'friendRequest' => $newFriendRequestArray];
+	}
+	
+	public static function getAccountCommentReplies($person, $postID, $commentsPage) {
+		require __DIR__."/connection.php";
+		
+		$postReplies = $db->prepare("SELECT * FROM replies INNER JOIN users ON users.extID = replies.accountID WHERE commentID = :postID ORDER BY timestamp DESC LIMIT 10 OFFSET ".$commentsPage);
+		$postReplies->execute([':postID' => $postID]);
+		$postReplies = $postReplies->fetchAll();
+		
+		$postRepliesCount = $db->prepare("SELECT count(*) FROM replies WHERE commentID = :postID");
+		$postRepliesCount->execute([':postID' => $postID]);
+		$postRepliesCount = $postRepliesCount->fetchColumn();
+		
+		return ["replies" => $postReplies, "count" => $postRepliesCount];
+	}
+	
+	public static function isAbleToAccountCommentReply($person, $postID, $comment) {
+		require __DIR__."/connection.php";
+		require __DIR__."/../../config/security.php";
+		require_once __DIR__."/automod.php";
+		require_once __DIR__."/security.php";
+		
+		if(!is_numeric($person['accountID']) || $person['accountID'] == 0) return ["success" => false, "error" => LoginError::WrongCredentials];
+		
+		$accountID = $person['accountID'];
+		
+		$checkBan = self::getPersonBan($person, Ban::Commenting);
+		if($checkBan) return ["success" => false, "error" => CommonError::Banned, "info" => $checkBan];
+		
+		$account = self::getAccountByID($accountID);
+		if($account && $account['registerDate'] > time() - $minAccountDate) return ["success" => false, "error" => CommonError::Automod];
+		
+		$accountPost = self::getAccountComment($person, $postID);
+		$targetUser = self::getUserByID($accountPost['userID']);
+		if(self::isPersonBlocked($accountID, $targetUser['extID'])) return ["success" => false, "error" => CommonError::Blocked];
+		
+		if(Security::checkFilterViolation($person, $comment, 3)) return ["success" => false, "error" => CommonError::Filter];
+		
+		if(Automod::isAccountsDisabled(1)) return ["success" => false, "error" => CommonError::Automod];
+		
+		return ["success" => true];
+	}
+	
+	public static function uploadAccountCommentReply($person, $postID, $comment) {
+		require __DIR__."/connection.php";
+		require_once __DIR__."/exploitPatch.php";
+		require_once __DIR__."/automod.php";
+		
+		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
+		
+		$accountID = $person['accountID'];
+		$userName = $person['userName'];
+		
+		if($enableCommentLengthLimiter) $comment = mb_substr($comment, 0, $maxAccountCommentLength);
+		
+		$comment = Escape::url_base64_encode($comment);
+		
+		$uploadAccountCommentReply = $db->prepare("INSERT INTO replies (commentID, accountID, body, timestamp)
+			VALUES (:postID, :accountID, :comment, :timestamp)");
+		$uploadAccountCommentReply->execute([':postID' => $postID, ':accountID' => $accountID, ':comment' => $comment, ':timestamp' => time()]);
+		$replyID = $db->lastInsertId();
+
+		self::logAction($person, Action::AccountCommentReplyUpload, $postID, $comment, $replyID);
+		
+		Automod::checkRepliesSpamming($accountID);
+		
+		return $replyID;
+	}
+	
+	public static function deleteAccountCommentReply($person, $replyID) {
+		require __DIR__."/connection.php";
+		
+		if($person['accountID'] == 0 || $person['userID'] == 0) return false;
+		
+		$accountID = $person['accountID'];
+		$userName = $person['userName'];
+		$userID = $person['userID'];
+		
+		$getReply = $db->prepare("SELECT * FROM replies WHERE replyID = :replyID");
+		$getReply->execute([':replyID' => $replyID]);
+		$getReply = $getReply->fetch();
+		if(!$getReply || ($getReply['accountID'] != $accountID && !self::checkPermission($person, 'gameDeleteComments'))) return false;
+		
+		$user = self::getUserByAccountID($getReply['accountID']);
+		
+		$deleteReply = $db->prepare("DELETE FROM replies WHERE replyID = :replyID");
+		$deleteReply->execute([':replyID' => $replyID]);
+		
+		if($getReply['accountID'] == $accountID) self::logAction($person, Action::AccountCommentReplyDeletion, $userName, $getReply['body'], $user['extID'], $getReply['replyID'], $getReply['commentID']);
+		else self::logModeratorAction($person, ModeratorAction::AccountCommentReplyDeletion, $userName, $getReply['body'], $user['extID'], $getReply['replyID'], $getReply['commentID']);
+		
+		return true;
 	}
 	
 	/*
@@ -2760,15 +2886,15 @@ class Library {
 		require_once __DIR__."/automod.php";
 		require_once __DIR__."/security.php";
 		
-		if($person['accountID'] == 0 || $person['userID'] == 0) return ["success" => false, "error" => LoginError::WrongCredentials];
+		if(!is_numeric($person['accountID']) || $person['accountID'] == 0) return ["success" => false, "error" => LoginError::WrongCredentials];
+		
+		$accountID = $person['accountID'];
 		
 		$checkBan = self::getPersonBan($person, Ban::Commenting);
 		if($checkBan) return ["success" => false, "error" => CommonError::Banned, "info" => $checkBan];
 		
-		if(is_numeric($accountID)) { // Numeric account ID = registered account
-			$account = self::getAccountByID($accountID);
-			if($account && $account['registerDate'] > time() - $minAccountDate) return ["success" => false, "error" => CommonError::Automod];
-		}
+		$account = self::getAccountByID($accountID);
+		if($account && $account['registerDate'] > time() - $minAccountDate) return ["success" => false, "error" => CommonError::Automod];
 		
 		if(Security::checkFilterViolation($person, $comment, 3)) return ["success" => false, "error" => CommonError::Filter];
 		
@@ -5660,7 +5786,7 @@ class Library {
 		$clan = self::getClanByID($clanID);
 		if(!$clan) return ["success" => false, "error" => ClanError::NothingFound];
 		
-		if($clan["clanOwner"] != $accountID && !Library::checkPermission($person, "dashboardManageClans")) return ["success" => false, "error" => ClanError::NoPermissions];
+		if($clan["clanOwner"] != $accountID && !self::checkPermission($person, "dashboardManageClans")) return ["success" => false, "error" => ClanError::NoPermissions];
 		
 		if(Security::checkFilterViolation($person, $clanName, 1)) return ["success" => false, "error" => ClanError::BadClanName];
 		if(Security::checkFilterViolation($person, $clanTag, 2)) return ["success" => false, "error" => ClanError::BadClanTag];
@@ -6003,13 +6129,14 @@ class Library {
 			(SELECT COUNT(banType) FROM bans WHERE banType = 2) AS levelUploadBans,
 			(SELECT COUNT(banType) FROM bans WHERE banType = 3) AS commentBans,
 			(SELECT COUNT(banType) FROM bans WHERE banType = 4) AS accountBans,
+			(SELECT COUNT(banType) FROM bans WHERE banType = 5) AS audioBans,
 			
 			mostUsedSong.ID AS mostUsedSongID,
 			mostUsedSong.authorName AS mostUsedSongAuthor,
 			mostUsedSong.name AS mostUsedSongName,
 			mostUsedSong.levelsCount AS mostUsedSongLevelsCount,
 			mostUsedSong.size AS mostUsedSongSize,
-			IF(mostUsedSong.reuploadID = 0, 0, 1) AS mostUsedSongIsReupload
+			mostUsedSong.isReupload AS mostUsedSongIsReupload
 			FROM (SELECT ID, authorName, name, size, levelsCount, reuploadID, IF(reuploadID = 0, 0, 1) AS isReupload FROM songs WHERE isDisabled = 0 ORDER BY levelsCount DESC LIMIT 1) AS mostUsedSong
 		");
 		$stats->execute([':time' => time()]);
@@ -6080,10 +6207,8 @@ class Library {
 		
 		$itemColumn = $itemName = '';
 		
-		$checkRateLimit = $db->prepare("SELECT count(*) FROM reports WHERE (accountID = :accountID OR IP REGEXP CONCAT('(', :IP, '.*)')) AND timestamp >= :timestamp");
-		$checkRateLimit->execute([':accountID' => $accountID, ':IP' => self::convertIPForSearching($IP, true), ':timestamp' => time() - 10]);
-		$checkRateLimit = $checkRateLimit->fetchColumn();
-		if($checkRateLimit) return ['success' => false, 'error' => ReportError::TooFast];
+		$checkReportingItemsRateLimit = Security::checkRateLimits($person, RateLimit::ItemReport);
+		if(!$checkReportingItemsRateLimit) return ['success' => false, 'error' => ReportError::TooFast];
 		
 		$checkIfReported = $db->prepare("SELECT count(*) FROM reports WHERE reportItem = :reportItem AND itemID = :itemID AND (accountID = :accountID OR IP REGEXP CONCAT('(', :IP, '.*)'))");
 		$checkIfReported->execute([':reportItem' => $reportItem, ':itemID' => $itemID, ':accountID' => $accountID, ':IP' => self::convertIPForSearching($IP, true)]);
@@ -6136,8 +6261,12 @@ class Library {
 		$checkItem = $checkItem->fetchColumn();
 		if(!$checkItem) return ['success' => false, 'error' => ReportError::NothingFound];
 		
+		$extraInfo = Escape::url_base64_encode($extraInfo);
+		
 		$reportContent = $db->prepare("INSERT INTO reports (reportType, reportItem, itemID, extraInfo, accountID, IP, timestamp) VALUES (:reportType, :reportItem, :itemID, :extraInfo, :accountID, :IP, :timestamp)");
-		$reportContent->execute([':reportType' => $reportType, ':reportItem' => $reportItem, ':itemID' => $itemID, ':extraInfo' => Escape::url_base64_encode($extraInfo), ':accountID' => $accountID, ':IP' => $IP, ':timestamp' => time()]);
+		$reportContent->execute([':reportType' => $reportType, ':reportItem' => $reportItem, ':itemID' => $itemID, ':extraInfo' => $extraInfo, ':accountID' => $accountID, ':IP' => $IP, ':timestamp' => time()]);
+		
+		self::logAction($person, Action::ItemReport, $reportType, $reportItem, $itemID, $extraInfo);
 		
 		return ['success' => true];
 	}

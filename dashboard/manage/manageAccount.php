@@ -11,11 +11,22 @@ if(!$person['success']) exit(Dashboard::renderToast("xmark", Dashboard::string("
 
 if(isset($_POST['accountID'])) {
 	$accountID = Escape::number($_POST['accountID']);
+	$isPersonThemselves = $accountID == $person['accountID'];
 	
-	if($accountID != $person['accountID'] && !Library::checkPermission($person, "dashboardManageAccounts")) exit(Dashboard::renderToast("xmark", Dashboard::string("errorTitle"), "error"));
+	if(!$isPersonThemselves && !Library::checkPermission($person, "dashboardManageAccounts")) exit(Dashboard::renderToast("xmark", Dashboard::string("errorTitle"), "error"));
 	
 	$account = Library::getAccountByID($accountID);
 	if(!$account) exit(Dashboard::renderToast("xmark", Dashboard::string("errorAccountNotFound"), "error"));
+	
+	if($isPersonThemselves) {
+		$lang = strtoupper(Escape::latin($_POST['lang'], 2)) ?: 'EN';
+		$enableLoweredMotion = isset($_POST['loweredMotion']) ? 1 : 0;
+		
+		$_COOKIE['lang'] = $lang;
+		setcookie("lang", $lang, 2147483647, "/");
+		$_COOKIE['enableLoweredMotion'] = $enableLoweredMotion;
+		setcookie("enableLoweredMotion", $enableLoweredMotion, 2147483647, "/");
+	}
 	
 	$newMessagesState = Security::limitValue(0, Escape::number($_POST["messagesPrivacy"]), 2);
 	$newFriendRequestsState = $_POST["friendRequests"] ? 1 : 0;

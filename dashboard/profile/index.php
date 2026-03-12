@@ -40,6 +40,8 @@ $canOpenSettings = ($accountID == $account['accountID'] || Library::checkPermiss
 $additionalPage = '';
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 
+$titleID = "userProfile";
+
 switch($parameters[1]) {
 	case 'comments':
 		$mode = isset($_GET['mode']) ? Escape::number($_GET["mode"]) : 0;
@@ -95,6 +97,8 @@ switch($parameters[1]) {
 			'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
 		];
 		
+		$titleID = "userComments";
+		
 		$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/comments', $additionalData);
 		$pageBase = "../../";
 		break;
@@ -135,6 +139,8 @@ switch($parameters[1]) {
 			'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
 		];
 		
+		$titleID = "userScores";
+		
 		$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/scores', $additionalData);
 		$pageBase = "../../";
 		break;
@@ -169,6 +175,8 @@ switch($parameters[1]) {
 			'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
 		];
 		
+		$titleID = "userSongs";
+		
 		$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/songs', $additionalData);
 		$pageBase = "../../";
 		break;
@@ -198,6 +206,8 @@ switch($parameters[1]) {
 			'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
 		];
 		
+		$titleID = "userSFXs";
+		
 		$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/sfxs', $additionalData);
 		$pageBase = "../../";
 		break;
@@ -223,6 +233,12 @@ switch($parameters[1]) {
 		$additionalData = [
 			'ACCOUNT_ID' => $account['accountID'],
 			
+			'PROFILE_OWN_SETTINGS' => $isPersonThemselves ? 'true' : 'false',
+			'SETTING_LANGUAGE_EN_DEFAULT' => $_COOKIE['lang'] == 'EN' ? 'true' : 'false',
+			'SETTING_LANGUAGE_RU_DEFAULT' => $_COOKIE['lang'] == 'RU' ? 'true' : 'false',
+			'LOWERED_MOTION_VALUE' => $_COOKIE['enableLoweredMotion'] ? 1 : 0,
+			'LOWERED_MOTION_REMOVE_CHECK' => !$_COOKIE['enableLoweredMotion'] ? 'checked' : '',
+			
 			'MESSAGES_PRIVACY_VALUE' => $account['mS'],
 			'FRIEND_REQUESTS_VALUE' => $account['frS'],
 			'COMMENT_HISTORY_VALUE' => $account['cS'],
@@ -240,10 +256,60 @@ switch($parameters[1]) {
 			'TIMEZONE_ELEMENTS' => $timezoneElements
 		];
 		
+		$titleID = $isPersonThemselves ? "settings" : "userSettings";
+		
 		$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('manage/account', $additionalData);
 		$pageBase = "../../";
 		break;
-	case '': // User posts
+	case 'posts':
+	case '':
+		$emojisDiv = Dashboard::renderEmojisDiv();
+		
+		if(isset($parameters[2])) { // Post replies
+			$postID = abs(Escape::number($parameters[2]) ?: 0);
+			
+			$accountPost = Library::getAccountComment($person, $postID);
+			if(!$accountPost || $accountPost['userID'] != $user['userID']) exit(Dashboard::renderErrorPage(Dashboard::string("profile"), Dashboard::string("errorPostNotFound"), '../../../'));
+			
+			$postCard = Dashboard::renderPostCard($accountPost, $person);
+			
+			$postReplies = Library::getAccountCommentReplies($person, $postID, $pageOffset);
+			
+			foreach($postReplies['replies'] AS &$reply) $additionalPage .= Dashboard::renderReplyCard($reply, $person);
+			
+			$pageNumber = ceil($pageOffset / 10) + 1 ?: 1;
+			$pageCount = floor(($postReplies['count'] - 1) / 10) + 1;
+			
+			if($pageCount == 0) $pageCount = 1;
+			
+			$additionalData = [
+				'ADDITIONAL_PAGE' => $additionalPage,
+				'PROFILE_NO_REPLIES' => !$postReplies['count'] ? 'true' : 'false',
+				'POST_PAGE_TEXT' => sprintf(Dashboard::string('pageText'), $pageNumber, $pageCount),
+				
+				'POST_ID' => $postID,
+				'PROFILE_CAN_REPLY' => $person['success'] ? 'true' : 'false',
+				'PROFILE_MAX_COMMENT_LENGTH' => $enableCommentLengthLimiter ? $maxAccountCommentLength : '-1',
+				
+				'POST_ORIGINAL_POST_CARD' => $postCard,
+				'POST_EMOJIS_DIV' => $emojisDiv,
+				
+				'IS_FIRST_PAGE' => $pageNumber == 1 ? 'true' : 'false',
+				'IS_LAST_PAGE' => $pageNumber == $pageCount ? 'true' : 'false',
+				
+				'FIRST_PAGE_BUTTON' => "getPage('@page=REMOVE_QUERY', 'settings')",
+				'PREVIOUS_PAGE_BUTTON' => "getPage('@".(($pageNumber - 1) > 1 ? "page=".($pageNumber - 1) : 'page=REMOVE_QUERY')."', 'settings')",
+				'NEXT_PAGE_BUTTON' => "getPage('@page=".($pageNumber + 1)."', 'settings')",
+				'LAST_PAGE_BUTTON' => "getPage('@page=".$pageCount."', 'settings')"
+			];
+			
+			$titleID = "userPost";
+			
+			$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/replies', $additionalData);
+			$pageBase = "../../../";
+			break;
+		}
+		
 		$mode = isset($_GET['mode']) ? Escape::number($_GET["mode"]) : 0;
 		$sortMode = $mode ? "acccomments.likes - acccomments.dislikes" : "acccomments.timestamp";
 		
@@ -255,8 +321,6 @@ switch($parameters[1]) {
 		$pageCount = floor(($accountComments['count'] - 1) / 10) + 1;
 				
 		if($pageCount == 0) $pageCount = 1;
-		
-		$emojisDiv = Dashboard::renderEmojisDiv();
 		
 		$additionalData = [
 			'ADDITIONAL_PAGE' => $additionalPage,
@@ -278,7 +342,7 @@ switch($parameters[1]) {
 		];
 		
 		$user['PROFILE_ADDITIONAL_PAGE'] = Dashboard::renderTemplate('browse/posts', $additionalData);
-		$pageBase = "../";
+		$pageBase = empty($parameters[1]) ? "../" : "../../";
 		break;
 	default:
 		exit(http_response_code(404));
@@ -289,7 +353,7 @@ $user['PROFILE_PAGE_TEXT'] = sprintf(Dashboard::string('pageText'), $pageNumber,
 $user['PROFILE_REGISTER_DATE'] = $account['registerDate'];
 
 $user['PROFILE_USERNAME'] = $contextMenuData['MENU_NAME'] = htmlspecialchars($account['userName']);
-$user['PROFILE_TITLE'] = sprintf(Dashboard::string("userProfile"), htmlspecialchars($account['userName']));
+$user['PROFILE_TITLE'] = sprintf(Dashboard::string($titleID), htmlspecialchars($account['userName']));
 $user['PROFILE_ATTRIBUTES'] = $userMetadata['userAttributes'];
 
 $user['PROFILE_HAS_CLAN'] = $accountClan ? 'true' : 'false';

@@ -668,6 +668,26 @@ class Security {
 				}
 				
 				return true;
+			case RateLimit::ItemReport:
+				if(!$itemReportDelay) return true;
+				
+				$searchFilters = ['type = '.Action::ItemReport, 'timestamp >= '.time() - $itemReportDelay];
+				$checkReports = Library::getPersonActions($person, $searchFilters);
+				
+				if($checkReports) {
+					Library::logAction($person, Action::ItemReportRateLimit);
+					
+					$searchFilters = ['type = '.Action::ItemReportRateLimit, 'timestamp >= '.time() - $rateLimitBanTime];
+					$isRateLimited = Library::getPersonActions($person, $searchFilters);
+					
+					if(count($isRateLimited) > $itemReportDelay * $rateLimitBanMultiplier) {
+						Library::banPerson(0, $person, "You exceeded rate limit for reporting content.", Ban::Account, Person::IP, (time() + $rateLimitBanTime), "Person tried to report too many content. (".count($isRateLimited)." > ".$itemReportDelay." * ".$rateLimitBanMultiplier.")");
+					}
+					
+					return false;
+				}
+				
+				return true;
 		}
 	}
 	

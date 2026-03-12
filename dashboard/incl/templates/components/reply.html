@@ -1,0 +1,38 @@
+<div class="contentDiv transparent" dashboard-context-div>
+	<div class="horisontal">
+		<span class="replyLine"></span>
+	
+		<div class="vertical">
+			<div class="levelTitle">
+				<div class="horisontal">
+					<h2>%REPLY_USER%</h2>
+				</div>
+				
+				<div class="commentStat">
+					<form name="reply%replyID%">
+						<input type="hidden" name="replyID" value="%replyID%"></input>
+					</form>
+				</div>
+				
+				<div class="horisontal small">
+					<div class="commentStat" title="ID">
+						<i class="fa-solid fa-comment"></i> 
+						<text dashboard-copy>%replyID%</text>
+					</div>
+				
+					<div class="commentStat" title="%TEXT_uploadDate%">
+						<i class="fa-solid fa-calendar"></i>
+						<text dashboard-date="%timestamp%"></text>
+					</div>
+				</div>
+			</div>
+			
+			<h3 class="levelDescription">
+				<span class="emptySymbol">:(</span>
+				%REPLY_CONTENT%
+			</h3>
+		</div>
+	</div>
+	
+	%REPLY_CONTEXT_MENU%
+</div>
