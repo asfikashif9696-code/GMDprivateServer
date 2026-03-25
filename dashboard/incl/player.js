@@ -24,6 +24,7 @@ function loadAudioPlayer() {
 
 	player.start = async function(songID, songAuthor, songTitle, songURL) {
 		player.classList.add("show");
+		player.range.style = "--audio-position: 0%;";
 		
 		player.songURL = songURL;
 		
@@ -50,7 +51,8 @@ function loadAudioPlayer() {
 			player.playButton.onclick = () => player.interact(songID, songAuthor, songTitle, songURL);
 			
 			player.range.addEventListener("input", (event) => {
-				player.audio.currentTime = event.target.value / 1000000;
+				player.audio.currentTime = event.target.valueAsNumber / 1000000;
+				player.changeRange(player.audio.currentTime, player.audio.duration);
 				
 				if(player.audio.paused && !player.pausedByUser) player.play();
 			});
@@ -118,7 +120,10 @@ function loadAudioPlayer() {
 		if(current == total) {
 			player.playButtonIcon.classList.replace("fa-pause", "fa-play");
 			document.querySelectorAll("[dashboard-song='" + player.isPlaying + "'] i").forEach((element) => element.classList.replace("fa-circle-pause", "fa-circle-play"));
+			return;
 		}
+		
+		player.range.style = total != 0 ? "--audio-position: " + Math.round(current / total * 10000) / 100 +"%;" : "--audio-position: 0%;";
 	}
 
 	player.convertTime = async function(time) { // https://stackoverflow.com/a/36981712

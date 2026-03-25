@@ -4440,12 +4440,14 @@ class Library {
 		}
 		
 		if(!$song) {
-			$GLOBALS['core_cache']['songs'][$songID] = false;			
+			$GLOBALS['core_cache']['songs'][$songID] = false;
 			return false;
 		}
 
 		$song['isLocalSong'] = $isLocalSong;
-		$GLOBALS['core_cache']['songs'][$songID] = $song;		
+		$GLOBALS['core_cache']['songs'][$songID] = $song;
+		
+		if(isset($song["isDisabled"]) && $song['isDisabled']) $song['download'] = '';
 		
 		if($column != "*") return $song[$column];
 		else return array("isLocalSong" => $isLocalSong, "ID" => $song["ID"], "name" => $song["name"], "authorName" => $song["authorName"], "size" => $song["size"], "duration" => $song["duration"], "download" => urldecode($song["download"]), "reuploadTime" => $song["reuploadTime"], "reuploadID" => (isset($song["reuploadID"]) ? $song["reuploadID"] : 0), "isDisabled" => (isset($song["isDisabled"]) ? $song["isDisabled"] : 0), "levelsCount" => (isset($song["levelsCount"]) ? $song["levelsCount"] : 0), "favouritesCount" => (isset($song["favouritesCount"]) ? $song["favouritesCount"] : 0));
@@ -4466,8 +4468,6 @@ class Library {
 		$sfx->execute([':sfxID' => $sfxID]);
 		$sfx = $sfx->fetch();
 		
-		$GLOBALS['core_cache']['sfxs'][$sfxID] = $sfx;
-		
 		if(!$sfx) {
 			$sfx = self::getLibrarySongInfo($sfxID, 'sfx');
 			$isLocalSFX = $sfx['isLocalSFX'];
@@ -4480,6 +4480,8 @@ class Library {
 		
 		$sfx['isLocalSFX'] = $isLocalSFX;
 		$GLOBALS['core_cache']['sfxs'][$sfxID] = $sfx;
+		
+		if(isset($sfx["isDisabled"]) && $sfx['isDisabled']) $sfx['download'] = '';
 		
 		if($column != "*") return $sfx[$column];
 		else return ["isLocalSFX" => $isLocalSFX, "ID" => $sfx["ID"], "originalID" => (isset($sfx["originalID"]) ? $sfx["originalID"] : $sfx["ID"]), "name" => $sfx["name"], "authorName" => $sfx["authorName"], "size" => $sfx["size"], "download" => $sfx["download"], "reuploadTime" => $sfx["reuploadTime"], "reuploadID" => $sfx["reuploadID"], "isDisabled" => (isset($sfx["isDisabled"]) ? $sfx["isDisabled"] : 0), "levelsCount" => (isset($sfx["levelsCount"]) ? $sfx["levelsCount"] : 0)];
@@ -4990,7 +4992,7 @@ class Library {
 						'ID' => ($customSongs['ID']),
 						'name' => !empty($customSongs['name']) ? $customSongs['name'] : 'Unnamed',
 						'authorID' => (int)($serverIDs[null]. 0 .$folderID[$authorName]),
-						'size' => $customSongs['size'] * 1024 * 1024,
+						'size' => ((int)$customSongs['size']) * 1048576,
 						'seconds' => $customSongs['duration'],
 						'tags' => '.'.$serverIDs[null].'.'.$serverIDs[null]. 0 .$accIDs[$customSongs['reuploadID']].'.',
 						'ncs' => 0,
@@ -5291,7 +5293,7 @@ class Library {
 				if($songFile['error'] != UPLOAD_ERR_OK) return ['success' => false, 'error' => SongError::InvalidFile];
 				
 				if($songFile['size'] == 0) return ['success' => false, 'error' => SongError::UnknownError];
-				if($songFile['size'] > $songSize * 1024 * 1024) return ['success' => false, 'error' => SongError::TooBig];
+				if($songFile['size'] > $songSize * 1048576) return ['success' => false, 'error' => SongError::TooBig];
 				
 				$fileData = file_get_contents($songFile['tmp_name']);
 				
@@ -5355,7 +5357,7 @@ class Library {
 					
 					$songURL = (isset($_SERVER['HTTPS']) ? "https" : "http")."://".$_SERVER["HTTP_HOST"].dirname(dirname($_SERVER["REQUEST_URI"]))."/songs/".$songID.".ogg";
 				} else {
-					$realSongSize = round($fileInfo['size'] / 1048576, 2);
+					$realSongSize = round(((int)$fileInfo['size']) / 1048576, 2);
 					
 					$songAuthor = Escape::text($songAuthor, 40) ?: 'Reupload';
 					$songTitle = Escape::text($songTitle, 35) ?: 'Unknown';
@@ -5397,7 +5399,7 @@ class Library {
 		if($sfxFile['error'] != UPLOAD_ERR_OK) return ['success' => false, 'error' => SongError::InvalidFile];
 		
 		if($sfxFile['size'] == 0) return ['success' => false, 'error' => SongError::UnknownError];
-		if($sfxFile['size'] > $sfxSize * 1024 * 1024) return ['success' => false, 'error' => SongError::TooBig];
+		if($sfxFile['size'] > $sfxSize * 1048576) return ['success' => false, 'error' => SongError::TooBig];
 		
 		$fileData = file_get_contents($sfxFile['tmp_name']);
 		
@@ -6269,6 +6271,40 @@ class Library {
 		self::logAction($person, Action::ItemReport, $reportType, $reportItem, $itemID, $extraInfo);
 		
 		return ['success' => true];
+	}
+	
+	public static function returnFileByRange($fileName, $filePath) {
+		$bufferSize = 1048576;
+		$fileSize = filesize(realpath($filePath));
+		$length = $fileSize;
+		$offset = 0;
+		
+		if(isset($_SERVER['HTTP_RANGE'])) {
+			preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+			
+			$offset = intval($matches[1]);
+			$end = $matches[2] || $matches[2] === '0' ? intval($matches[2]) : $fileSize - 1;
+			$length = $end + 1 - $offset;
+			
+			header($_SERVER["SERVER_PROTOCOL"].' 206 Partial Content');
+			header("Content-Range: bytes ".$offset."-".$end."/".$fileSize);
+		}
+		
+		$fileFormat = explode('.', $filePath);
+		header('Content-Type: '.mime_content_type($filePath));
+		header("Content-Length: ".$fileSize);
+		header("Content-Disposition: attachment; filename=\"".rawurlencode($fileName).".".$fileFormat[count($fileFormat) - 1]."\"");
+		header('Accept-Ranges: bytes');
+
+		$file = fopen($filePath, 'r');
+		fseek($file, $offset);
+		while($length >= $bufferSize) {
+			print(fread($file, $bufferSize));
+			$length -= $bufferSize;
+		}
+		if($length) print(fread($file, $length));
+		
+		fclose($file);
 	}
 	
 	/*

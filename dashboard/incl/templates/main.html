@@ -7,6 +7,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit='no'">
 		<link rel="icon" href="%DASHBOARD_FAVICON%">
 		<link async rel="stylesheet" href="incl/style.css?%STYLE_TIMESTAMP%">
+		<link async rel="stylesheet" href="incl/mobile.css?%STYLE_TIMESTAMP%">
 		<link async rel="stylesheet" href="incl/icons/css/all.min.css">
 		<link async rel="stylesheet" href="incl/toast/toast.css">
 		<script type="text/javascript" id="dashboardScript">
@@ -56,256 +57,275 @@
 		</script>
 	</head>
 	<body id="dashboard-body">
-		<nav>
-			<div class="navbar-buttons down">
-				<button title="%TEXT_home%" type="button" href="" dashboard-loader-type="loader">
-					<i class="fa-solid fa-house"></i>
-					<text>%TEXT_home%</text>
-				</button>
-				
-				<div class="dropdown" id="accountDropdown" dashboard-show="%IS_LOGGED_IN%">
-					<button title="%TEXT_account%" type="button" dashboard-dropdown="accountDropdown">
-						<i class="fa-solid fa-user"></i>
-						<text>%TEXT_account%</text>
-						<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
+		<div class="navbar-box" id="dashboard-navbar-box">
+			<nav>
+				<div class="navbar-buttons mobile" dashboard-mobile>
+					<button type="button" onclick="openNavbar()">
+						<i class="fa-solid fa-bars"></i>
+						<text title="%TEXT_hidePanel%">%TEXT_hidePanel%</text>
 					</button>
 					
-					<div class="dropdown-items">
-						<button title="%TEXT_yourLevelsTitle%" type="button" href="account/levels" dashboard-loader-type="list">
-							<i class="fa-solid fa-gamepad"></i>
-							<text>%TEXT_yourLevelsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_yourListsTitle%" type="button" href="account/lists" dashboard-loader-type="list">
-							<i class="fa-solid fa-list"></i>
-							<text>%TEXT_yourListsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_yourSongsTitle%" type="button" href="account/songs" dashboard-loader-type="list">
-							<i class="fa-solid fa-music"></i>
-							<text>%TEXT_yourSongsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_favouriteSongsTitle%" type="button" href="account/favouriteSongs" dashboard-loader-type="list">
-							<i class="fa-solid fa-heart"></i>
-							<text>%TEXT_favouriteSongsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_yourSFXsTitle%" type="button" href="account/sfxs" dashboard-loader-type="list">
-							<i class="fa-solid fa-drum"></i>
-							<text>%TEXT_yourSFXsTitle%</text>
-						</button>
-					</div>
-				</div>
-				
-				<div class="dropdown" id="browseDropdown">
-					<button title="%TEXT_browse%" type="button" dashboard-dropdown="browseDropdown">
-						<i class="fa-solid fa-magnifying-glass"></i>
-						<text>%TEXT_browse%</text>
-						<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
-					</button>
-					
-					<div class="dropdown-items">
-						<button title="%TEXT_accountsTitle%" type="button" href="browse/accounts" dashboard-loader-type="list">
-							<i class="fa-solid fa-user"></i>
-							<text>%TEXT_accountsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_leaderboardsTitle%" type="button" href="browse/leaderboards" dashboard-loader-type="list">
-							<i class="fa-solid fa-chart-simple"></i>
-							<text>%TEXT_leaderboardsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_levelsTitle%" type="button" href="browse/levels" dashboard-loader-type="list">
-							<i class="fa-solid fa-gamepad"></i>
-							<text>%TEXT_levelsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_listsTitle%" type="button" href="browse/lists" dashboard-loader-type="list">
-							<i class="fa-solid fa-list"></i>
-							<text>%TEXT_listsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_mapPacksTitle%" type="button" href="browse/mappacks" dashboard-loader-type="list">
-							<i class="fa-solid fa-folder-open"></i>
-							<text>%TEXT_mapPacksTitle%</text>
-						</button>
-						
-						<button title="%TEXT_gauntletsTitle%" type="button" href="browse/gauntlets" dashboard-loader-type="list">
-							<i class="fa-solid fa-globe"></i>
-							<text>%TEXT_gauntletsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_songsTitle%" type="button" href="browse/songs" dashboard-loader-type="list">
-							<i class="fa-solid fa-music"></i>
-							<text>%TEXT_songsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_sfxsTitle%" type="button" href="browse/sfxs" dashboard-loader-type="list">
-							<i class="fa-solid fa-drum"></i>
-							<text>%TEXT_sfxsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_clansListTitle%" type="button" href="browse/clans" dashboard-loader-type="list" dashboard-show="%CLANS_ENABLED%">
-							<i class="fa-solid fa-shield-halved"></i>
-							<text>%TEXT_clansListTitle%</text>
-						</button>
-						
-						<button title="%TEXT_moderatorsTitle%" type="button" href="mod/accounts" dashboard-loader-type="list">
-							<i class="fa-solid fa-user-shield"></i>
-							<text>%TEXT_moderatorsTitle%</text>
-						</button>
-					</div>
-				</div>
-				
-				<div class="dropdown" id="uploadDropdown" dashboard-show="%IS_LOGGED_IN%">
-					<button title="%TEXT_upload%" type="button" dashboard-dropdown="uploadDropdown">
-						<i class="fa-solid fa-arrow-up-from-bracket"></i>
-						<text>%TEXT_upload%</text>
-						<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
-					</button>
-					
-					<div class="dropdown-items">
-						<button title="%TEXT_uploadSongTitle%" type="button" href="upload/song" dashboard-loader-type="box" dashboard-show="%UPLOAD_SONG_PAGE_ENABLED%">
-							<i class="fa-solid fa-music"></i>
-							<text>%TEXT_uploadSongTitle%</text>
-						</button>
-						
-						<button title="%TEXT_uploadSFXTitle%" type="button" href="upload/sfx" dashboard-loader-type="box" dashboard-show="%UPLOAD_SFX_PAGE_ENABLED%">
-							<i class="fa-solid fa-drum"></i>
-							<text>%TEXT_uploadSFXTitle%</text>
-						</button>
-						
-						<button title="%TEXT_reuploadLevelTitle%" type="button" href="upload/level" dashboard-loader-type="box" dashboard-show="%REUPLOAD_LEVEL_PAGE_ENABLED%">
-							<i class="fa-solid fa-gamepad"></i>
-							<text>%TEXT_reuploadLevelTitle%</text>
-						</button>
-						
-						<button title="%TEXT_runCron%" type="button" href="manage/runCron">
-							<i class="fa-solid fa-bars-progress"></i>
-							<text>%TEXT_runCron%</text>
-						</button>
-					</div>
-				</div>
-				
-				<div class="dropdown" id="modToolsDropdown" dashboard-show="%PERMISSION_dashboardModeratorTools%">
-					<button title="%TEXT_moderatorTools%" type="button" dashboard-dropdown="modToolsDropdown">
-						<i class="fa-solid fa-wrench"></i>
-						<text>%TEXT_moderatorTools%</text>
-						<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
-					</button>
-					
-					<div class="dropdown-items">
-						<button title="%TEXT_banUserTitle%" type="button" href="mod/ban" dashboard-loader-type="box">
-							<i class="fa-solid fa-gavel"></i>
-							<text>%TEXT_banUserTitle%</text>
-						</button>
-						
-						<button title="%TEXT_addMapPackTitle%" type="button" href="upload/mappack" dashboard-loader-type="box" dashboard-show="%PERMISSION_dashboardManageMapPacks%">
-							<i class="fa-solid fa-folder-open"></i>
-							<text>%TEXT_addMapPackTitle%</text>
-						</button>
-						
-						<button title="%TEXT_addGauntletTitle%" type="button" href="upload/gauntlet" dashboard-loader-type="box" dashboard-show="%PERMISSION_dashboardManageGauntlets%">
-							<i class="fa-solid fa-globe"></i>
-							<text>%TEXT_addGauntletTitle%</text>
-						</button>
-						
-						<button title="%TEXT_unlistedLevelsTitle%" type="button" href="mod/levels" dashboard-loader-type="list">
-							<i class="fa-solid fa-gamepad"></i>
-							<text>%TEXT_unlistedLevelsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_unlistedListsTitle%" type="button" href="mod/lists" dashboard-loader-type="list">
-							<i class="fa-solid fa-list"></i>
-							<text>%TEXT_unlistedListsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_suggestedLevelsTitle%" type="button" href="mod/suggestedLevels" dashboard-loader-type="list">
-							<i class="fa-solid fa-user"></i>
-							<text>%TEXT_suggestedLevelsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_disabledSongsTitle%" type="button" href="mod/songs" dashboard-loader-type="list">
-							<i class="fa-solid fa-music"></i>
-							<text>%TEXT_disabledSongsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_disabledSFXsTitle%" type="button" href="mod/sfxs" dashboard-loader-type="list">
-							<i class="fa-solid fa-drum"></i>
-							<text>%TEXT_disabledSFXsTitle%</text>
-						</button>
-						
-						<button title="%TEXT_manageRolesTitle%" type="button" href="mod/roles" dashboard-loader-type="manage" dashboard-show="%PERMISSION_dashboardManageRoles%">
-							<i class="fa-solid fa-id-badge"></i>
-							<text>%TEXT_manageRolesTitle%</text>
-						</button>
-					</div>
-				</div>
-			</div>
-			
-			<div class="navbar-buttons up">
-				<!--<button title="%TEXT_messengerTitle%" type="button" href="messenger" dashboard-show="%IS_LOGGED_IN%">
-					<i class="fa-solid fa-comments"></i>
-					<text>%TEXT_messengerTitle% (X)</text>
-				</button>-->
-				
-				<div class="dropdown" id="profileLoggedOutDropdown" dashboard-hide="%IS_LOGGED_IN%">
-					<button title="%TEXT_profile%" type="button" dashboard-dropdown="profileLoggedOutDropdown">
+					<button title="%TEXT_profile%" type="button" onclick="openNavbar()" dashboard-dropdown="profileLoggedOutDropdown" dashboard-hide="%IS_LOGGED_IN%">
 						<i class="fa-solid fa-user"></i>
 						<text>%TEXT_profile%</text>
-						<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
 					</button>
 					
-					<div class="dropdown-items">
-						<button title="%TEXT_settings%" type="button" href="settings" dashboard-loader-type="list">
-							<i class="fa-solid fa-gear"></i>
-							<text>%TEXT_settings%</text>
+					<button title="%USERNAME%" type="button" onclick="openNavbar()" dashboard-dropdown="profileLoggedInDropdown" dashboard-show="%IS_LOGGED_IN%">
+						<img loading="lazy" src="%PROFILE_ICON%"></img>
+						<text>%USERNAME%</text>
+					</button>
+				</div>
+					
+				<div class="navbar-buttons down">
+					<button title="%TEXT_home%" type="button" href="" dashboard-loader-type="loader">
+						<i class="fa-solid fa-house"></i>
+						<text>%TEXT_home%</text>
+					</button>
+					
+					<div class="dropdown" id="accountDropdown" dashboard-show="%IS_LOGGED_IN%">
+						<button title="%TEXT_account%" type="button" dashboard-dropdown="accountDropdown">
+							<i class="fa-solid fa-user"></i>
+							<text>%TEXT_account%</text>
+							<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
 						</button>
 						
-						<button title="%TEXT_loginToAccountTitle%" type="button" href="account/login" dashboard-loader-type="box">
-							<i class="fa-solid fa-sign-in"></i>
-							<text>%TEXT_loginToAccountTitle%</text>
+						<div class="dropdown-items">
+							<button title="%TEXT_yourLevelsTitle%" type="button" href="account/levels" dashboard-loader-type="list">
+								<i class="fa-solid fa-gamepad"></i>
+								<text>%TEXT_yourLevelsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_yourListsTitle%" type="button" href="account/lists" dashboard-loader-type="list">
+								<i class="fa-solid fa-list"></i>
+								<text>%TEXT_yourListsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_yourSongsTitle%" type="button" href="account/songs" dashboard-loader-type="list">
+								<i class="fa-solid fa-music"></i>
+								<text>%TEXT_yourSongsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_favouriteSongsTitle%" type="button" href="account/favouriteSongs" dashboard-loader-type="list">
+								<i class="fa-solid fa-heart"></i>
+								<text>%TEXT_favouriteSongsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_yourSFXsTitle%" type="button" href="account/sfxs" dashboard-loader-type="list">
+								<i class="fa-solid fa-drum"></i>
+								<text>%TEXT_yourSFXsTitle%</text>
+							</button>
+						</div>
+					</div>
+					
+					<div class="dropdown" id="browseDropdown">
+						<button title="%TEXT_browse%" type="button" dashboard-dropdown="browseDropdown">
+							<i class="fa-solid fa-magnifying-glass"></i>
+							<text>%TEXT_browse%</text>
+							<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
 						</button>
 						
-						<button title="%TEXT_registerAccountTitle%" type="button" href="account/register" dashboard-loader-type="box">
-							<i class="fa-solid fa-user-plus"></i>
-							<text>%TEXT_registerAccountTitle%</text>
+						<div class="dropdown-items">
+							<button title="%TEXT_accountsTitle%" type="button" href="browse/accounts" dashboard-loader-type="list">
+								<i class="fa-solid fa-user"></i>
+								<text>%TEXT_accountsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_leaderboardsTitle%" type="button" href="browse/leaderboards" dashboard-loader-type="list">
+								<i class="fa-solid fa-chart-simple"></i>
+								<text>%TEXT_leaderboardsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_levelsTitle%" type="button" href="browse/levels" dashboard-loader-type="list">
+								<i class="fa-solid fa-gamepad"></i>
+								<text>%TEXT_levelsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_listsTitle%" type="button" href="browse/lists" dashboard-loader-type="list">
+								<i class="fa-solid fa-list"></i>
+								<text>%TEXT_listsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_mapPacksTitle%" type="button" href="browse/mappacks" dashboard-loader-type="list">
+								<i class="fa-solid fa-folder-open"></i>
+								<text>%TEXT_mapPacksTitle%</text>
+							</button>
+							
+							<button title="%TEXT_gauntletsTitle%" type="button" href="browse/gauntlets" dashboard-loader-type="list">
+								<i class="fa-solid fa-globe"></i>
+								<text>%TEXT_gauntletsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_songsTitle%" type="button" href="browse/songs" dashboard-loader-type="list">
+								<i class="fa-solid fa-music"></i>
+								<text>%TEXT_songsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_sfxsTitle%" type="button" href="browse/sfxs" dashboard-loader-type="list">
+								<i class="fa-solid fa-drum"></i>
+								<text>%TEXT_sfxsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_clansListTitle%" type="button" href="browse/clans" dashboard-loader-type="list" dashboard-show="%CLANS_ENABLED%">
+								<i class="fa-solid fa-shield-halved"></i>
+								<text>%TEXT_clansListTitle%</text>
+							</button>
+							
+							<button title="%TEXT_moderatorsTitle%" type="button" href="mod/accounts" dashboard-loader-type="list">
+								<i class="fa-solid fa-user-shield"></i>
+								<text>%TEXT_moderatorsTitle%</text>
+							</button>
+						</div>
+					</div>
+					
+					<div class="dropdown" id="uploadDropdown" dashboard-show="%IS_LOGGED_IN%">
+						<button title="%TEXT_upload%" type="button" dashboard-dropdown="uploadDropdown">
+							<i class="fa-solid fa-arrow-up-from-bracket"></i>
+							<text>%TEXT_upload%</text>
+							<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
 						</button>
+						
+						<div class="dropdown-items">
+							<button title="%TEXT_uploadSongTitle%" type="button" href="upload/song" dashboard-loader-type="box" dashboard-show="%UPLOAD_SONG_PAGE_ENABLED%">
+								<i class="fa-solid fa-music"></i>
+								<text>%TEXT_uploadSongTitle%</text>
+							</button>
+							
+							<button title="%TEXT_uploadSFXTitle%" type="button" href="upload/sfx" dashboard-loader-type="box" dashboard-show="%UPLOAD_SFX_PAGE_ENABLED%">
+								<i class="fa-solid fa-drum"></i>
+								<text>%TEXT_uploadSFXTitle%</text>
+							</button>
+							
+							<button title="%TEXT_reuploadLevelTitle%" type="button" href="upload/level" dashboard-loader-type="box" dashboard-show="%REUPLOAD_LEVEL_PAGE_ENABLED%">
+								<i class="fa-solid fa-gamepad"></i>
+								<text>%TEXT_reuploadLevelTitle%</text>
+							</button>
+							
+							<button title="%TEXT_runCron%" type="button" href="manage/runCron">
+								<i class="fa-solid fa-bars-progress"></i>
+								<text>%TEXT_runCron%</text>
+							</button>
+						</div>
+					</div>
+					
+					<div class="dropdown" id="modToolsDropdown" dashboard-show="%PERMISSION_dashboardModeratorTools%">
+						<button title="%TEXT_moderatorTools%" type="button" dashboard-dropdown="modToolsDropdown">
+							<i class="fa-solid fa-wrench"></i>
+							<text>%TEXT_moderatorTools%</text>
+							<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
+						</button>
+						
+						<div class="dropdown-items">
+							<button title="%TEXT_banUserTitle%" type="button" href="mod/ban" dashboard-loader-type="box">
+								<i class="fa-solid fa-gavel"></i>
+								<text>%TEXT_banUserTitle%</text>
+							</button>
+							
+							<button title="%TEXT_addMapPackTitle%" type="button" href="upload/mappack" dashboard-loader-type="box" dashboard-show="%PERMISSION_dashboardManageMapPacks%">
+								<i class="fa-solid fa-folder-open"></i>
+								<text>%TEXT_addMapPackTitle%</text>
+							</button>
+							
+							<button title="%TEXT_addGauntletTitle%" type="button" href="upload/gauntlet" dashboard-loader-type="box" dashboard-show="%PERMISSION_dashboardManageGauntlets%">
+								<i class="fa-solid fa-globe"></i>
+								<text>%TEXT_addGauntletTitle%</text>
+							</button>
+							
+							<button title="%TEXT_unlistedLevelsTitle%" type="button" href="mod/levels" dashboard-loader-type="list">
+								<i class="fa-solid fa-gamepad"></i>
+								<text>%TEXT_unlistedLevelsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_unlistedListsTitle%" type="button" href="mod/lists" dashboard-loader-type="list">
+								<i class="fa-solid fa-list"></i>
+								<text>%TEXT_unlistedListsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_suggestedLevelsTitle%" type="button" href="mod/suggestedLevels" dashboard-loader-type="list">
+								<i class="fa-solid fa-user"></i>
+								<text>%TEXT_suggestedLevelsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_disabledSongsTitle%" type="button" href="mod/songs" dashboard-loader-type="list">
+								<i class="fa-solid fa-music"></i>
+								<text>%TEXT_disabledSongsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_disabledSFXsTitle%" type="button" href="mod/sfxs" dashboard-loader-type="list">
+								<i class="fa-solid fa-drum"></i>
+								<text>%TEXT_disabledSFXsTitle%</text>
+							</button>
+							
+							<button title="%TEXT_manageRolesTitle%" type="button" href="mod/roles" dashboard-loader-type="manage" dashboard-show="%PERMISSION_dashboardManageRoles%">
+								<i class="fa-solid fa-id-badge"></i>
+								<text>%TEXT_manageRolesTitle%</text>
+							</button>
+						</div>
 					</div>
 				</div>
 				
-				<div class="dropdown" id="profileLoggedInDropdown" dashboard-show="%IS_LOGGED_IN%">
-					<button title="%USERNAME%" type="button" dashboard-dropdown="profileLoggedInDropdown">
-						<img loading="lazy" src="%PROFILE_ICON%"></img>
-						<text>%USERNAME%</text>
-						<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
-					</button>
+				<div class="navbar-buttons up">
+					<!--<button title="%TEXT_messengerTitle%" type="button" href="messenger" dashboard-show="%IS_LOGGED_IN%">
+						<i class="fa-solid fa-comments"></i>
+						<text>%TEXT_messengerTitle% (X)</text>
+					</button>-->
 					
-					<div class="dropdown-items">
-						<button title="%TEXT_yourProfileTitle%" type="button" href="profile/%USERNAME%" dashboard-loader-type="settings">
+					<div class="dropdown" id="profileLoggedOutDropdown" dashboard-hide="%IS_LOGGED_IN%">
+						<button title="%TEXT_profile%" type="button" dashboard-dropdown="profileLoggedOutDropdown">
 							<i class="fa-solid fa-user"></i>
-							<text>%TEXT_yourProfileTitle%</text>
+							<text>%TEXT_profile%</text>
+							<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
 						</button>
 						
-						<button title="%TEXT_yourClan%" type="button" href="clan/%CLAN_NAME%" dashboard-loader-type="settings" dashboard-show="%IS_IN_CLAN%">
-							<i class="fa-solid fa-shield-halved"></i>
-							<text>%CLAN_NAME%</text>
+						<div class="dropdown-items">
+							<button title="%TEXT_settings%" type="button" href="settings" dashboard-loader-type="list">
+								<i class="fa-solid fa-gear"></i>
+								<text>%TEXT_settings%</text>
+							</button>
+							
+							<button title="%TEXT_loginToAccountTitle%" type="button" href="account/login" dashboard-loader-type="box">
+								<i class="fa-solid fa-sign-in"></i>
+								<text>%TEXT_loginToAccountTitle%</text>
+							</button>
+							
+							<button title="%TEXT_registerAccountTitle%" type="button" href="account/register" dashboard-loader-type="box">
+								<i class="fa-solid fa-user-plus"></i>
+								<text>%TEXT_registerAccountTitle%</text>
+							</button>
+						</div>
+					</div>
+					
+					<div class="dropdown" id="profileLoggedInDropdown" dashboard-show="%IS_LOGGED_IN%">
+						<button title="%USERNAME%" type="button" dashboard-dropdown="profileLoggedInDropdown">
+							<img loading="lazy" src="%PROFILE_ICON%"></img>
+							<text>%USERNAME%</text>
+							<i class="fa-solid fa-caret-right navbar-hide" dashboard-dropdown-caret></i>
 						</button>
 						
-						<button title="%TEXT_settings%" type="button" href="profile/%USERNAME%/settings" dashboard-loader-type="settings">
-							<i class="fa-solid fa-gear"></i>
-							<text>%TEXT_settings%</text>
-						</button>
-						
-						<button title="%TEXT_logoutFromAccountTitle%" type="button" href="account/logout">
-							<i class="fa-solid fa-sign-out"></i>
-							<text>%TEXT_logoutFromAccountTitle%</text>
-						</button>
+						<div class="dropdown-items">
+							<button title="%TEXT_yourProfileTitle%" type="button" href="profile/%USERNAME%" dashboard-loader-type="settings">
+								<i class="fa-solid fa-user"></i>
+								<text>%TEXT_yourProfileTitle%</text>
+							</button>
+							
+							<button title="%TEXT_yourClan%" type="button" href="clan/%CLAN_NAME%" dashboard-loader-type="settings" dashboard-show="%IS_IN_CLAN%">
+								<i class="fa-solid fa-shield-halved"></i>
+								<text>%CLAN_NAME%</text>
+							</button>
+							
+							<button title="%TEXT_settings%" type="button" href="profile/%USERNAME%/settings" dashboard-loader-type="settings">
+								<i class="fa-solid fa-gear"></i>
+								<text>%TEXT_settings%</text>
+							</button>
+							
+							<button title="%TEXT_logoutFromAccountTitle%" type="button" href="account/logout">
+								<i class="fa-solid fa-sign-out"></i>
+								<text>%TEXT_logoutFromAccountTitle%</text>
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
-		</nav>
+			</nav>
+		</div>
 		
 		<div class="dashboard-loader" id="dashboard-loader" dashboard-loader>
 			<i class="fa-solid fa-circle-notch fa-spin"></i>
@@ -424,7 +444,7 @@
 		
 		<div class="audioPlayer" id="audioPlayer">
 			<div class="vertical">
-				<h1>
+				<h1 class="audioPlayerTitle">
 					<text class="songAuthor" id="audioPlayerAuthor"></text>
 					<text id="audioPlayerTitle">%TEXT_nothingIsPlaying%</text>
 					<text dashboard-copy id="audioPlayerSongID"></text>

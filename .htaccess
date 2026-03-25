@@ -8,13 +8,28 @@
 
 	RewriteCond %{REQUEST_URI} \.json$ [NC]
 	RewriteRule ^ - [F]
-
+	
+	RewriteCond %{REQUEST_URI} \.txt$ [NC]
+	RewriteRule ^ - [F]
+	
+	
+	
+	# Music redirects
+	
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^sfx/(.+)$ sfx/handler.php?request=$1 [L,QSA]
 
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^music/(.+)$ music/handler.php?request=$1 [L,QSA]
-
+	
+	RewriteRule ^dashboard/sfxs/(.+)\.(ogg|mp3)$ dashboard/sfxs/handler.php?sfxID=$1 [L,QSA]
+	
+	RewriteRule ^dashboard/songs/(.+)\.(ogg|mp3)$ dashboard/songs/handler.php?songID=$1 [L,QSA]
+	
+	
+	
+	# Page redirects
+	
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^dashboard/clan/(.+)$ dashboard/clan/index.php?id=$1 [L,QSA]
 

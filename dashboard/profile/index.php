@@ -397,7 +397,7 @@ $user['PROFILE_SONGS_COUNT'] = $profileStats['songs'];
 $user['PROFILE_SFXS_COUNT'] = $profileStats['sfxs'];
 $user['PROFILE_BANS_COUNT'] = $canSeeBans ? $profileStats['bans'] : 'So sneaky! :)';
 
-$contextMenuData['MENU_SHOW_NAME'] = 'false';
+$contextMenuData['MENU_SHOW_NAME'] = $contextMenuData['MENU_SHOW_REPLY_BUTTON'] = 'false';
 
 $user['PROFILE_CAN_SEE_COMMENT_HISTORY'] = $contextMenuData['MENU_CAN_SEE_COMMENT_HISTORY'] = $canSeeCommentHistory ? 'true' : 'false';
 

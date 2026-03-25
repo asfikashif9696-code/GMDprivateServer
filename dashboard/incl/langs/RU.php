@@ -306,7 +306,7 @@ $language['bannedToast'] = 'Вы заблокированы: "%1$s", бан пр
 $language['songs'] = 'Песни';
 $language['sfxs'] = 'Звуки';
 
-$language['pageText'] = 'Страница %1$s из %2$s';
+$language['pageText'] = '%1$s из %2$s';
 
 $language['dashboardSettingsTitle'] = 'Настройки панели';
 

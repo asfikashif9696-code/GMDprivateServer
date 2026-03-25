@@ -479,7 +479,7 @@ class Dashboard {
 			'DASHBOARD_ACCENT_COLOR' => $accentColor,
 			'DATABASE_PATH' => $dbPath,
 			
-			'STYLE_TIMESTAMP' => filemtime(__DIR__."/style.css"),
+			'STYLE_TIMESTAMP' => max(filemtime(__DIR__."/style.css"), filemtime(__DIR__."/mobile.css")),
 			'SCRIPT_TIMESTAMP' => filemtime(__DIR__."/script.js"),
 			
 			'MAX_SONG_SIZE' => $songSize,

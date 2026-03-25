@@ -306,7 +306,7 @@ $language['bannedToast'] = 'You\'re banned: "%1$s", ban will expire %2$s'; // %1
 $language['songs'] = 'Songs';
 $language['sfxs'] = 'SFXs';
 
-$language['pageText'] = 'Page %1$s of %2$s';
+$language['pageText'] = '%1$s of %2$s';
 
 $language['dashboardSettingsTitle'] = 'Dashboard settings';
 

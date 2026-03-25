@@ -55,11 +55,6 @@ class IP {
 			Cloudflare reverse proxy
 		*/
 		if(isset($_SERVER['HTTP_CF_CONNECTING_IP']) && self::isCloudFlareIP($_SERVER['REMOTE_ADDR'])) return $_SERVER['HTTP_CF_CONNECTING_IP'];
-		
-		/*
-			141412.xyz support
-		*/
-		if(isset($_SERVER['HTTP_X_REAL_IP']) && $_SERVER['REMOTE_ADDR'] == "10.0.1.10") return $_SERVER['HTTP_X_REAL_IP'];
 			
 		/*
 			Localhost reverse proxy (mostly 7m.pl)

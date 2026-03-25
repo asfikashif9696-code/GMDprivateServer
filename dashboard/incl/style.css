@@ -44,6 +44,10 @@
 	--transition-0-2: 0.2s;
 }
 
+[dashboard-mobile] {
+	display: none !important;
+}
+
 * {
 	font-family: 'Inter', sans-serif;
 }
@@ -100,17 +104,17 @@ button {
 }
 
 nav {
-	padding: 20px;
-
-	max-height: 100vh;
-	min-height: 100vh;
-
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
 	flex-direction: column;
 	
-	background-color: #00000025;
+	padding: 20px;
+	
+	max-height: 100vh;
+	min-height: 100vh;
+	
+	background-color: var(--content-color-black);
 	border-right: solid 1px #FFFFFF20;
 	
 	z-index: 5;
@@ -137,6 +141,10 @@ nav {
 	width: 100%;
 	
 	gap: 10px;
+}
+
+.navbar-box {
+	display: contents;
 }
 
 nav button {
@@ -518,7 +526,8 @@ footer h4 span {
 	height: max-content;
 }
 
-.button:hover {
+.button:hover,
+.inputStyle:hover {
 	background-color: var(--content-color-34);
 	box-shadow: var(--content-shadow);
 }
@@ -610,7 +619,7 @@ form {
 	outline: none;
 	background: none;
 	border: 1px solid var(--href-shadow-color);
-	box-shadow: var(--href-shadow);
+	box-shadow: 0px 0px 20px var(--href-shadow-color);
 	
 	transition: var(--transition-0-2);
 	
@@ -744,6 +753,33 @@ form.empty-fields .select:has(input:not([dashboard-not-required]):placeholder-sh
 
 .navbar-buttons.down .dropdown.show i[dashboard-dropdown-caret] {
 	transform: rotate(90deg);
+}
+
+.navbar-buttons.mobile {
+	--display: flex;
+	flex-direction: row;
+	
+	max-height: 0px;
+	opacity: 0;
+	margin-top: -10px;
+	pointer-events: none;
+	
+	transition: var(--transition-0-2);
+}
+
+.navbar-buttons.mobile text {
+	display: none;
+}
+
+.navbar-buttons.mobile button {
+	justify-content: center;
+}
+
+body.hide .navbar-buttons.mobile {
+	max-height: max-content;
+	opacity: 1;
+	margin-top: 0px;
+	pointer-events: initial;
 }
 
 nav .dropdown-items button {
@@ -965,7 +1001,7 @@ span.username {
 	max-width: 30px;
 	max-height: 30px;
 	
-	min-height: 27px;
+	min-width: 27px;
 }
 
 .username > [href],
@@ -1224,7 +1260,7 @@ h1.username[href],
 	
 	padding: 10px;
 	border-radius: 15px;
-	max-width: 50%;
+	min-width: 500px;
 	
 	background-color: var(--content-color-black);
 	border: 1px solid var(--content-color-34);
@@ -1298,6 +1334,11 @@ h1.username[href],
 	font-size: 20px;
 }
 
+.audioPlayerControls text {
+	min-width: 45px;
+	max-width: 45px;
+}
+
 .audioPlayerControls input {
 	appearance: none;
 	
@@ -1306,8 +1347,9 @@ h1.username[href],
 	
 	background-size: 0% 100%;
 	background-repeat: no-repeat;
-	background-color: var(--content-color-34);
+	background: linear-gradient(to right, var(--href-shadow-color) var(--audio-position, 0%), var(--content-color-34) var(--audio-position, 0%));
 	border: 1px solid var(--content-color-34);
+	accent-color: var(--href-color);
 	
 	width: 100%;
 	
@@ -1541,6 +1583,8 @@ i[onclick],
 	background-color: var(--content-color-14);
 	border: 1px solid var(--content-color-24);
 	border-radius: 10px;
+	
+	width: max-content;
 }
 
 .modeButtons button {
@@ -1915,6 +1959,11 @@ nav [title]::after,
 	width: 100%;
 }
 
+.languageDiv.extra {
+	margin-left: 15px;
+	width: calc(100% - 15px);
+}
+
 .settingDescription h2:has(img) {
 	display: flex;
 	align-items: center;
@@ -1984,6 +2033,10 @@ nav [title]::after,
 	@starting-style {
 		opacity: 0;
 	}
+}
+
+.radio:checked:active::after {
+	scale: 0.9;
 }
 
 .usernameDiv {
@@ -2951,6 +3004,7 @@ hr {
 
 label.inputStyle {
 	cursor: pointer;
+	width: auto;
 }
 
 label.inputStyle input[type="file"] {
@@ -3247,4 +3301,14 @@ body.loweredMotion .toastify.error {
 
 .skeletonAnimation {
 	animation: none;
+}
+
+body.loweredMotion .toggle:checked::after,
+body.loweredMotion .radio:checked::after,
+body.loweredMotion .toggleExtra::after {
+	border: 1px solid var(--href-color);
+}
+
+body.loweredMotion .inputColor {
+	box-shadow: none;
 }

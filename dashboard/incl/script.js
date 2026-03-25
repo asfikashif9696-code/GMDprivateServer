@@ -1,14 +1,18 @@
 if(typeof localStorage.player_volume == "undefined") localStorage.player_volume = 0.15;
 
-var dashboardLoader, dashboardBody, dashboardBase, dashboardBackground, dashboardFooter;
+var dashboardLoader, dashboardBody, dashboardNavbarBox, dashboardNavbar, dashboardBase, dashboardBackground, dashboardFooter;
 var intervals = [];
 var searchLists = [];
 var pageLoaders = {};
 var updateFilters = true;
+var isNavbarHovered = false;
+var isMobile = window.outerWidth <= 1000;
 
 window.addEventListener('load', () => {
 	dashboardLoader = document.getElementById("dashboard-loader");
 	dashboardBody = document.getElementById("dashboard-body");
+	dashboardNavbarBox = document.getElementById("dashboard-navbar-box");
+	dashboardNavbar = document.querySelector("nav");
 	dashboardBase = document.querySelector("base");
 	dashboardBackground = document.querySelector("span.background");
 	dashboardFooter = document.querySelector("footer");
@@ -27,9 +31,37 @@ window.addEventListener('load', () => {
 		return getPage(newHref, false);
 	});
 	window.addEventListener("wheel", () => document.querySelector("[dashboard-context-menu].show")?.classList.remove("show"));
+	window.addEventListener("resize", () => isMobile = window.outerWidth <= 1000);
 	
 	setTimeout(() => dashboardLoader.classList.add("hide"), 200);
+	
+	isMobile = window.outerWidth <= 1000;
+	
+	dashboardNavbarBox.addEventListener("touchend", (event) => {
+		if(!recursiveIsParent(event.target, dashboardNavbar)) closeNavbar();
+	})
+	dashboardNavbarBox.addEventListener("scroll", (event) => {
+		if(!dashboardBody.classList.contains("hide") && !dashboardNavbarBox.classList.contains("no-closing") && event.target.scrollTop <= 10) closeNavbar();
+		if(dashboardBody.classList.contains("hide") && event.target.scrollTop >= 10) openNavbar(false);
+	})
 });
+
+function openNavbar(scrollToTop = true) {
+	if(!dashboardBody.classList.contains("hide")) return;
+	
+	dashboardNavbarBox.classList.add("no-closing");
+	setTimeout(() => dashboardNavbarBox.classList.remove("no-closing"), 100);
+	
+	dashboardBody.classList.remove("hide");
+	if(scrollToTop) dashboardNavbarBox.scrollTo(0, 120);
+}
+
+function closeNavbar() {
+	if(dashboardBody.classList.contains("hide")) return;
+	
+	dashboardBody.classList.add("hide");
+	dashboardNavbarBox.scrollTo(0, 0);
+}
 
 async function getPage(href, loaderType = 'loader') {
 	if(loaderType && ((window.location.href.endsWith(href) && href.length) || (!href.length && dashboardBase.getAttribute("href") == './'))) return false;
@@ -152,19 +184,20 @@ function changePage(response, href, loaderType = false) {
 		dashboardBody.scroll(0, 0);
 		document.querySelector("base").replaceWith(newPageBody.querySelector("base"));
 		document.querySelector("title").replaceWith(newPageBody.querySelector("title"));
-		document.querySelector("nav").replaceWith(newPageBody.querySelector("nav"));
+		dashboardNavbar.replaceWith(newPageBody.querySelector("nav"));
 		document.getElementById("dashboardScript").replaceWith(newPageBody.getElementById("dashboardScript"));
 		eval(document.getElementById("dashboardScript").textContent);
 		document.getElementById("dashboardStyle").replaceWith(newPageBody.getElementById("dashboardStyle"));
+		
+		dashboardBody = document.getElementById("dashboard-body");
+		dashboardNavbar = document.querySelector("nav");
+		dashboardBase = document.querySelector("base");
 		
 		if(newPageScript != null) {
 			eval(newPageScript.textContent);
 			newPageScript.remove();
 		}
-		if(reportModal != null) document.querySelector("body").appendChild(reportModal);
-		
-		dashboardBody = document.getElementById("dashboard-body");
-		dashboardBase = document.querySelector("base");
+		if(reportModal != null) dashboardBody.appendChild(reportModal);
 		
 		updatePage();
 		updateNavbar();
@@ -200,7 +233,15 @@ function toggleDropdown(dropdown) {
 	if(previousDropdown != null && previousDropdown.id != dropdown) previousDropdown.classList.remove("show");
 	
 	const newDropdown = document.getElementById(dropdown);
-	if(newDropdown != null) newDropdown.classList.toggle("show");
+	if(newDropdown != null) {
+		newDropdown.classList.toggle("show");
+		if(newDropdown.classList.contains("show")) {
+			const dropdownItems = newDropdown.querySelector(".dropdown-items")
+			const dropdownPosition = parseInt(dropdownItems.style.getPropertyValue("--dropdown-height"));
+			
+			setTimeout(() => dashboardNavbarBox.scrollTo(0, dashboardNavbarBox.scrollHeight + dropdownPosition), 200);
+		}
+	}
 }
 
 function showToastOutOfPage(toastBody) {
@@ -266,15 +307,25 @@ async function showToast(toastIcon, toastText, toastStyle) {
 }
 
 async function updatePage() {
-	if(localStorage.enableLoweredMotion == "1") document.querySelector("body").classList.add("loweredMotion");
-	else document.querySelector("body").classList.remove("loweredMotion");
+	if(localStorage.enableLoweredMotion == "1") dashboardBody.classList.add("loweredMotion");
+	else dashboardBody.classList.remove("loweredMotion");
 	
 	for(const element of document.querySelectorAll("[dashboard-hide=true]")) element.remove();
 	for(const element of document.querySelectorAll("[dashboard-show=false]")) element.remove();
 	
 	const navbar = document.querySelector("nav");
-	navbar.addEventListener("mouseenter", () => dashboardBody.classList.remove("hide"));
-	navbar.addEventListener("mouseleave", () => dashboardBody.classList.add("hide"));
+	navbar.addEventListener("mouseenter", () => {
+		if(isMobile) return;
+		
+		isNavbarHovered = true;
+		dashboardBody.classList.remove("hide");
+	});
+	navbar.addEventListener("mouseleave", () => {
+		if(isMobile) return;
+		
+		isNavbarHovered = false;
+		dashboardBody.classList.add("hide");
+	});
 	
 	const removeElements = dashboardBody.querySelectorAll('[dashboard-remove]');
 	removeElements.forEach(async (element) => {
@@ -959,6 +1010,8 @@ async function updatePage() {
 		
 		if(inputElement.value.length) element.querySelector(`button[value="${inputElement.value}"]`).click();
 	});
+	
+	if(isNavbarHovered && !isMobile) dashboardBody.classList.remove("hide");
 }
 
 function timeConverter(timestamp, textStyle = "short") {
@@ -1494,14 +1547,22 @@ function activateLoaderOfType(loaderType) {
 	for(const element of document.querySelectorAll("[dashboard-loader]")) element.classList.add("hide");
 	for(const element of document.querySelectorAll("[dashboard-modal]")) element.classList.remove("show");
 	
-	dashboardBody.classList.add("hide");
+	closeNavbar();
 	toggleDropdown(null);
 	
 	if(!loaderType || !loaderType.length) {
 		document.getElementById("dashboard-page").classList.remove("hide");
+		if(isNavbarHovered && !isMobile) dashboardBody.classList.remove("hide");
 		return;
 	}
 	
 	if(loaderType == 'loader') dashboardLoader.classList.remove("hide");
 	else document.getElementById(`dashboard-loader-${loaderType}`).classList.remove("hide");
+}
+
+function recursiveIsParent(element, targetElement) {
+	if(element === targetElement) return true;
+	if(element == null || element.parentElement === document) return false;
+	
+	return recursiveIsParent(element.parentElement, targetElement);
 }
