@@ -238,6 +238,10 @@ switch($parameters[1]) {
 			'SETTING_LANGUAGE_RU_DEFAULT' => $_COOKIE['lang'] == 'RU' ? 'true' : 'false',
 			'LOWERED_MOTION_VALUE' => $_COOKIE['enableLoweredMotion'] ? 1 : 0,
 			'LOWERED_MOTION_REMOVE_CHECK' => !$_COOKIE['enableLoweredMotion'] ? 'checked' : '',
+			'NO_ELEMENTS_EFFECTS_VALUE' => $_COOKIE['disableElementsEffects'] ? 1 : 0,
+			'NO_ELEMENTS_EFFECTS_REMOVE_CHECK' => !$_COOKIE['disableElementsEffects'] ? 'checked' : '',
+			'NO_BACKGROUND_VALUE' => $_COOKIE['disableBackground'] ? 1 : 0,
+			'NO_BACKGROUND_REMOVE_CHECK' => !$_COOKIE['disableBackground'] ? 'checked' : '',
 			
 			'MESSAGES_PRIVACY_VALUE' => $account['mS'],
 			'FRIEND_REQUESTS_VALUE' => $account['frS'],

@@ -1,12 +1,15 @@
 <form class="wideBox" name="settingsForm" dashboard-change-form>
 	<div class="contentDiv vertical">
 		<div class="settingDescription">
-			<h2>%TEXT_languageTitle%</h2>
+			<h2>
+				<i class="fa-solid fa-language"></i>
+				%TEXT_languageTitle%
+			</h2>
 			<h3>%TEXT_languageDesc%</h3>
 		</div>
 		
 		<div class="languagesDiv">
-			<div class="languageDiv extra">
+			<div class="languageDiv extra" dashboard-toggle>
 				<div class="settingDescription">
 					<h2>
 						<img src="incl/icons/flag_EN.svg"></img> English
@@ -18,7 +21,7 @@
 				<input dashboard-hide="%SETTING_LANGUAGE_EN_DEFAULT%" class="radio" type="radio" name="lang" value="EN"></input>
 			</div>
 			
-			<div class="languageDiv extra">
+			<div class="languageDiv extra" dashboard-toggle>
 				<div class="settingDescription">
 					<h2>
 						<img src="incl/icons/flag_RU.svg"></img> Русский
@@ -45,7 +48,7 @@
 	</div>
 	
 	<div class="contentDiv vertical">
-		<div class="settingDiv horisontal">
+		<div class="settingDiv horisontal" dashboard-button>
 			<div class="usernameDiv">
 				<div class="mainIcon">
 					<img dashboard-show="%IS_LOGGED_IN%" src="%PROFILE_ICON%"></img>

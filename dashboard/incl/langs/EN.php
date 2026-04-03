@@ -22,6 +22,7 @@ $language['nothingIsPlaying'] = 'Nothing is playing...';
 $language['manage'] = 'Manage';
 $language['view'] = 'View';
 $language['levels'] = 'Levels'; // Levels in general
+$language['menu'] = 'Menu';
 
 /* Panel strings */
 $language['hidePanel'] = 'Hide panel';
@@ -69,7 +70,8 @@ $language['clans'] = 'Clans';
 $language['messengerTitle'] = 'Messenger';
 $language['loginToAccountTitle'] = 'Login to account';
 $language['yourProfileTitle'] = 'Your profile';
-$language['logoutFromAccountTitle'] = 'Logout';
+$language['logoutFromAccountTitle'] = 'Logout from account';
+$language['logoutFromAccountDesc'] = 'Logout from your account';
 $language['registerAccountTitle'] = 'Register account';
 
 $language['linksTitle'] = 'Links';
@@ -774,6 +776,12 @@ $language['reportReply'] = 'Report reply';
 $language['copyReplyID'] = 'Copy reply ID';
 $language['replyToUserText'] = 'Reply to %1$s';
 $language['viewRepliedPost'] = 'View replied post';
+$language['performanceSettingsTitle'] = 'Performance settings';
+$language['performanceSettingsDesc'] = 'These settings may improve performances, especially on lower-end devices';
 $language['loweredMotion'] = 'Lowered motion';
-$language['loweredMotionDesc'] = 'Lowers down effects and animations, gaining more performance to low-end devices';
+$language['loweredMotionDesc'] = 'Lowers down effects and animations';
+$language['noElementsEffectsTitle'] = 'Disable elements effects';
+$language['noElementsEffectsDesc'] = 'Disables most background effects, such as blur or glow behind elements';
+$language['noBackgroundTitle'] = 'Disable background animation';
+$language['noBackgroundDesc'] = 'Disables the animation showing up in the background';
 ?>

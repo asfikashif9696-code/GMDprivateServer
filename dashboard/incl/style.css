@@ -50,6 +50,7 @@
 
 * {
 	font-family: 'Inter', sans-serif;
+	-webkit-tap-highlight-color: transparent;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -768,11 +769,18 @@ form.empty-fields .select:has(input:not([dashboard-not-required]):placeholder-sh
 }
 
 .navbar-buttons.mobile text {
-	display: none;
+	font-size: 10px;
+	width: max-content;
 }
 
 .navbar-buttons.mobile button {
 	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	
+	gap: 5px;
+	padding: 5px 10px;
+	margin: -2.5px 0px;
 }
 
 body.hide .navbar-buttons.mobile {
@@ -1361,7 +1369,8 @@ h1.username[href],
 }
 
 i[onclick],
-[dashboard-toggle] {
+[dashboard-toggle],
+[dashboard-button] {
 	cursor: pointer;
 }
 
@@ -1981,7 +1990,7 @@ nav [title]::after,
 	
 	width: 100%;
 	
-	gap: 5px;
+	gap: 10px;
 }
 
 .radio {
@@ -2186,6 +2195,11 @@ span.background {
 	backdrop-filter: var(--backdrop-filter-0);
 	
 	pointer-events: none;
+}
+
+span.background.show {
+	opacity: 1;
+	pointer-events: initial;
 }
 
 .modalPage .box {
@@ -3117,8 +3131,6 @@ a {
 
 	cursor: pointer;
 	
-	padding: 0px;
-	
 	background-color: var(--href-shadow-color);
 	box-shadow: var(--href-shadow);
 	
@@ -3134,7 +3146,7 @@ a {
 	content: '';
 	position: absolute;
 	
-	width: 40px;
+	width: 39px;
 	
 	background-color: var(--href-color);
 	box-shadow: var(--href-shadow);
@@ -3145,7 +3157,7 @@ a {
 	aspect-ratio: 1 / 1;
 	
 	transition: var(--transition-0-2);
-	transform: translateX(calc((100% - 2.5px) * var(--toggle-value)));
+	transform: translateX(calc((100% - 1.5px) * var(--toggle-value)));
 	
 	z-index: 1;
 }
@@ -3252,6 +3264,11 @@ a {
 */
 
 body.loweredMotion {
+	--transition-0-1: none;
+	--transition-0-2: none;
+}
+
+body.noElementsEffects {
 	--href-shadow: none;
 	
 	--content-color-14: #1C1C1C;
@@ -3267,48 +3284,45 @@ body.loweredMotion {
 	--backdrop-filter-0: none;
 	--backdrop-filter-5: none;
 	--backdrop-filter-10: none;
-	
-	--transition-0-1: none;
-	--transition-0-2: none;
 }
 
-body.loweredMotion .circles {
+body.noBackground .circles {
 	display: none;
 }
 
-body.loweredMotion .toastify {
+body.noElementsEffects .toastify {
 	border: 1px solid var(--content-color-34) !important;
 	background: var(--content-color-24) !important;
 	box-shadow: none !important;
 }
 
-body.loweredMotion .toastify.success {
+body.noElementsEffects .toastify.success {
 	border: 1px solid #468044 !important;
 	background: #234619 !important;
 	box-shadow: none !important;
 }
 
-body.loweredMotion .toastify.error {
+body.noElementsEffects .toastify.error {
 	border: 1px solid #804444;
 	background: #461919 !important;
 	box-shadow: none !important;
 }
 
-.modalPage .box {
+body.noElementsEffects .modalPage .box {
 	background: var(--content-color-14);
 	border: 1px solid var(--content-color-24);
 }
 
-.skeletonAnimation {
+body.noElementsEffects .skeletonAnimation {
 	animation: none;
 }
 
-body.loweredMotion .toggle:checked::after,
-body.loweredMotion .radio:checked::after,
-body.loweredMotion .toggleExtra::after {
+body.noElementsEffects .toggle:checked::after,
+body.noElementsEffects .radio:checked::after,
+body.noElementsEffects .toggleExtra::after {
 	border: 1px solid var(--href-color);
 }
 
-body.loweredMotion .inputColor {
+body.noElementsEffects .inputColor {
 	box-shadow: none;
 }

@@ -6,11 +6,17 @@ require_once __DIR__."/../".$dbPath."incl/lib/enums.php";
 if(isset($_POST['lang'])) {
 	$lang = strtoupper(Escape::latin($_POST['lang'], 2)) ?: 'EN';
 	$enableLoweredMotion = isset($_POST['loweredMotion']) ? 1 : 0;
+	$disableElementsEffects = isset($_POST['noElementsEffects']) ? 1 : 0;
+	$disableBackground = isset($_POST['noBackground']) ? 1 : 0;
 	
 	$_COOKIE['lang'] = $lang;
 	setcookie("lang", $lang, 2147483647, "/");
 	$_COOKIE['enableLoweredMotion'] = $enableLoweredMotion;
 	setcookie("enableLoweredMotion", $enableLoweredMotion, 2147483647, "/");
+	$_COOKIE['disableElementsEffects'] = $disableElementsEffects;
+	setcookie("disableElementsEffects", $disableElementsEffects, 2147483647, "/");
+	$_COOKIE['disableBackground'] = $disableBackground;
+	setcookie("disableBackground", $disableBackground, 2147483647, "/");
 	
 	exit(Dashboard::renderToast("check", Dashboard::string("successAppliedSettings"), "success", "@", "list"));
 }

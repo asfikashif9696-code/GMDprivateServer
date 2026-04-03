@@ -22,6 +22,7 @@ $language['nothingIsPlaying'] = 'Ничего не играет...';
 $language['manage'] = 'Управление';
 $language['view'] = 'Посмотреть';
 $language['levels'] = 'Уровни'; // Levels in general
+$language['menu'] = 'Меню';
 
 /* Panel strings */
 $language['hidePanel'] = 'Скрыть панель';
@@ -70,6 +71,7 @@ $language['messengerTitle'] = 'Мессенджер';
 $language['loginToAccountTitle'] = 'Войти в аккаунт';
 $language['yourProfileTitle'] = 'Ваш профиль';
 $language['logoutFromAccountTitle'] = 'Выйти из аккаунта';
+$language['logoutFromAccountDesc'] = 'Выйти из вашего аккаунта';
 $language['registerAccountTitle'] = 'Зарегистрировать аккаунт';
 
 $language['linksTitle'] = 'Ссылки';
@@ -774,6 +776,12 @@ $language['reportReply'] = 'Пожаловаться на ответ';
 $language['copyReplyID'] = 'Скопировать ID ответа';
 $language['replyToUserText'] = 'Ответ %1$s';
 $language['viewRepliedPost'] = 'Посмотреть пост с ответа';
+$language['performanceSettingsTitle'] = 'Настройки производительности';
+$language['performanceSettingsDesc'] = 'Эти настройки позволят добиться большей производительности на слабых девайсах';
 $language['loweredMotion'] = 'Уменьшенное движение';
-$language['loweredMotionDesc'] = 'Понижает эффекты и анимации, позволяя добиться большей производительности на слабых девайсах';
+$language['loweredMotionDesc'] = 'Понижает эффекты и анимации';
+$language['noElementsEffectsTitle'] = 'Отключить эффекты у элементов';
+$language['noElementsEffectsDesc'] = 'Отключает большинство эффектов у элементов, к примеру, блюр или свечение';
+$language['noBackgroundTitle'] = 'Отключить фон';
+$language['noBackgroundDesc'] = 'Отключает фон за страницей';
 ?>

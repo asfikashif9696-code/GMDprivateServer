@@ -4,7 +4,7 @@
 		<base href="%PAGE_BASE%">
 		<meta charset="utf-8">
 		<meta name="color-scheme" content="dark">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit='no'">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 		<link rel="icon" href="%DASHBOARD_FAVICON%">
 		<link async rel="stylesheet" href="incl/style.css?%STYLE_TIMESTAMP%">
 		<link async rel="stylesheet" href="incl/mobile.css?%STYLE_TIMESTAMP%">
@@ -42,6 +42,8 @@
 			
 			localStorage.language = "%LANGUAGE%";
 			localStorage.enableLoweredMotion = "%LOWERED_MOTION%";
+			localStorage.disableElementsEffects = "%NO_ELEMENTS_EFFECTS%";
+			localStorage.disableBackground = "%NO_BACKGROUND%";
 		</script>
 		<style id="dashboardStyle">
 			:root {
@@ -60,19 +62,23 @@
 		<div class="navbar-box" id="dashboard-navbar-box">
 			<nav>
 				<div class="navbar-buttons mobile" dashboard-mobile>
+					<button type="button" type="button" href="" dashboard-loader-type="loader">
+						<i class="fa-solid fa-house"></i>
+						<text>%TEXT_home%</text>
+					</button>
+					
 					<button type="button" onclick="openNavbar()">
 						<i class="fa-solid fa-bars"></i>
-						<text title="%TEXT_hidePanel%">%TEXT_hidePanel%</text>
+						<text>%TEXT_menu%</text>
 					</button>
 					
-					<button title="%TEXT_profile%" type="button" onclick="openNavbar()" dashboard-dropdown="profileLoggedOutDropdown" dashboard-hide="%IS_LOGGED_IN%">
-						<i class="fa-solid fa-user"></i>
-						<text>%TEXT_profile%</text>
+					<button title="%TEXT_settings%" type="button" href="settings" dashboard-loader-type="list" dashboard-hide="%IS_LOGGED_IN%">
+						<i class="fa-solid fa-gear"></i>
+						<text>%TEXT_settings%</text>
 					</button>
-					
-					<button title="%USERNAME%" type="button" onclick="openNavbar()" dashboard-dropdown="profileLoggedInDropdown" dashboard-show="%IS_LOGGED_IN%">
-						<img loading="lazy" src="%PROFILE_ICON%"></img>
-						<text>%USERNAME%</text>
+					<button title="%TEXT_settings%" type="button" href="profile/%USERNAME%/settings" dashboard-loader-type="settings" dashboard-show="%IS_LOGGED_IN%">
+						<i class="fa-solid fa-gear"></i>
+						<text>%TEXT_settings%</text>
 					</button>
 				</div>
 					
@@ -315,11 +321,6 @@
 							<button title="%TEXT_settings%" type="button" href="profile/%USERNAME%/settings" dashboard-loader-type="settings">
 								<i class="fa-solid fa-gear"></i>
 								<text>%TEXT_settings%</text>
-							</button>
-							
-							<button title="%TEXT_logoutFromAccountTitle%" type="button" href="account/logout">
-								<i class="fa-solid fa-sign-out"></i>
-								<text>%TEXT_logoutFromAccountTitle%</text>
 							</button>
 						</div>
 					</div>

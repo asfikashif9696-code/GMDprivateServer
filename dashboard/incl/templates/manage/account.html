@@ -11,7 +11,7 @@
 		</div>
 		
 		<div class="languagesDiv">
-			<div class="languageDiv extra">
+			<div class="languageDiv extra" dashboard-toggle>
 				<div class="settingDescription">
 					<h2>
 						<img src="incl/icons/flag_EN.svg"></img> English
@@ -23,7 +23,7 @@
 				<input dashboard-hide="%SETTING_LANGUAGE_EN_DEFAULT%" class="radio" type="radio" name="lang" value="EN"></input>
 			</div>
 			
-			<div class="languageDiv extra">
+			<div class="languageDiv extra" dashboard-toggle>
 				<div class="settingDescription">
 					<h2>
 						<img src="incl/icons/flag_RU.svg"></img> Русский
@@ -35,17 +35,51 @@
 				<input dashboard-hide="%SETTING_LANGUAGE_RU_DEFAULT%" class="radio" type="radio" name="lang" value="RU"></input>
 			</div>
 		</div>
+		
+		<div class="settingDescription">
+			<h2>
+				<i class="fa-solid fa-gauge-high"></i>
+				%TEXT_performanceSettingsTitle%
+			</h2>
+			<h3>%TEXT_performanceSettingsDesc%</h3>
+		</div>
 				
-		<div class="languageDiv" dashboard-toggle>
-			<div class="settingDescription">
-				<h2>
-					<i class="fa-solid fa-eye-slash"></i>
-					%TEXT_loweredMotion%
-				</h2>
-				<h3>%TEXT_loweredMotionDesc%</h3>
+		<div class="languagesDiv">
+			<div class="languageDiv extra" dashboard-toggle>
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-eye-slash"></i>
+						%TEXT_loweredMotion%
+					</h2>
+					<h3>%TEXT_loweredMotionDesc%</h3>
+				</div>
+				
+				<input class="toggle" type="checkbox" name="loweredMotion" value="%LOWERED_MOTION_VALUE%" dashboard-change-default checked dashboard-remove="%LOWERED_MOTION_REMOVE_CHECK%"></input>
 			</div>
 			
-			<input class="toggle" type="checkbox" name="loweredMotion" value="%LOWERED_MOTION_VALUE%" dashboard-change-default checked dashboard-remove="%LOWERED_MOTION_REMOVE_CHECK%"></input>
+			<div class="languageDiv extra" dashboard-toggle>
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-wand-magic-sparkles"></i>
+						%TEXT_noElementsEffectsTitle%
+					</h2>
+					<h3>%TEXT_noElementsEffectsDesc%</h3>
+				</div>
+				
+				<input class="toggle" type="checkbox" name="noElementsEffects" value="%NO_ELEMENTS_EFFECTS_VALUE%" dashboard-change-default checked dashboard-remove="%NO_ELEMENTS_EFFECTS_REMOVE_CHECK%"></input>
+			</div>
+			
+			<div class="languageDiv extra" dashboard-toggle>
+				<div class="settingDescription">
+					<h2>
+						<i class="fa-solid fa-burst"></i>
+						%TEXT_noBackgroundTitle%
+					</h2>
+					<h3>%TEXT_noBackgroundDesc%</h3>
+				</div>
+				
+				<input class="toggle" type="checkbox" name="noBackground" value="%NO_BACKGROUND_VALUE%" dashboard-change-default checked dashboard-remove="%NO_BACKGROUND_REMOVE_CHECK%"></input>
+			</div>
 		</div>
 	</div>
 	
@@ -201,7 +235,7 @@
 		</div>
 	</div>
 	<div class="contentDiv vertical">
-		<div class="languageDiv">
+		<div class="languageDiv" dashboard-button>
 			<div class="settingDescription">
 				<h2>
 					<i class="fa-solid fa-user-circle"></i>
@@ -215,7 +249,7 @@
 			</button>
 		</div>
 		
-		<div class="languageDiv">
+		<div class="languageDiv" dashboard-button>
 			<div class="settingDescription">
 				<h2>
 					<i class="fa-solid fa-key"></i>
@@ -226,6 +260,20 @@
 			
 			<button class="button toggleButton titleToRight" type="button" title="%TEXT_changePasswordTitle%" href="account/changePassword" dashboard-loader-type="box">
 				<i class="fa-solid fa-up-right-from-square"></i>
+			</button>
+		</div>
+		
+		<div class="languageDiv" dashboard-button>
+			<div class="settingDescription">
+				<h2>
+					<i class="fa-solid fa-sign-out"></i>
+					%TEXT_logoutFromAccountTitle%
+				</h2>
+				<h3>%TEXT_logoutFromAccountDesc%</h3>
+			</div>
+			
+			<button class="button toggleButton titleToRight" type="button" title="%TEXT_logoutFromAccountTitle%" href="account/logout">
+				<i class="fa-solid fa-sign-out"></i>
 			</button>
 		</div>
 	</div>

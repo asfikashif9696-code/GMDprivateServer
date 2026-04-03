@@ -26,6 +26,11 @@ window.addEventListener('load', () => {
 	updateNavbar();
 	
 	window.addEventListener("popstate", (event) => {
+		event.stopPropagation();
+		event.preventDefault();
+		
+		if(isMobile && !dashboardBody.classList.contains("hide")) return closeNavbar();
+		
 		const newHref = decodeURIComponent(event.target.location.href).substr(baseURL.href.length);
 		
 		return getPage(newHref, false);
@@ -38,7 +43,9 @@ window.addEventListener('load', () => {
 	isMobile = window.outerWidth <= 1000;
 	
 	dashboardNavbarBox.addEventListener("touchend", (event) => {
-		if(!recursiveIsParent(event.target, dashboardNavbar)) closeNavbar();
+		if(!recursiveIsParent(event.target, dashboardNavbar)) return closeNavbar();
+		
+		if(!dashboardNavbarBox.classList.contains("no-closing") && dashboardNavbarBox.scrollTop <= 100 && dashboardNavbarBox.scrollTop > 10) dashboardNavbarBox.scrollTo(0, 100);
 	})
 	dashboardNavbarBox.addEventListener("scroll", (event) => {
 		if(!dashboardBody.classList.contains("hide") && !dashboardNavbarBox.classList.contains("no-closing") && event.target.scrollTop <= 10) closeNavbar();
@@ -53,7 +60,7 @@ function openNavbar(scrollToTop = true) {
 	setTimeout(() => dashboardNavbarBox.classList.remove("no-closing"), 100);
 	
 	dashboardBody.classList.remove("hide");
-	if(scrollToTop) dashboardNavbarBox.scrollTo(0, 120);
+	if(scrollToTop) dashboardNavbarBox.scrollTo(0, 100);
 }
 
 function closeNavbar() {
@@ -239,18 +246,28 @@ function toggleDropdown(dropdown) {
 			const dropdownItems = newDropdown.querySelector(".dropdown-items")
 			const dropdownPosition = parseInt(dropdownItems.style.getPropertyValue("--dropdown-height"));
 			
-			setTimeout(() => dashboardNavbarBox.scrollTo(0, dashboardNavbarBox.scrollHeight + dropdownPosition), 200);
+			const scrollInterval = setInterval(() => {
+				dashboardNavbarBox.scrollTo({
+					left: 0,
+					top: dashboardNavbarBox.scrollHeight + dropdownPosition,
+					
+					behavior: "instant"
+				});
+			}, 10);
+			setTimeout(() => clearInterval(scrollInterval), 200);
 		}
 	}
 }
 
 function showToastOutOfPage(toastBody) {
+	const toastType = toastBody.getAttribute("state");
+	
 	Toastify({
 		text: toastBody.innerHTML,
 		duration: 2000,
 		position: "center",
 		escapeMarkup: false,
-		className: toastBody.getAttribute("state"),
+		className: toastType,
 	}).showToast();
 	
 	const toastifyBody = document.querySelector(".toastify");
@@ -309,6 +326,10 @@ async function showToast(toastIcon, toastText, toastStyle) {
 async function updatePage() {
 	if(localStorage.enableLoweredMotion == "1") dashboardBody.classList.add("loweredMotion");
 	else dashboardBody.classList.remove("loweredMotion");
+	if(localStorage.disableElementsEffects == "1") dashboardBody.classList.add("noElementsEffects");
+	else dashboardBody.classList.remove("noElementsEffects");
+	if(localStorage.disableBackground == "1") dashboardBody.classList.add("noBackground");
+	else dashboardBody.classList.remove("noBackground");
 	
 	for(const element of document.querySelectorAll("[dashboard-hide=true]")) element.remove();
 	for(const element of document.querySelectorAll("[dashboard-show=false]")) element.remove();
@@ -842,6 +863,36 @@ async function updatePage() {
 		}
 	});
 	
+	const buttonElements = document.querySelectorAll("[dashboard-button]");
+	buttonElements.forEach(async (element) => {
+		const buttonElement = element.querySelector("button");
+		
+		element.onclick = (event) => {
+			if(event.target != buttonElement) {
+				const buttonHref = buttonElement.getAttribute("href");
+				
+				if(buttonHref == null || !buttonHref.length) return buttonElement.onclick();
+				
+				switch(event.button) {
+					case 0:
+						const hrefLoaderType = buttonElement.getAttribute("dashboard-loader-type") ?? 'loader';
+						getPage(buttonHref, hrefLoaderType);
+						
+						break;
+					case 1:
+						const openNewTab = document.createElement("a");
+						openNewTab.href = buttonHref;
+						openNewTab.target = "_blank";
+						openNewTab.click();
+						
+						break;
+				}
+				
+				return;
+			}
+		}
+	});
+	
 	const regexElements = document.querySelectorAll("[dashboard-regex-check]");
 	regexElements.forEach(async (element) => {
 		element.oninput = () => {
@@ -998,6 +1049,13 @@ async function updatePage() {
 			const buttonIndex = i;
 			
 			buttonElement.onclick = () => {
+				if(isMobile && buttonElement.classList.contains("checked")) {
+					dashboardBackground.classList.add("show");
+					element.classList.add("focused");
+					
+					return;
+				}
+				
 				buttonElements.forEach(async (removeButtonStyle) => removeButtonStyle.classList.remove("checked"));
 				buttonElement.classList.add("checked");
 				
@@ -1007,6 +1065,11 @@ async function updatePage() {
 				checkFormSettingsChange(document.querySelector("[dashboard-change-form]"));
 			}
 		});
+		
+		dashboardBackground.onclick = () => {
+			dashboardBackground.classList.remove("show");
+			extraToggleElements.forEach(async (removeStyle) => removeStyle.classList.remove("focused"));
+		}
 		
 		if(inputElement.value.length) element.querySelector(`button[value="${inputElement.value}"]`).click();
 	});
@@ -1083,7 +1146,21 @@ function timeConverter(timestamp, textStyle = "short") {
 function copyElementContent(textToCopy, relativeLink = false) {
 	if(relativeLink && !textToCopy.startsWith("http://") && !textToCopy.startsWith("https://")) textToCopy = baseURL.href + textToCopy;
 	
-	navigator.clipboard.writeText(textToCopy);
+	if("clipboard" in navigator) navigator.clipboard.writeText(textToCopy);
+	else {
+		const textArea = document.createElement('textarea');
+		
+		textArea.value = textToCopy;
+		textArea.style = 'position: fixed; opacity: 0; pointer-events: none; touch-action: none; top: -100px;';
+		
+		document.body.appendChild(textArea);
+		
+		textArea.focus();
+		textArea.select();
+		document.execCommand('copy');
+		
+		document.body.removeChild(textArea);
+	}
 	
 	Toastify({
 		text: copiedText,
@@ -1316,6 +1393,12 @@ async function resetSettings() {
 		
 		element.querySelector(`button[value="${inputElement.value}"]`).click();
 	});
+	
+	const extraToggleElements = document.querySelectorAll("[dashboard-extra-toggle]");
+	if(extraToggleElements.length) {
+		dashboardBackground.classList.remove("show");
+		extraToggleElements.forEach(async (removeStyle) => removeStyle.classList.remove("focused"));
+	}
 }
 
 async function addEmojiToInput(emojiName) {
@@ -1565,4 +1648,20 @@ function recursiveIsParent(element, targetElement) {
 	if(element == null || element.parentElement === document) return false;
 	
 	return recursiveIsParent(element.parentElement, targetElement);
+}
+
+function mobileVibrate(type) {
+	if(!"vibrate" in navigator) return;
+	
+	switch(type) {
+		case "small":
+			navigator.vibrate(15);
+			break;
+		case "long":
+			navigator.vibrate(50);
+			break;
+		case "double":
+			navigator.vibrate([15, 90, 15]);
+			break;
+	}
 }

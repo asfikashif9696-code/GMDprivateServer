@@ -467,6 +467,8 @@ class Dashboard {
 		}
 		
 		if(!isset($_COOKIE['enableLoweredMotion'])) setcookie("enableLoweredMotion", '0', 2147483647, "/");
+		if(!isset($_COOKIE['disableElementsEffects'])) setcookie("disableElementsEffects", '0', 2147483647, "/");
+		if(!isset($_COOKIE['disableBackground'])) setcookie("disableBackground", '0', 2147483647, "/");
 		
 		$mainPageData = [
 			'PAGE' => $templatePage,
@@ -495,6 +497,8 @@ class Dashboard {
 			
 			'LANGUAGE' => Escape::latin_no_spaces($_COOKIE['lang'], 2) ?: "EN",
 			'LOWERED_MOTION' => Escape::number($_COOKIE['enableLoweredMotion']),
+			'NO_ELEMENTS_EFFECTS' => Escape::number($_COOKIE['disableElementsEffects']),
+			'NO_BACKGROUND' => Escape::number($_COOKIE['disableBackground']),
 			
 			'UPLOAD_SONG_PAGE_ENABLED' => strpos($songEnabled, '1') !== false || strpos($songEnabled, '2') !== false ? 'true' : 'false',
 			'UPLOAD_SFX_PAGE_ENABLED' => $sfxEnabled ? 'true' : 'false',

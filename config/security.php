@@ -79,6 +79,7 @@ $proxies['https'] = 'https://fhgdps.com/proxies/https.txt';
 $proxies['socks4'] = 'https://fhgdps.com/proxies/socks4.txt';
 $proxies['socks5'] = 'https://fhgdps.com/proxies/socks5.txt';
 $proxies['unknown'] = 'https://fhgdps.com/proxies/unknown.txt';
+$proxies['data-shield'] = 'https://raw.githubusercontent.com/duggytuxy/Data-Shield_IPv4_Blocklist/refs/heads/main/prod_data-shield_ipv4_blocklist.txt';
 $vpns['vpn'] = 'https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/vpn/ipv4.txt';
 
 /*
