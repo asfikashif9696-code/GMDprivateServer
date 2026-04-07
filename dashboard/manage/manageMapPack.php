@@ -35,9 +35,9 @@ if(Library::checkPermission($person, "dashboardManageMapPacks") && isset($_POST[
 	$newLevels = implode(',', $newLevelsArray);
 	
 	$friendsString = Library::getFriendsQueryString($accountID);
-	$filters = ["levelID IN (".$newLevels.") AND (
-			unlisted != 1 OR
-			(unlisted = 1 AND (levels.extID IN (".$friendsString.")))
+	$filters = ["levels.levelID IN (".$newLevels.") AND (
+			levels.unlisted != 1 OR
+			(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 		)"];
 	
 	$levelsArray = Library::getLevels($filters, '', '', '', 0);

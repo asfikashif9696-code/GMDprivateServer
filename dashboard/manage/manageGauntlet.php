@@ -22,9 +22,9 @@ if(Library::checkPermission($person, "dashboardManageGauntlets") && isset($_POST
 	if(count($newLevelsArray) != 5) exit(Dashboard::renderToast("xmark", Dashboard::string("errorGauntletWrongLevelsCount"), "error"));
 	
 	$friendsString = Library::getFriendsQueryString($accountID);
-	$filters = ["levelID IN (".$newLevels.") AND (
-			unlisted != 1 OR
-			(unlisted = 1 AND (levels.extID IN (".$friendsString.")))
+	$filters = ["levels.levelID IN (".$newLevels.") AND (
+			levels.unlisted != 1 OR
+			(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 		)"];
 	
 	$levelsArray = Library::getLevels($filters, '', '', '', 0);

@@ -18,15 +18,13 @@ if(isset($_GET['search'])) {
 		
 		$friendsString = Library::getFriendsQueryString($accountID);
 		
-		$filters = ["levelID = ".$search." AND (
-				unlisted != 1 OR
-				(unlisted = 1 AND (levels.extID IN (".$friendsString.")))
+		$filters = ["levels.levelID = ".$search." AND (
+				levels.unlisted != 1 OR
+				(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 			)"];
 	}
 	
-	$queryJoin = "INNER JOIN users ON levels.userID = users.userID";
-	
-	$levelsArray = Library::getLevels($filters, '', '', $queryJoin, 0, 5);
+	$levelsArray = Library::getLevels($filters, '', '', '', 0, 5);
 	if(!$levelsArray['levels']) exit(json_encode([]));
 	
 	foreach($levelsArray['levels'] AS &$level) {

@@ -784,4 +784,7 @@ $language['noElementsEffectsTitle'] = 'Disable elements effects';
 $language['noElementsEffectsDesc'] = 'Disables most background effects, such as blur or glow behind elements';
 $language['noBackgroundTitle'] = 'Disable background animation';
 $language['noBackgroundDesc'] = 'Disables the animation showing up in the background';
+
+$language['viewMore'] = 'More';
+$language['hide'] = 'Hide';
 ?>

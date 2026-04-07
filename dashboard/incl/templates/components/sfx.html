@@ -16,31 +16,42 @@
 		</div>
 	</div>
 	
-	<div class="horisontal stats">
-		<div class="songCard">
-			<div class="contents userButton" dashboard-show="%SFX_IS_LOCAL%">%SFX_USER%</div>
+	<div class="viewMoreDiv" dashboard-view-more>
+		<button class="button" type="button" dashboard-mobile dashboard-view-more-button>
+			<i class="fa-solid fa-caret-right" dashboard-view-more-icon></i>
+		
+			<div class="viewMoreText">
+				<text dashboard-view-more-text-closed>%TEXT_viewMore%</text>
+				<text dashboard-view-more-text-opened>%TEXT_hide%</text>
+			</div>
+		</button>
+	
+		<div class="horisontal stats">
+			<div class="songCard">
+				<div class="contents userButton" dashboard-show="%SFX_IS_LOCAL%">%SFX_USER%</div>
+				
+				<text class="levelStat" title="%TEXT_library%" dashboard-hide="%SFX_IS_LOCAL%">
+					<i class="fa-solid fa-list"></i>
+					%SFX_AUTHOR%
+				</text>
+			</div>
 			
-			<text class="levelStat" title="%TEXT_library%" dashboard-hide="%SFX_IS_LOCAL%">
-				<i class="fa-solid fa-list"></i>
-				%SFX_AUTHOR%
-			</text>
-		</div>
-		
-		<div class="levelStats card">
-			<text class="levelStat" title="%TEXT_sfxID%">
-				<i class="fa-solid fa-drum"></i>
-				<text dashboard-copy>%SFX_ID%</text>
-			</text>
-		
-			<text class="levelStat" title="%TEXT_uploadDate%" dashboard-show="%SFX_IS_LOCAL%">
-				<i class="fa-solid fa-calendar"></i>
-				<text dashboard-date="%reuploadTime%"></text>
-			</text>
-		
-			<text class="levelStat" title="%TEXT_usageCount%" dashboard-show="%SFX_IS_LOCAL%">
-				<i class="fa-solid fa-gamepad"></i>
-				%levelsCount%
-			</text>
+			<div class="levelStats card">
+				<text class="levelStat" title="%TEXT_sfxID%">
+					<i class="fa-solid fa-drum"></i>
+					<text dashboard-copy>%SFX_ID%</text>
+				</text>
+			
+				<text class="levelStat" title="%TEXT_uploadDate%" dashboard-show="%SFX_IS_LOCAL%">
+					<i class="fa-solid fa-calendar"></i>
+					<text dashboard-date="%reuploadTime%"></text>
+				</text>
+			
+				<text class="levelStat" title="%TEXT_usageCount%" dashboard-show="%SFX_IS_LOCAL%">
+					<i class="fa-solid fa-gamepad"></i>
+					%levelsCount%
+				</text>
+			</div>
 		</div>
 	</div>
 	

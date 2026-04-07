@@ -8,6 +8,8 @@ var updateFilters = true;
 var isNavbarHovered = false;
 var isMobile = window.outerWidth <= 1000;
 
+if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 window.addEventListener('load', () => {
 	dashboardLoader = document.getElementById("dashboard-loader");
 	dashboardBody = document.getElementById("dashboard-body");
@@ -165,13 +167,7 @@ function changePage(response, href, loaderType = false) {
 			const toastBody = newPageBody.getElementById("toast");
 			if(toastBody != null) return r(showToastOutOfPage(toastBody));
 			
-			Toastify({
-				text: failedToLoadText,
-				duration: 2000,
-				position: "center",
-				escapeMarkup: false,
-				className: 'error',
-			}).showToast();
+			showToast("", failedToLoadText, "error");
 			
 			return r(true);
 		}
@@ -260,15 +256,9 @@ function toggleDropdown(dropdown) {
 }
 
 function showToastOutOfPage(toastBody) {
-	const toastType = toastBody.getAttribute("state");
+	const toastStyle = toastBody.getAttribute("state");
 	
-	Toastify({
-		text: toastBody.innerHTML,
-		duration: 2000,
-		position: "center",
-		escapeMarkup: false,
-		className: toastType,
-	}).showToast();
+	showToast("", toastBody.innerHTML, toastStyle);
 	
 	const toastifyBody = document.querySelector(".toastify");
 	
@@ -444,13 +434,7 @@ async function updatePage() {
 		}, 1000);
 		
 		element.onclick = () => {
-			Toastify({
-				text: timeConverter(dateTime, false),
-				duration: 2000,
-				position: "center",
-				escapeMarkup: false,
-				className: "info",
-			}).showToast();
+			showToast("", timeConverter(dateTime, false), "info");
 		}
 	});
 	
@@ -868,7 +852,7 @@ async function updatePage() {
 		const buttonElement = element.querySelector("button");
 		
 		element.onclick = (event) => {
-			if(event.target != buttonElement) {
+			if(buttonElement != null && event.target != buttonElement && event.target.getAttribute("dashboard-not-button") == null) {
 				const buttonHref = buttonElement.getAttribute("href");
 				
 				if(buttonHref == null || !buttonHref.length) return buttonElement.onclick();
@@ -1074,6 +1058,24 @@ async function updatePage() {
 		if(inputElement.value.length) element.querySelector(`button[value="${inputElement.value}"]`).click();
 	});
 	
+	const viewMoreElements = document.querySelectorAll("[dashboard-view-more]");
+	viewMoreElements.forEach(async (element) => {
+		const viewMoreButton = element.querySelector("[dashboard-view-more-button]");
+		
+		viewMoreButton.onclick = () => {
+			element.classList.toggle("show");
+		}
+	});
+	
+	const emojisInput = document.querySelector("[dashboard-emojis-div]");
+	if(emojisInput != null) {
+		const emojisDiv = emojisInput.querySelector(".emojisDiv");
+		
+		document.addEventListener("click", (event) => {
+			if(emojisInput.classList.contains("show") && !recursiveIsParent(event.target, emojisInput) && !recursiveIsParent(event.target, emojisDiv)) toggleEmojisDiv();
+		});
+	}
+	
 	if(isNavbarHovered && !isMobile) dashboardBody.classList.remove("hide");
 }
 
@@ -1162,13 +1164,7 @@ function copyElementContent(textToCopy, relativeLink = false) {
 		document.body.removeChild(textArea);
 	}
 	
-	Toastify({
-		text: copiedText,
-		duration: 2000,
-		position: "center",
-		escapeMarkup: false,
-		className: "success",
-	}).showToast();
+	showToast("", copiedText, "success");
 }
 
 function showLevelPassword() {
@@ -1407,6 +1403,8 @@ async function addEmojiToInput(emojiName) {
 	
 	formInput.value += `:${emojiName}:`;
 	formInput.focus();
+	
+	toggleEmojisDiv();
 }
 
 async function toggleEmojisDiv() {

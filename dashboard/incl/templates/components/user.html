@@ -17,63 +17,75 @@
 		</h1>
 	</div>
 	
-	<div class="horisontal stats">
-		<div class="levelStats card">
-			<text class="levelStat" title="%TEXT_accountID%">
-				<i class="fa-solid fa-user"></i>
-				<text dashboard-copy>%extID%</text>
-			</text>
+	<div class="viewMoreDiv" dashboard-view-more>
+		<button class="button" type="button" dashboard-mobile dashboard-view-more-button>
+			<i class="fa-solid fa-caret-right" dashboard-view-more-icon></i>
 			
-			<text class="levelStat" title="%TEXT_userID%">
-				<i class="fa-regular fa-user"></i>
-				<text dashboard-copy>%userID%</text>
-			</text>
-		</div>
-		
-		<div class="levelStats card">
-			<text class="levelStat" title="%TEXT_registerDate%" dashboard-show="%USER_SHOW_REGISTER_DATE%">
-				<i class="fa-solid fa-calendar"></i>
-				<text dashboard-date="%registerDate%"></text>
-			</text>
-		
-			<div class="levelStat" title="%TEXT_stars%">
-				<i class="fa-solid fa-star"></i>
-				%stars%
+			<div class="viewMoreText">
+				<text dashboard-view-more-text-closed>%TEXT_viewMore%</text>
+				<text dashboard-view-more-text-opened>%TEXT_hide%</text>
 			</div>
-		
-			<div class="levelStat" title="%TEXT_moons%">
-				<i class="fa-solid fa-moon"></i>
-				%moons%
+		</button>
+	
+		<div class="horisontal stats">
+			<div class="levelStats card">
+				<text class="levelStat" title="%TEXT_accountID%">
+					<i class="fa-solid fa-user"></i>
+					<text dashboard-copy>%extID%</text>
+				</text>
+				
+				<text class="levelStat" title="%TEXT_userID%">
+					<i class="fa-regular fa-user"></i>
+					<text dashboard-copy>%userID%</text>
+				</text>
 			</div>
 			
-			<div class="levelStat" title="%TEXT_diamonds%">
-				<i class="fa-solid fa-gem"></i>
-				%diamonds%
-			</div>
+			<div class="levelStats card">
+				<text class="levelStat" title="%TEXT_registerDate%" dashboard-show="%USER_SHOW_REGISTER_DATE%">
+					<i class="fa-solid fa-calendar"></i>
+					<text dashboard-date="%registerDate%"></text>
+				</text>
 			
-			<div class="levelStat" title="%TEXT_goldCoins%">
-				<i class="fa-solid fa-coins goldCoins"></i>
-				%coins%
-			</div>
+				<div class="levelStat" title="%TEXT_stars%">
+					<i class="fa-solid fa-star"></i>
+					%stars%
+				</div>
 			
-			<div class="levelStat" title="%TEXT_userCoins%">
-				<i class="fa-solid fa-coins"></i>
-				%userCoins%
+				<div class="levelStat" title="%TEXT_moons%">
+					<i class="fa-solid fa-moon"></i>
+					%moons%
+				</div>
+				
+				<div class="levelStat" title="%TEXT_diamonds%">
+					<i class="fa-solid fa-gem"></i>
+					%diamonds%
+				</div>
+				
+				<div class="levelStat" title="%TEXT_goldCoins%">
+					<i class="fa-solid fa-coins goldCoins"></i>
+					%coins%
+				</div>
+				
+				<div class="levelStat" title="%TEXT_userCoins%">
+					<i class="fa-solid fa-coins"></i>
+					%userCoins%
+				</div>
+				
+				<div class="levelStat" title="%TEXT_demons%">
+					<i class="fa-solid fa-dragon"></i>
+					%demons%
+				</div>
+				
+				<div class="levelStat" title="%TEXT_creatorPoints%">
+					<i class="fa-solid fa-screwdriver-wrench"></i>
+					%creatorPoints%
+				</div>
+				
+				<button class="button titleToRight" type="button" title="%TEXT_viewAccount%" href="profile/%USER_NAME%" dashboard-loader-type="settings">
+					<i class="fa-solid fa-eye"></i>
+					<text dashboard-mobile>%TEXT_viewAccount%</text>
+				</button>
 			</div>
-			
-			<div class="levelStat" title="%TEXT_demons%">
-				<i class="fa-solid fa-dragon"></i>
-				%demons%
-			</div>
-			
-			<div class="levelStat" title="%TEXT_creatorPoints%">
-				<i class="fa-solid fa-screwdriver-wrench"></i>
-				%creatorPoints%
-			</div>
-			
-			<button class="button titleToRight" type="button" title="%TEXT_viewAccount%" href="profile/%USER_NAME%" dashboard-loader-type="settings">
-				<i class="fa-solid fa-eye"></i>
-			</button>
 		</div>
 	</div>
 	

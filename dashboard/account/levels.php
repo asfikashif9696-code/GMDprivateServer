@@ -9,7 +9,7 @@ $person = Dashboard::loginDashboardUser();
 if(!$person['success']) exit(Dashboard::renderErrorPage(Dashboard::string("yourLevelsTitle"), Dashboard::string("errorLoginRequired")));
 $userID = $person['userID'];
 
-$order = "uploadDate";
+$order = "levels.uploadDate";
 $orderSorting = "DESC";
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 $page = '';

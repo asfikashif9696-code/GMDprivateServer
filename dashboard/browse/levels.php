@@ -405,7 +405,7 @@ if($_GET['id']) {
 }
 
 // Search levels
-$order = "uploadDate";
+$order = "levels.uploadDate";
 $orderSorting = "DESC";
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 $page = '';

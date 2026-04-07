@@ -3,7 +3,7 @@
 		<div class="horisontal">
 			<div class="vertical">
 				<div class="levelTitle">
-					<h2>%LIST_TITLE% • <text dashboard-copy>%listID%</text></h2>
+					<h2>%LIST_TITLE%</h2>
 				</div>
 				
 				<h3 class="levelDescription">
@@ -16,7 +16,10 @@
 		</div>
 		
 		<div class="horisontal stats">
-			<span class="emptySymbol">:3</span>
+			<text class="levelStat" title="%TEXT_listID%">
+				<i class="fa-solid fa-list"></i>
+				<text dashboard-copy>%listID%</text>
+			</text>
 			
 			<button class="button short titleToRight" type="button" onclick="copyElementContent('browse/lists/%listID%', true)">
 				<i class="fa-solid fa-chain"></i>

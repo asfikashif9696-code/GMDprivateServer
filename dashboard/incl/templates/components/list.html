@@ -1,8 +1,12 @@
 <div class="contentDiv" dashboard-context-div>
 	<div class="horisontal">
 		<div class="vertical">
-			<div class="levelTitle" href="browse/lists/%listID%" dashboard-loader-type="settings">
-				<h2>%LIST_TITLE%</h2>
+			<div class="horisontal">
+				<div class="levelTitle" href="browse/lists/%listID%" dashboard-loader-type="settings">
+					<img loading="lazy" class="difficultyImage" src="%LIST_DIFFICULTY_IMAGE%" dashboard-mobile></img>
+					
+					<h2>%LIST_TITLE%</h2>
+				</div>
 			</div>
 			
 			<h3 class="levelDescription">
@@ -10,52 +14,68 @@
 				%LIST_DESCRIPTION%
 			</h3>
 	
-			<div class="horisontal stats">
-				<div class="levelStats">
-					<button class="button titleToLeft" type="button" title="%TEXT_viewList%" href="browse/lists/%listID%" dashboard-loader-type="settings">
-						<i class="fa-solid fa-eye"></i>
-					</button>
+			<div class="viewMoreDiv" dashboard-view-more>
+				<button class="button" type="button" dashboard-mobile dashboard-view-more-button>
+					<i class="fa-solid fa-caret-right" dashboard-view-more-icon></i>
 					
-					<text class="levelStat" title="%TEXT_listID%">
-						<i class="fa-solid fa-list"></i>
-						<text dashboard-copy>%listID%</text>
-					</text>
-					
-					<text class="levelStat" title="%TEXT_listPrivacy%" dashboard-show="%LIST_SHOW_PRIVACY%">
-						<i class="fa-solid fa-%LIST_PRIVACY_ICON%"></i>
-						%LIST_PRIVACY_TEXT%
-					</text>				
-					
-					<text class="levelStat" title="%TEXT_uploadDate%">
-						<i class="fa-solid fa-calendar"></i>
-						<text dashboard-date="%uploadDate%"></text>
-					</text>
-					
-					<text class="levelStat" title="%TEXT_countForReward%">
-						<i class="fa-solid fa-gamepad"></i>
-						%countForReward%
-					</text>
-					
-					<text class="levelStat" title="%TEXT_diamonds%">
-						<i class="fa-solid fa-gem"></i>
-						%starStars%
-					</text>
-					
-					<text class="levelStat" title="%TEXT_downloads%">
-						<i class="fa-solid fa-reply fa-rotate-270"></i>
-						%downloads%
-					</text>
-					
-					<text class="levelStat" title="%TEXT_rating%">
-						<i dashboard-hide="%LIST_IS_DISLIKED%" class="fa-solid fa-thumbs-up"></i>
-						<i dashboard-show="%LIST_IS_DISLIKED%" class="fa-solid fa-thumbs-down"></i>
-						%LIST_LIKES%
-					</text>
+					<div class="viewMoreText">
+						<text dashboard-view-more-text-closed>%TEXT_viewMore%</text>
+						<text dashboard-view-more-text-opened>%TEXT_hide%</text>
+					</div>
+				</button>
+				
+				<div class="horisontal stats">
+					<div class="levelStats">
+						<button class="button titleToLeft" type="button" title="%TEXT_viewList%" href="browse/lists/%listID%" dashboard-loader-type="settings" dashboard-pc>
+							<i class="fa-solid fa-eye"></i>
+						</button>
+						
+						<text class="levelStat" title="%TEXT_listID%">
+							<i class="fa-solid fa-list"></i>
+							<text dashboard-copy>%listID%</text>
+						</text>
+						
+						<text class="levelStat" title="%TEXT_listPrivacy%" dashboard-show="%LIST_SHOW_PRIVACY%">
+							<i class="fa-solid fa-%LIST_PRIVACY_ICON%"></i>
+							%LIST_PRIVACY_TEXT%
+						</text>
+						
+						<text class="levelStat" title="%TEXT_uploadDate%">
+							<i class="fa-solid fa-calendar"></i>
+							<text dashboard-date="%uploadDate%"></text>
+						</text>
+						
+						<text class="levelStat" title="%TEXT_countForReward%">
+							<i class="fa-solid fa-gamepad"></i>
+							%countForReward%
+						</text>
+						
+						<text class="levelStat" title="%TEXT_diamonds%">
+							<i class="fa-solid fa-gem"></i>
+							%starStars%
+						</text>
+						
+						<text class="levelStat" title="%TEXT_downloads%">
+							<i class="fa-solid fa-reply fa-rotate-270"></i>
+							%downloads%
+						</text>
+						
+						<text class="levelStat" title="%TEXT_rating%">
+							<i dashboard-hide="%LIST_IS_DISLIKED%" class="fa-solid fa-thumbs-up"></i>
+							<i dashboard-show="%LIST_IS_DISLIKED%" class="fa-solid fa-thumbs-down"></i>
+							%LIST_LIKES%
+						</text>
+						
+						<button class="button titleToLeft" type="button" title="%TEXT_viewList%" href="browse/lists/%listID%" dashboard-loader-type="settings" dashboard-mobile>
+							<i class="fa-solid fa-eye"></i>
+							%TEXT_viewList%
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
 		
-		<img loading="lazy" class="difficultyImage" src="%LIST_DIFFICULTY_IMAGE%"></img>
+		<img loading="lazy" class="difficultyImage" src="%LIST_DIFFICULTY_IMAGE%" dashboard-pc></img>
 	</div>
 	
 	%LIST_CONTEXT_MENU%

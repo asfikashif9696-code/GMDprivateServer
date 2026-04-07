@@ -2160,7 +2160,7 @@ class Library {
 	public static function getLevels($filters, $order, $orderSorting, $queryJoin, $pageOffset, $limit = 10) {
 		require __DIR__."/connection.php";
 		
-		$levels = $db->prepare("SELECT * FROM levels ".$queryJoin." INNER JOIN users ON users.extID = levels.extID WHERE (".implode(") AND (", $filters).") AND isDeleted = 0 ".($order ? "ORDER BY ".$order." ".$orderSorting : "")." ".($limit ? "LIMIT ".$limit." OFFSET ".$pageOffset : ''));
+		$levels = $db->prepare("SELECT * FROM levels ".$queryJoin." INNER JOIN users ON users.extID = levels.extID WHERE (".implode(") AND (", $filters).") AND levels.isDeleted = 0 ".($order ? "ORDER BY ".$order." ".$orderSorting : "")." ".($limit ? "LIMIT ".$limit." OFFSET ".$pageOffset : ''));
 		$levels->execute();
 		$levels = $levels->fetchAll();
 		
@@ -3286,7 +3286,7 @@ class Library {
 		require_once __DIR__."/exploitPatch.php";
 		
 		$epicParams = $diffParams = $demonParams = [];
-		$filters = !$removeDefaultFilter ? ["unlisted = 0 AND unlisted2 = 0"] : [];
+		$filters = !$removeDefaultFilter ? ["levels.unlisted = 0 AND levels.unlisted2 = 0"] : [];
 
 		$str = Escape::text(urldecode($query["str"])) ?: '';
 		$type = Escape::number($query["type"]) ?: 0;
@@ -3295,25 +3295,25 @@ class Library {
 
 		if(!$showAllLevels) $filters[] = "levels.gameVersion <= '".$gameVersion."'";
 
-		if(isset($query["original"]) && $query["original"] == 1) $filters[] = "original = 0";
-		if(isset($query["coins"]) && $query["coins"] == 1) $filters[] = "starCoins = 1 AND NOT levels.coins = 0";
+		if(isset($query["original"]) && $query["original"] == 1) $filters[] = "levels.original = 0";
+		if(isset($query["coins"]) && $query["coins"] == 1) $filters[] = "levels.starCoins = 1 AND NOT levels.coins = 0";
 		
 		if((isset($query["uncompleted"]) || isset($query["onlyCompleted"])) && ($query["uncompleted"] == 1 || $query["onlyCompleted"] == 1)) {
 			$completedLevels = Escape::multiple_ids(urldecode($query["completedLevels"]));
-			$filters[] = ($query['uncompleted'] == 1 ? 'NOT ' : '')."levelID IN (".$completedLevels.")";
+			$filters[] = ($query['uncompleted'] == 1 ? 'NOT ' : '')."levels.levelID IN (".$completedLevels.")";
 		}
 		
 		if(isset($query["song"])) {
 			$song = abs(Escape::number($query["song"]) ?: 0);
 			if(!isset($query["customSong"])) {
 				$song = $song - 1;
-				$filters[] = "audioTrack = '".$song."' AND songID = 0";
-			} else $filters[] = $song == 0 ? "audioTrack = 0 AND songID > 0" : "audioTrack = 0 AND (songID = '".$song."' OR songIDs REGEXP '(\\\D|^)(".$song.")(\\\D|$)')";
+				$filters[] = "levels.audioTrack = '".$song."' AND levels.songID = 0";
+			} else $filters[] = $song == 0 ? "levels.audioTrack = 0 AND levels.songID > 0" : "levels.audioTrack = 0 AND (levels.songID = '".$song."' OR levels.songIDs REGEXP '(\\\D|^)(".$song.")(\\\D|$)')";
 		}
 		
-		if(isset($query["twoPlayer"]) && $query["twoPlayer"] == 1) $filters[] = "twoPlayer = 1";
-		if(isset($query["star"]) && $query["star"] == 1) $filters[] = "NOT starStars = 0";
-		if(isset($query["noStar"]) && $query["noStar"] == 1) $filters[] = "starStars = 0";
+		if(isset($query["twoPlayer"]) && $query["twoPlayer"] == 1) $filters[] = "levels.twoPlayer = 1";
+		if(isset($query["star"]) && $query["star"] == 1) $filters[] = "NOT levels.starStars = 0";
+		if(isset($query["noStar"]) && $query["noStar"] == 1) $filters[] = "levels.starStars = 0";
 		
 		if(isset($query["gauntlet"]) && $query["gauntlet"] != 0) {
 			$gauntletID = abs(Escape::number($query["gauntlet"]));
@@ -3328,12 +3328,12 @@ class Library {
 		}
 		
 		$len = Escape::multiple_ids(urldecode($query["len"])) ?: '-';
-		if($len && $len != "-") $filters[] = "levelLength IN (".$len.")";
+		if($len && $len != "-") $filters[] = "levels.levelLength IN (".$len.")";
 		
-		if(isset($query["featured"]) && $query["featured"] == 1) $epicParams[] = "(starFeatured > 0 AND starEpic = 0)";
-		if(isset($query["epic"]) && $query["epic"] == 1) $epicParams[] = "starEpic = 1";
-		if(isset($query["mythic"]) && $query["mythic"] == 1) $epicParams[] = "starEpic = 2"; // The reason why Mythic and Legendary ratings are swapped: RobTop accidentally swapped them in-game
-		if(isset($query["legendary"]) && $query["legendary"] == 1) $epicParams[] = "starEpic = 3";
+		if(isset($query["featured"]) && $query["featured"] == 1) $epicParams[] = "(levels.starFeatured > 0 AND levels.starEpic = 0)";
+		if(isset($query["epic"]) && $query["epic"] == 1) $epicParams[] = "levels.starEpic = 1";
+		if(isset($query["mythic"]) && $query["mythic"] == 1) $epicParams[] = "levels.starEpic = 2"; // The reason why Mythic and Legendary ratings are swapped: RobTop accidentally swapped them in-game
+		if(isset($query["legendary"]) && $query["legendary"] == 1) $epicParams[] = "levels.starEpic = 3";
 		$epicFilter = implode(" OR ", $epicParams);
 		if(!empty($epicFilter)) $filters[] = $epicFilter;
 		
@@ -3344,24 +3344,24 @@ class Library {
 			foreach($diffArray AS &$diffEntry) {
 				switch($diffEntry) {
 					case -1:
-						$diffParams[] = "starDifficulty / difficultyDenominator < 0.5";
+						$diffParams[] = "levels.starDifficulty / levels.difficultyDenominator < 0.5";
 						
 						break;
 					case -3:
-						$diffParams[] = "starAuto = 1";
+						$diffParams[] = "levels.starAuto = 1";
 						
 						break;
 					case -2:
 						$demonDiffs = [0, 3, 4, 0, 5, 6];
 						$demonFilter = $query["demonFilter"] ? explode(',', Escape::multiple_ids(urldecode($query["demonFilter"]))) : [];
 						
-						foreach($demonFilter AS &$demonDiff) $demonParams[] = "starDemonDiff = ".($demonDiffs[$demonDiff] ?: 0);
+						foreach($demonFilter AS &$demonDiff) $demonParams[] = "levels.starDemonDiff = ".($demonDiffs[$demonDiff] ?: 0);
 						
-						$diffParams[] = "starDemon = 1".(!empty($demonParams) ? ' AND ('.implode(" OR ", $demonParams).')' : '');
+						$diffParams[] = "levels.starDemon = 1".(!empty($demonParams) ? ' AND ('.implode(" OR ", $demonParams).')' : '');
 						
 						break;
 					default:
-						$diffParams[] = "starAuto = 0 AND starDemon = 0 AND starDifficulty / difficultyDenominator >= ".((int)$diffEntry - 0.5)." AND starDifficulty / difficultyDenominator < ".((int)$diffEntry + 0.5);
+						$diffParams[] = "levels.starAuto = 0 AND levels.starDemon = 0 AND levels.starDifficulty / levels.difficultyDenominator >= ".((int)$diffEntry - 0.5)." AND levels.starDifficulty / levels.difficultyDenominator < ".((int)$diffEntry + 0.5);
 						break;
 				}
 			}
@@ -3369,7 +3369,7 @@ class Library {
 		$diffFilter = implode(") OR (", $diffParams);
 		if(!empty($diffFilter)) $filters[] = '('.$diffFilter.')';
 		
-		if($addSearchFilter) $filters[] = "levelName LIKE '%".$str."%'";
+		if($addSearchFilter) $filters[] = "levels.levelName LIKE '%".$str."%'";
 		
 		return [
 			'filters' => $filters,
@@ -4145,14 +4145,14 @@ class Library {
 		require_once __DIR__."/exploitPatch.php";
 		
 		$diffParams = [];
-		$filters = !$removeDefaultFilter ? ["unlisted = 0"] : [];
+		$filters = !$removeDefaultFilter ? ["lists.unlisted = 0"] : [];
 		
 		$type = Escape::number($query["type"]) ?: 0;
 		$str = Escape::text(urldecode($query["str"])) ?: '';
 		$diff = Escape::multiple_ids(urldecode($query["diff"])) ?: '-';
 
 		// Additional search parameters
-		if(isset($query["star"])) $filters[] = $query["star"] == 1 ? "NOT starStars = 0" : "starStars = 0";
+		if(isset($query["star"])) $filters[] = $query["star"] == 1 ? "NOT lists.starStars = 0" : "lists.starStars = 0";
 
 		// Difficulty filters
 		if($diff && $diff != '-') {
@@ -4161,20 +4161,20 @@ class Library {
 			foreach($diffArray AS &$diffEntry) {
 				switch($diffEntry) {
 					case -3:
-						$diffParams[] = "starDifficulty = '0'";
+						$diffParams[] = "lists.starDifficulty = '0'";
 						
 						break;
 					case -2:
 						$demonDiffs = [1, 2, 3, 4, 5];
 						$demonFilter = $query["demonFilter"] ? explode(',', Escape::multiple_ids(urldecode($query["demonFilter"]))) : [];
 						
-						foreach($demonFilter AS &$demonDiff) $demonParams[] = "starDifficulty = ".($demonDiffs[$demonDiff - 1] + 5);
+						foreach($demonFilter AS &$demonDiff) $demonParams[] = "lists.starDifficulty = ".($demonDiffs[$demonDiff - 1] + 5);
 						
-						$diffParams[] = $demonParams ? '('.implode(" OR ", $demonParams).')' : "starDifficulty >= 6";
+						$diffParams[] = $demonParams ? '('.implode(" OR ", $demonParams).')' : "lists.starDifficulty >= 6";
 						
 						break;
 					default:
-						$diffParams[] = "starDifficulty = '".$diffEntry."'";
+						$diffParams[] = "lists.starDifficulty = '".$diffEntry."'";
 						
 						break;
 				}
@@ -4183,7 +4183,7 @@ class Library {
 		$diffFilter = implode(") OR (", $diffParams);
 		if(!empty($diffFilter)) $filters[] = '('.$diffFilter.')';
 		
-		if($addSearchFilter) $filters[] = "listName LIKE '%".$str."%'";
+		if($addSearchFilter) $filters[] = "lists.listName LIKE '%".$str."%'";
 		
 		return [
 			'filters' => $filters,

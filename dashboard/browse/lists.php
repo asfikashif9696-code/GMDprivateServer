@@ -74,17 +74,17 @@ if($_GET['id']) {
 			$friendsString = Library::getFriendsQueryString($accountID);
 				
 			$filters = [
-				"levelID IN (".$listLevels.")",
+				"levels.levelID IN (".$listLevels.")",
 				"(
-					unlisted != 1 OR
-					(unlisted = 1 AND (extID IN (".$friendsString.")))
+					levels.unlisted != 1 OR
+					(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 				)"
 			];
 			
 			$levelsArray = explode(',', $listLevels);
 			$levelsText = '';
 			
-			foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
+			foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levels.levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
 			
 			$order = 'CASE
 				'.$levelsText.'
@@ -177,17 +177,15 @@ if($_GET['id']) {
 			$friendsString = Library::getFriendsQueryString($accountID);
 				
 			$filters = [
-				"levelID IN (".$listLevels.")",
+				"levels.levelID IN (".$listLevels.")",
 				"(
-					unlisted != 1 OR
-					(unlisted = 1 AND (levels.extID IN (".$friendsString.")))
+					levels.unlisted != 1 OR
+					(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 				)"
 			];
 			
-			$queryJoin = "INNER JOIN users ON levels.userID = users.userID";
-			
 			$levelsText = '';
-			foreach($listLevelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
+			foreach($listLevelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levels.levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
 			
 			$order = 'CASE
 				'.$levelsText.'
@@ -196,7 +194,7 @@ if($_GET['id']) {
 			
 			$listLevelsElements = '';
 			
-			$levels = Library::getLevels($filters, $order, $orderSorting, $queryJoin, 0);
+			$levels = Library::getLevels($filters, $order, $orderSorting, '', 0);
 			
 			foreach($levels['levels'] AS &$level) {
 				$userMetadata = Dashboard::getUserMetadata($level);
@@ -276,7 +274,7 @@ if($_GET['id']) {
 }
 
 // Search lists
-$order = "uploadDate";
+$order = "lists.uploadDate";
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 $page = '';
 

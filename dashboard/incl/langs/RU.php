@@ -784,4 +784,7 @@ $language['noElementsEffectsTitle'] = 'Отключить эффекты у эл
 $language['noElementsEffectsDesc'] = 'Отключает большинство эффектов у элементов, к примеру, блюр или свечение';
 $language['noBackgroundTitle'] = 'Отключить фон';
 $language['noBackgroundDesc'] = 'Отключает фон за страницей';
+
+$language['viewMore'] = 'Подробнее';
+$language['hide'] = 'Скрыть';
 ?>

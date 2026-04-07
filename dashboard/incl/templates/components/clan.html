@@ -24,31 +24,42 @@
 				<span class="emptySymbol">:(</span>
 				%CLAN_DESCRIPTION%
 			</h3>
-			
-			<div class="horisontal stats">
-				<div class="songCard">
-					<div class="contents userButton">%CLAN_OWNER_CARD%</div>
-				</div>
+	
+			<div class="viewMoreDiv" dashboard-view-more>
+				<button class="button" type="button" dashboard-mobile dashboard-view-more-button>
+					<i class="fa-solid fa-caret-right" dashboard-view-more-icon></i>
 				
-				<div class="levelStats card">
-					<text class="levelStat" title="%TEXT_clanID%">
-						<i class="fa-solid fa-shield-halved"></i>
-						<text dashboard-copy>%clanID%</text>
-					</text>
+					<div class="viewMoreText">
+						<text dashboard-view-more-text-closed>%TEXT_viewMore%</text>
+						<text dashboard-view-more-text-opened>%TEXT_hide%</text>
+					</div>
+				</button>
+				
+				<div class="horisontal stats">
+					<div class="songCard">
+						<div class="contents userButton">%CLAN_OWNER_CARD%</div>
+					</div>
 					
-					<text class="levelStat" title="%TEXT_clanMembersCount%">
-						<i class="fa-solid fa-users"></i>
-						%clanMembersCount%
-					</text>
-				
-					<text class="levelStat" title="%TEXT_creationDate%">
-						<i class="fa-solid fa-calendar"></i>
-						<text dashboard-date="%creationDate%"></text>
-					</text>
-				
-					<button class="button short titleToRight" type="button" title="%TEXT_viewClan%" href="clan/%CLAN_NAME%" dashboard-loader-type="settings">
-						<i class="fa-solid fa-eye"></i>
-					</button>
+					<div class="levelStats card">
+						<text class="levelStat" title="%TEXT_clanID%">
+							<i class="fa-solid fa-shield-halved"></i>
+							<text dashboard-copy>%clanID%</text>
+						</text>
+						
+						<text class="levelStat" title="%TEXT_clanMembersCount%">
+							<i class="fa-solid fa-users"></i>
+							%clanMembersCount%
+						</text>
+					
+						<text class="levelStat" title="%TEXT_creationDate%">
+							<i class="fa-solid fa-calendar"></i>
+							<text dashboard-date="%creationDate%"></text>
+						</text>
+					
+						<button class="button short titleToRight" type="button" title="%TEXT_viewClan%" href="clan/%CLAN_NAME%" dashboard-loader-type="settings">
+							<i class="fa-solid fa-eye"></i>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>

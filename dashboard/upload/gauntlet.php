@@ -29,9 +29,9 @@ if(isset($_POST['gauntletID']) && isset($_POST['levels'])) {
 	$levels = implode(',', $levelsArray);
 	
 	$friendsString = Library::getFriendsQueryString($accountID);
-	$filters = ["levelID IN (".$levels.") AND (
-			unlisted != 1 OR
-			(unlisted = 1 AND (levels.extID IN (".$friendsString.")))
+	$filters = ["levels.levelID IN (".$levels.") AND (
+			levels.unlisted != 1 OR
+			(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 		)"];
 	
 	$levelsSearchArray = Library::getLevels($filters, '', '', '', 0);

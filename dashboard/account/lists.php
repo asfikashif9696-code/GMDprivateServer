@@ -10,7 +10,7 @@ if(!$person['success']) exit(Dashboard::renderErrorPage(Dashboard::string("yourL
 $accountID = $person['accountID'];
 
 // Search lists
-$order = "uploadDate";
+$order = "lists.uploadDate";
 $pageOffset = is_numeric($_GET["page"]) ? abs(Escape::number($_GET["page"]) - 1) * 10 : 0;
 $page = '';
 

@@ -1,7 +1,7 @@
 <div class="contentDiv" dashboard-context-div>
 	<div class="horisontal">
 		<div class="vertical">
-			<div class="levelTitle">
+			<div class="levelTitle" dashboard-button>
 				<h2>%SONG_TITLE%</h2>
 				
 				<button class="contents songButton"
@@ -16,50 +16,61 @@
 		</div>
 	</div>
 	
-	<div class="horisontal stats">
-		<div class="songCard">
-			<div class="contents userButton">%SONG_USER%</div>
-		</div>
+	<div class="viewMoreDiv" dashboard-view-more>
+		<button class="button" type="button" dashboard-mobile dashboard-view-more-button>
+			<i class="fa-solid fa-caret-right" dashboard-view-more-icon></i>
 		
-		<div class="levelStats card">
-			<text class="levelStat" title="%TEXT_songID%">
-				<i class="fa-solid fa-music"></i>
-				<text dashboard-copy>%ID%</text>
-			</text>
-		
-			<text class="levelStat" title="%TEXT_songSize%">
-				<i class="fa-solid fa-weight-hanging"></i>
-				<text>%SONG_SIZE%</text>
-			</text>
-		
-			<text class="levelStat" title="%TEXT_uploadDate%">
-				<i class="fa-solid fa-calendar"></i>
-				<text dashboard-date="%reuploadTime%"></text>
-			</text>
-		
-			<button class="button" type="button" title="%TEXT_usageCount%" href="browse/levels?customSong=1&song=%ID%" dashboard-loader-type="list" dashboard-show="%SONG_CAN_USE_BUTTONS%">
-				<text class="levelStat">
+			<div class="viewMoreText">
+				<text dashboard-view-more-text-closed>%TEXT_viewMore%</text>
+				<text dashboard-view-more-text-opened>%TEXT_hide%</text>
+			</div>
+		</button>
+	
+		<div class="horisontal stats">
+			<div class="songCard">
+				<div class="contents userButton">%SONG_USER%</div>
+			</div>
+			
+			<div class="levelStats card">
+				<text class="levelStat" title="%TEXT_songID%">
+					<i class="fa-solid fa-music"></i>
+					<text dashboard-copy>%ID%</text>
+				</text>
+			
+				<text class="levelStat" title="%TEXT_songSize%">
+					<i class="fa-solid fa-weight-hanging"></i>
+					<text>%SONG_SIZE%</text>
+				</text>
+			
+				<text class="levelStat" title="%TEXT_uploadDate%">
+					<i class="fa-solid fa-calendar"></i>
+					<text dashboard-date="%reuploadTime%"></text>
+				</text>
+			
+				<button class="button" type="button" title="%TEXT_usageCount%" href="browse/levels?customSong=1&song=%ID%" dashboard-loader-type="list" dashboard-show="%SONG_CAN_USE_BUTTONS%">
+					<text class="levelStat">
+						<i class="fa-solid fa-gamepad"></i>
+						%SONG_LEVELS_COUNT%
+					</text>
+				</button>
+				<text class="levelStat" dashboard-hide="%SONG_CAN_USE_BUTTONS%">
 					<i class="fa-solid fa-gamepad"></i>
 					%SONG_LEVELS_COUNT%
 				</text>
-			</button>
-			<text class="levelStat" dashboard-hide="%SONG_CAN_USE_BUTTONS%">
-				<i class="fa-solid fa-gamepad"></i>
-				%SONG_LEVELS_COUNT%
-			</text>
-			
-			<button class="button titleToRight" type="button" title="%TEXT_favouritesCount%" dashboard-favourite="%ID%" dashboard-show="%SONG_CAN_USE_BUTTONS%">
-				<text class="levelStat">
+				
+				<button class="button titleToRight" type="button" title="%TEXT_favouritesCount%" dashboard-favourite="%ID%" dashboard-show="%SONG_CAN_USE_BUTTONS%">
+					<text class="levelStat">
+						<i class="fa-solid fa-heart" dashboard-show="%SONG_IS_FAVOURITE%"></i>
+						<i class="fa-regular fa-heart" dashboard-hide="%SONG_IS_FAVOURITE%"></i>
+						<span>%SONG_FAVORITES_COUNT%</span>
+					</text>
+				</button>
+				<text class="levelStat" dashboard-hide="%SONG_CAN_USE_BUTTONS%">
 					<i class="fa-solid fa-heart" dashboard-show="%SONG_IS_FAVOURITE%"></i>
 					<i class="fa-regular fa-heart" dashboard-hide="%SONG_IS_FAVOURITE%"></i>
 					<span>%SONG_FAVORITES_COUNT%</span>
 				</text>
-			</button>
-			<text class="levelStat" dashboard-hide="%SONG_CAN_USE_BUTTONS%">
-				<i class="fa-solid fa-heart" dashboard-show="%SONG_IS_FAVOURITE%"></i>
-				<i class="fa-regular fa-heart" dashboard-hide="%SONG_IS_FAVOURITE%"></i>
-				<span>%SONG_FAVORITES_COUNT%</span>
-			</text>
+			</div>
 		</div>
 	</div>
 	

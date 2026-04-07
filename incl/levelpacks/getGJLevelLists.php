@@ -12,7 +12,7 @@ $accountID = $person['accountID'];
 
 $time = time();
 $str = $echoString = $userString = $queryJoin = '';
-$order = "uploadDate";
+$order = "lists.uploadDate";
 $isIDSearch = false;
 
 $getFilters = Library::getListSearchFilters($_POST, false, false);
@@ -30,9 +30,9 @@ switch($type) {
 			if(is_numeric($str)) {
 				$friendsString = Library::getFriendsQueryString($accountID);
 
-				$filters = ["listID = ".$str." AND (
-					unlisted != 1 OR
-					(unlisted = 1 AND (accountID IN (".$friendsString.")))
+				$filters = ["lists.listID = ".$str." AND (
+					lists.unlisted != 1 OR
+					(lists.unlisted = 1 AND (lists.accountID IN (".$friendsString.")))
 				)"];
 			} else {
 				$firstCharacter = $enableUserLevelsSearching ? substr($str, 0, 1) : '';
@@ -40,41 +40,41 @@ switch($type) {
 				if($firstCharacter == 'a') {
 					$potentialAccountID = substr($str, 1);
 					if(is_numeric($potentialAccountID)) {
-						$filters[] = "accountID = ".$potentialAccountID;
+						$filters[] = "lists.accountID = ".$potentialAccountID;
 						break;
 					}
 				}
 				
-				$filters[] = "listName LIKE '%".$str."%'";
+				$filters[] = "lists.listName LIKE '%".$str."%'";
 				break;
 			}
 		}
 		break;
 	case 1: // Most downloaded
-		$order = "downloads";
+		$order = "lists.downloads";
 		break;
 	case 2: // Most liked
-		$order = "likes";
+		$order = "lists.likes";
 		break;
 	case 3: // Trending
 		$uploadDate = $time - (7 * 24 * 60 * 60);
-		$filters[] = "uploadDate > ".$uploadDate;
-		$order = "likes";
+		$filters[] = "lists.uploadDate > ".$uploadDate;
+		$order = "lists.likes";
 		break;
 	case 5: // Levels per user
 		if($accountID && $accountID == $str) $filters = [];
-		$filters[] = "accountID = '".$str."'";
+		$filters[] = "lists.accountID = '".$str."'";
 		break;
 	case 6: // Top lists
-		$filters[] = "lists.starStars > 0 AND lists.starFeatured > 0";
-		$order = "downloads";
+		$filters[] = "lists.lists.starStars > 0 AND lists.starFeatured > 0";
+		$order = "lists.downloads";
 		break;
 	case 7: // Magic
-		$order = "likes";
+		$order = "lists.likes";
 		break;
 	case 11: // Rated
-		$filters[] = "lists.starStars > 0";
-		$order = "downloads";
+		$filters[] = "lists.lists.starStars > 0";
+		$order = "lists.downloads";
 		break;
 	case 12: // Lists from followed accounts
 		$followed = Escape::multiple_ids($_POST["followed"]);

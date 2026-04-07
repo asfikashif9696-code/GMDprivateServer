@@ -14,7 +14,7 @@ $userID = $person["userID"];
 $time = time();
 $echoString = $userString = $songsString = $queryJoin = '';
 $levelsStatsArray = [];
-$order = "uploadDate";
+$order = "levels.uploadDate";
 $orderSorting = "DESC";
 $orderEnabled = $isIDSearch = false;
 $limit = 10;
@@ -38,9 +38,9 @@ switch($type) {
 			if(is_numeric($str)) {
 				$friendsString = Library::getFriendsQueryString($accountID);
 				
-				$filters = ["levelID = ".$str." AND (
-					unlisted != 1 OR
-					(unlisted = 1 AND (extID IN (".$friendsString.")))
+				$filters = ["levels.levelID = ".$str." AND (
+					levels.unlisted != 1 OR
+					(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 				)"];
 				
 				$isIDSearch = true;
@@ -50,32 +50,32 @@ switch($type) {
 					case 'u':
 						$potentialUserID = substr($str, 1);
 						if(is_numeric($potentialUserID)) {
-							$filters[] = "userID = ".$potentialUserID;
+							$filters[] = "levels.userID = ".$potentialUserID;
 							break;
 						}
 					case 'a':
 						$potentialAccountID = substr($str, 1);
 						if(is_numeric($potentialAccountID)) {
-							$filters[] = "extID = ".$potentialAccountID;
+							$filters[] = "levels.extID = ".$potentialAccountID;
 							break;
 						}
 					default:
-						$filters[] = "levelName LIKE '%".$str."%'";
+						$filters[] = "levels.levelName LIKE '%".$str."%'";
 						break;
 				}
 			}
 		}
 		break;
 	case 1: // Most downloaded
-		$order = "downloads";
+		$order = "levels.downloads";
 		break;
 	case 2: // Most liked
-		$order = "likes";
+		$order = "levels.likes";
 		break;
 	case 3: // Trending
 		$uploadDate = $time - (7 * 24 * 60 * 60);
-		$filters[] = "uploadDate > ".$uploadDate;
-		$order = "likes";
+		$filters[] = "levels.uploadDate > ".$uploadDate;
+		$order = "levels.likes";
 		break;
 	case 5: // Levels per user
 		if($userID == $str) $filters = [];
@@ -83,13 +83,13 @@ switch($type) {
 		break;
 	case 6: // Featured
 	case 17: // Featured in GDW
-		if($gameVersion > 21) $filters[] = "NOT starFeatured = 0 OR NOT starEpic = 0";
-		else $filters[] = "NOT starFeatured = 0";
-		$order = "starFeatured DESC, rateDate DESC, uploadDate";
+		if($gameVersion > 21) $filters[] = "NOT levels.starFeatured = 0 OR NOT levels.starEpic = 0";
+		else $filters[] = "NOT levels.starFeatured = 0";
+		$order = "levels.starFeatured DESC, levels.rateDate DESC, levels.uploadDate";
 		break;
 	case 16: // Hall of Fame
-		$filters[] = "NOT starEpic = 0";
-		$order = "starFeatured DESC, rateDate DESC, uploadDate";
+		$filters[] = "NOT levels.starEpic = 0";
+		$order = "levels.starFeatured DESC, levels.rateDate DESC, levels.uploadDate";
 		break;
 	case 7: // Magic (recommendations)
 		$levelIDs = Library::generateLevelsRecommendations($person);
@@ -100,14 +100,14 @@ switch($type) {
 		
 		$str = $levelIDs;
 		
-		foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
+		foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levels.levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
 		
 		$order = 'CASE
 			'.$levelsText.'
 		END';
 		$orderSorting = 'ASC';
 		
-		$filters[] = "levelID IN (".$str.")";
+		$filters[] = "levels.levelID IN (".$str.")";
 		break;
 	case 10: // Map Packs
 	case 19: // Unknown, but same as Map Packs (on real GD type 10 has star rated filter and 19 doesn't)
@@ -115,7 +115,7 @@ switch($type) {
 		$levelsArray = explode(',', $str);
 		$levelsText = '';
 		
-		foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
+		foreach($levelsArray AS $levelKey => $levelID) $levelsText .= 'WHEN levels.levelID = '.$levelID.' THEN '.($levelKey + 1).PHP_EOL;
 		
 		$order = 'CASE
 			'.$levelsText.'
@@ -124,40 +124,40 @@ switch($type) {
 		
 		$friendsString = Library::getFriendsQueryString($accountID);
 		
-		$filters[] = "levelID IN (".$str.") AND (
-				unlisted != 1 OR
-				(unlisted = 1 AND (extID IN (".$friendsString.")))
+		$filters[] = "levels.levelID IN (".$str.") AND (
+				levels.unlisted != 1 OR
+				(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 			)";
 			
 		$limit = false;
 		break;
 	case 11: // Awarded
-		$filters[] = "NOT starStars = 0";
-		$order = "rateDate DESC, uploadDate";
+		$filters[] = "NOT levels.starStars = 0";
+		$order = "levels.rateDate DESC, levels.uploadDate";
 		break;
 	case 12: // Followed
 		$followed = Escape::multiple_ids($_POST["followed"]);
-		$filters[] = $followed ? "extID IN (".$followed.")" : "1 != 1";
+		$filters[] = $followed ? "levels.extID IN (".$followed.")" : "1 != 1";
 		break;
 	case 13: // Friends
 		$friendsArray = Library::getFriends($accountID);
 		$friendsString = "'".implode("','", $friendsArray)."'";
 		
-		$filters[] = $friendsString ? "extID IN (".$friendsString.")" : "1 != 1";
+		$filters[] = $friendsString ? "levels.extID IN (".$friendsString.")" : "1 != 1";
 		break;
 	case 21: // Daily safe
 		$queryJoin = "INNER JOIN dailyfeatures ON levels.levelID = dailyfeatures.levelID";
-		$filters[] = "dailyfeatures.type = 0 AND timestamp < ".$time;
+		$filters[] = "dailyfeatures.type = 0 AND dailyfeatures.timestamp < ".$time;
 		$order = "dailyfeatures.feaID";
 		break;
 	case 22: // Weekly safe
 		$queryJoin = "INNER JOIN dailyfeatures ON levels.levelID = dailyfeatures.levelID";
-		$filters[] = "dailyfeatures.type = 1 AND timestamp < ".$time;
+		$filters[] = "dailyfeatures.type = 1 AND dailyfeatures.timestamp < ".$time;
 		$order = "dailyfeatures.feaID";
 		break;
 	case 23: // Event safe
 		$queryJoin = "INNER JOIN events ON levels.levelID = events.levelID";
-		$filters[] = "timestamp < ".$time;
+		$filters[] = "events.timestamp < ".$time;
 		$order = "events.feaID";
 		break;
 	case 25: // List levels
@@ -179,9 +179,9 @@ switch($type) {
 		
 		$friendsString = Library::getFriendsQueryString($accountID);
 		
-		$filters = ["levelID IN (".$listLevels.") AND (
-				unlisted != 1 OR
-				(unlisted = 1 AND (extID IN (".$friendsString.")))
+		$filters = ["levels.levelID IN (".$listLevels.") AND (
+				levels.unlisted != 1 OR
+				(levels.unlisted = 1 AND (levels.extID IN (".$friendsString.")))
 			)"];
 			
 		$limit = false;
@@ -190,7 +190,7 @@ switch($type) {
 		$queryJoin = "JOIN (SELECT suggestLevelId AS levelID, MAX(suggest.timestamp) AS timestamp FROM suggest GROUP BY levelID) suggest ON levels.levelID = suggest.levelID";
 
 		$filters[] = "suggest.levelID > 0";
-		if(!$ratedLevelsInSent) $filters[] = "starStars = 0";
+		if(!$ratedLevelsInSent) $filters[] = "levels.starStars = 0";
 
 		$order = 'suggest.timestamp';
 		break;

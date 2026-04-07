@@ -272,8 +272,7 @@ body.hide nav button .navbar-hide {
 	
 	position: relative;
 	
-	overflow-y: scroll;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 
 .dashboard-page:has(.wideBox) {
@@ -470,6 +469,11 @@ footer h4 span {
 	border: 1px solid var(--content-color-24);
 }
 
+.box h1,
+.box p {
+	text-align: center;
+}
+
 .wideBox {
 	display: flex;
 	flex-direction: column;
@@ -491,6 +495,7 @@ footer h4 span {
 
 .button {
 	display: flex;
+	--display: flex;
 	align-items: center;
 	justify-content: center;
 	
@@ -695,6 +700,32 @@ form.empty-fields .select:has(input:not([dashboard-not-required]):placeholder-sh
 	gap: 5px;
 	
 	cursor: default !important;
+	
+	z-index: 15 !important;
+}
+
+.toastify:nth-of-type(2) {
+	transform: translateY(-110%) !important;
+	scale: 0.95;
+	
+	z-index: 14 !important;
+}
+
+.toastify:nth-of-type(3) {
+	transform: translateY(-235%) !important;
+	scale: 0.9;
+	
+	z-index: 13 !important;
+}
+
+.toastify:nth-of-type(n+4) {
+	transform: translateY(-350%) !important;
+	scale: 0.85;
+	
+	opacity: 0 !important;
+	pointer-events: none;
+	
+	z-index: 12 !important;
 }
 
 .toastify.success {
@@ -1490,7 +1521,7 @@ i[onclick],
 	background-color: var(--content-color-14);
 	border: 1px solid var(--content-color-24);
 	
-	border-radius: 15px;
+	border-radius: 5px;
 	
 	width: 100%;
 	
@@ -1526,6 +1557,16 @@ i[onclick],
 }
 
 .commentsDiv .contentDiv:last-child {
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+.commentsDiv .nothingOnPageDiv:first-child {
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+}
+
+.commentsDiv .nothingOnPageDiv:last-child {
 	border-bottom-left-radius: 15px;
 	border-bottom-right-radius: 15px;
 }
@@ -1643,14 +1684,6 @@ i[onclick],
 .commentsDiv .pageDiv {
 	justify-content: flex-end;
 	gap: 10px;
-	
-	white-space: nowrap;
-}
-
-.levelTitle text[dashboard-date] {
-	font-size: 20px;
-	
-	opacity: 0.8;
 	
 	white-space: nowrap;
 }
@@ -2877,6 +2910,7 @@ hr {
 	transition: var(--transition-0-2);
 	
 	overflow: scroll;
+	z-index: 2;
 }
 
 .emojisInput.show .emojisDiv {
@@ -2888,6 +2922,10 @@ hr {
 	cursor: pointer;
 	
 	max-height: 40px;
+}
+
+.emojisDiv > div {
+	justify-content: space-between;
 }
 
 .emojisDiv .horisontal {
@@ -3325,4 +3363,10 @@ body.noElementsEffects .toggleExtra::after {
 
 body.noElementsEffects .inputColor {
 	box-shadow: none;
+}
+
+.viewMoreDiv {
+	display: contents;
+	
+	transition: var(--transition-0-2);
 }

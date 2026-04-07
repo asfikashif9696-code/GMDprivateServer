@@ -16,7 +16,7 @@
 		</div>
 		
 		<div class="horisontal stats">
-			<div class="songCard">
+			<div class="songCard" dashboard-button>
 				<button class="contents" dashboard-show="%LEVEL_IS_CUSTOM_SONG%"
 					dashboard-title="%LEVEL_SONG_TITLE%"
 					dashboard-author="%LEVEL_SONG_AUTHOR%"
@@ -29,7 +29,8 @@
 				
 				<text dashboard-hide="%LEVEL_IS_CUSTOM_SONG%">%LEVEL_SONG%</text>
 				<text dashboard-running-text dashboard-show="%LEVEL_IS_CUSTOM_SONG%">%LEVEL_SONG%</text>
-				<span dashboard-show="%LEVEL_IS_CUSTOM_SONG%">
+				
+				<span dashboard-show="%LEVEL_IS_CUSTOM_SONG%" dashboard-not-button>
 					• <text dashboard-copy>%LEVEL_SONG_ID%</text>
 				</span>
 			</div>

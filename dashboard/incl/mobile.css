@@ -133,7 +133,20 @@
 	}
 	
 	footer {
-		padding-bottom: 100px;
+		padding: 15px 15px 95px 15px;
+	}
+	
+	footer h2 {
+		font-size: 22px;
+	}
+	
+	footer h4 {
+		font-size: 17px;
+	}
+	
+	footer h4 img {
+		max-width: 21px;
+		max-height: 21px;
 	}
 	
 	.head {
@@ -281,7 +294,7 @@
 	}
 	
 	.languageDiv:has(.toggleExtra) {
-		width: calc(100% - 55px);
+		width: calc(100% - 65px);
 	}
 	
 	.toggleExtraOption {
@@ -312,10 +325,23 @@
 		right: 26px;
 	}
 	
+	.toggleButton {
+		padding: 8px !important;
+		font-size: 20px;
+	}
+	
 	.toggleExtra.focused {
 		z-index: 7;
 		
 		gap: 5px;
+	}
+	
+	.inputDiv {
+		gap: 5px;
+	}
+	
+	.inputDiv h2 {
+		font-size: 20px;
 	}
 	
 	.inputStyle,
@@ -328,5 +354,324 @@
 		width: 10px;
 		height: 15px;
 		font-size: 15px;
+	}
+	
+	.contentDiv {
+		padding: 10px;
+	}
+	
+	.box {
+		padding: 15px;
+		border-radius: 15px;
+		
+		gap: 10px;
+		
+		min-width: 100%;
+	}
+	
+	.button {
+		padding: 5px 10px;
+		font-size: 17px;
+	}
+	
+	.box h1 {
+		font-size: 25px;
+	}
+	
+	.box p {
+		font-size: 20px;
+	}
+	
+	.levelPage .levelStats:not(.card) {
+		gap: 5px;
+		min-width: 100%;
+	}
+	
+	.levelPage .levelStats:not(.card) .levelStat {
+		font-size: 17px;
+		padding: 7px;
+	}
+	
+	.eyeButton i {
+		font-size: 20px;
+	}
+	
+	[title]::after,
+	.inputDiv:has(.regex-fail[dashboard-regex-check])::after {
+		font-size: 17px;
+		padding: 5px 10px;
+		
+		max-width: 90vw;
+		white-space: break-spaces;
+		overflow-wrap: break-word;
+		
+		border-radius: 10px;
+	}
+	
+	.levelTitle h2 {
+		font-size: 18px;
+	}
+	
+	.levelTitle h2 text.big {
+		font-size: 20px;
+	}
+	
+	.levelDescription {
+		font-size: 16px;
+	}
+	
+	.levelTitle h2 img,
+	.contextMenuButton img {
+		max-width: 22px;
+		max-height: 22px;
+	}
+	
+	.username span {
+		gap: 5px;
+	}
+	
+	.contentDiv .vertical {
+		gap: 5px;
+	}
+	
+	.commentsDiv .contentDiv .vertical {
+		gap: 10px;
+	}
+	
+	.contentDiv .difficultyImage {
+		width: 80px;
+		height: 80px;
+		
+		margin: -15px;
+	}
+	
+	.contentDiv .difficultyImage.gauntlet {
+		width: 50px;
+		height: 50px;
+		
+		margin: 0px;
+	}
+	
+	.levelStats {
+		flex-wrap: wrap;
+		justify-content: flex-start !important;
+		
+		gap: 5px;
+	}
+	
+	.stats > :not(i):last-child {
+		justify-content: flex-start !important;
+	}
+	
+	.levelStat {
+		font-size: 16px;
+		
+		gap: 3px;
+	}
+	
+	.levelStat i {
+		width: 20px;
+		height: 20px;
+	}
+	
+	.profileTitle:has(img), .levelTitle:has(img) {
+		gap: 10px;
+	}
+	
+	.levelTitle {
+		align-items: flex-start;
+	}
+	
+	.levelStats .button {
+		width: max-content;
+		
+		padding: 5px 7px;
+		font-size: 15px;
+	}
+	
+	.viewMoreDiv {
+		display: flex;
+		flex-direction: column;
+	}
+	
+	.viewMoreDiv.show {
+		gap: 10px;
+	}
+	
+	.contentDiv .stats {
+		justify-content: space-between;
+		flex-wrap: wrap;
+		
+		gap: 5px;
+	}
+	
+	.songCard {
+		display: block;
+		
+		font-size: 16px;
+	}
+	
+	.songCard:has(button) {
+		padding: 5px;
+		font-size: 14px;
+	}
+	
+	.songCard:has(.username) {
+		padding: 5px 7px;
+	}
+	
+	.songCard button:not(.contextMenuButton) {
+		font-size: 14px;	
+	}
+	
+	[dashboard-running-text] {
+		white-space: break-spaces;
+		max-width: max-content;
+	}
+
+	.viewMoreDiv [dashboard-view-more-icon] {
+		transition: var(--transition-0-2);
+	}
+
+	.viewMoreDiv.show [dashboard-view-more-icon] {
+		rotate: 90deg;
+	}
+
+	.viewMoreDiv [dashboard-view-more-text-closed] {
+		transition: var(--transition-0-2);
+		height: max-content;
+		
+		opacity: 1;
+	}
+
+	.viewMoreDiv [dashboard-view-more-text-opened] {
+		transition: var(--transition-0-2);
+		height: 0px;
+		
+		opacity: 0;
+	}
+
+	.viewMoreDiv.show [dashboard-view-more-text-closed] {
+		height: 0px;
+		
+		opacity: 0;
+	}
+
+	.viewMoreDiv.show [dashboard-view-more-text-opened] {
+		height: max-content;
+		
+		opacity: 1;
+	}
+
+	.viewMoreDiv > *:not(:first-child) {
+		transition: var(--transition-0-2);
+		height: 0px;
+		
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.viewMoreDiv.show > *:not(:first-child) {
+		height: max-content;
+		
+		opacity: 1;
+		pointer-events: initial;
+	}
+
+	.viewMoreText {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.viewMoreDiv .button {
+		justify-content: flex-start;
+	}
+
+	.viewMoreDiv > .button i {
+		width: 10px;
+	}
+	
+	.toastify {
+		font-size: 15px;
+		padding: 7px 10px !important;
+	}
+	
+	.modalPage .box {
+		min-width: 95%;
+		padding: 20px 40px;
+	}
+	
+	.profileTitle h1 {
+		font-size: 20px;
+	}
+	
+	.songCard .username {
+		font-size: 17px;
+	}
+
+	.userButton img, .levelDescription img {
+		max-width: 21px;
+		max-height: 21px;
+		min-width: 15px;
+	}
+	
+	.option {
+		font-size: 15px;
+		
+		gap: 3px;
+	}
+	
+	.select {
+		padding: 8.7px;
+	}
+	
+	.inputStyle h4 {
+		font-size: 15px;
+	}
+	
+	.commentStat {
+		font-size: 17px;
+	}
+	
+	.small .commentStat {
+		font-size: 15px;
+		gap: 3px;
+	}
+	
+	.commentStat text {
+		gap: 3px;
+	}
+	
+	.stats.small > div {
+		width: max-content;
+		flex-wrap: wrap;
+	}
+	
+	.button.small {
+		padding: 5px 7px;
+		font-size: 14px;
+	}
+	
+	.replyLineBig {
+		height: calc(100% - 58px);
+		transform: translate(10.5px, -5px);
+	}
+	
+	.emojisDiv {
+		left: 8px;
+	}
+	
+	.emojisDiv h3 {
+		font-size: 20px;
+	}
+	
+	.emojisDiv h3 img {
+		max-width: 25px;
+		max-height: 25px;
+	}
+	
+	h1[dashboard-score] {
+		font-size: 17px;
 	}
 }
