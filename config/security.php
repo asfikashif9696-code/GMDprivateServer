@@ -28,7 +28,7 @@ $filterClanTags = 2; // 0 = Disabled, 1 = Checks if the clan tag is word, 2 = Ch
 $bannedClanTags = [ // Add words to ban if it is a clan tag/if it is in a clan tag
 	'ADMIN',
 	'MOD',
-	'RobTop'
+	'RobTop',
 	'nig',
 	'fag'
 ];
