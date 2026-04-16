@@ -3,17 +3,23 @@ $unregisteredSubmissions = false; // false = green accounts can't upload levels,
 $preactivateAccounts = true; // false = accounts need to be activated at dashboard/login/activate.php; true = accounts can log in immediately
 
 $filterUsernames = 2; // 0 = Disabled, 1 = Checks if the username is word, 2 = Checks if the username contains word
-$bannedUsernames = [ // Add words to ban if it is a username/if it is in a username
-	'RobTop',
+$bannedUsernames = [ // I dont know why RobTop is Not Allowed
+	'nigga',
 	'nig',
+	'nigger',
+	'fuck',
+	'AdvyStyles',
+	'GDPS',
 	'fag'
 ];
 
 $filterClanNames = 2; // 0 = Disabled, 1 = Checks if the clan name is word, 2 = Checks if the clan name contains word
 $bannedClanNames = [ // Add words to ban if it is a clan name/if it is in a clan name
 	'Support',
+	'RobTop'
 	'Administration',
 	'Moderation',
+	'nigga',
 	'nig',
 	'fag'
 ];
@@ -22,6 +28,7 @@ $filterClanTags = 2; // 0 = Disabled, 1 = Checks if the clan tag is word, 2 = Ch
 $bannedClanTags = [ // Add words to ban if it is a clan tag/if it is in a clan tag
 	'ADMIN',
 	'MOD',
+	'RobTop'
 	'nig',
 	'fag'
 ];
@@ -34,7 +41,7 @@ $bannedClanTags = [ // Add words to ban if it is a clan tag/if it is in a clan t
 	Cloudflare Turnstile: https://www.cloudflare.com/products/turnstile/
 */
 
-$enableCaptcha = false;
+$enableCaptcha = true;
 $captchaType = 1; // 1 for hCaptcha, 2 for reCaptcha and 3 for CF-Turnstile
 $CaptchaKey = "";
 $CaptchaSecret = "";
@@ -46,8 +53,8 @@ $CaptchaSecret = "";
 	Syntax: $proxies['NAME OF IPs'] = 'LINK';
 */
 
-$blockFreeProxies = false; // true = check if person uses free proxy
-$blockCommonVPNs = false; // true = check if person uses a common VPN
+$blockFreeProxies = true; // true = check if person uses free proxy
+$blockCommonVPNs = true; // true = check if person uses a common VPN
 // URLs for IPs of proxies
 $proxies['http'] = 'https://fhgdps.com/proxies/http.txt';
 $proxies['https'] = 'https://fhgdps.com/proxies/https.txt';
