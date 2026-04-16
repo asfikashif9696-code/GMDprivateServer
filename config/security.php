@@ -16,7 +16,7 @@ $bannedUsernames = [ // I dont know why RobTop is Not Allowed
 $filterClanNames = 2; // 0 = Disabled, 1 = Checks if the clan name is word, 2 = Checks if the clan name contains word
 $bannedClanNames = [ // Add words to ban if it is a clan name/if it is in a clan name
 	'Support',
-	'RobTop'
+	'RobTop',
 	'Administration',
 	'Moderation',
 	'nigga',
