@@ -112,7 +112,7 @@ $showAllLevels = false;
 	$leaderboardMinStars - Minimum amount of stars for players to be displayed in the leaderboard, default is 10
 */
 
-$leaderboardMinStars = 10;
+$leaderboardMinStars = 50;
 
 /*
 	Update rated levels
@@ -160,7 +160,7 @@ $specialCommentLikes = [
 	False - Don't show unlisted levels
 */
 
-$unlistedLevelsForAdmins = false;
+$unlistedLevelsForAdmins = true;
 
 /*
 	Show rated levels in sent tab
